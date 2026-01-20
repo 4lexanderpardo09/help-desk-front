@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { authRequestInterceptor } from './interceptors/auth.interceptor';
+import { responseErrorHandler, responseSuccessHandler } from './interceptors/error.interceptor';
 
 /**
  * Instancia global de Axios configurada para la API.
@@ -13,41 +15,13 @@ export const api = axios.create({
     },
 });
 
-// Request interceptor to add the auth token to every request
-/**
- * Interceptor de Solicitud (Request).
- * 
- * Inyecta automáticamente el token JWT almacenado en localStorage
- * en el encabezado 'Authorization' de cada petición saliente.
- */
+// Registrar interceptores
 api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
+    authRequestInterceptor,
+    (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle global errors (like 401 Unauthorized)
-/**
- * Interceptor de Respuesta (Response).
- * 
- * Maneja errores globales.
- * TODO: Implementar lógica de redirección automática al login si se recibe un 401.
- */
 api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        // Optional: Redirect to login on 401, but careful with loops
-        if (error.response?.status === 401) {
-            // localStorage.removeItem('token');
-            // window.location.href = '/login';
-        }
-        return Promise.reject(error);
-    }
+    responseSuccessHandler,
+    responseErrorHandler
 );
