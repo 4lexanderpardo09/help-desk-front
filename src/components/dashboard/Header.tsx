@@ -17,7 +17,7 @@ export function Header({ toggleMobileSidebar }: HeaderProps) {
                 >
                     <span className="material-symbols-outlined">menu</span>
                 </button>
-                <h1 className="text-xl font-bold text-gray-800">Dashboard Overview</h1>
+                <h1 className="text-xl font-bold text-gray-800">Dashboard</h1>
             </div>
             <div className="flex items-center gap-6">
                 <button
@@ -29,8 +29,12 @@ export function Header({ toggleMobileSidebar }: HeaderProps) {
                 <div className="h-8 w-px bg-gray-200"></div>
                 <div className="flex items-center gap-3">
                     <div className="text-right">
-                        <p className="text-sm font-bold text-gray-800">{user?.usu_correo || 'Usuario'}</p>
-                        <p className="text-xs text-gray-500">Rol: {user?.rol_id || 'N/A'}</p>
+                        <p className="text-sm font-bold text-gray-800">
+                            {user?.nombre} {user?.apellido}
+                        </p>
+                        <p className="text-xs text-capitalize text-gray-500">
+                            {user?.role?.nombre || 'Sin Rol'}
+                        </p>
                     </div>
                     {/* Logout Button (Temporary location or interactive dropdown) */}
                     <button

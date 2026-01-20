@@ -7,13 +7,10 @@ import { useAuth } from '../context/useAuth';
 export default function DashboardPage() {
     const { user } = useAuth();
 
-    // Extract name from email (before @) as a fallback name
-    const userName = user?.usu_correo.split('@')[0] || 'Usuario';
-
     return (
         <DashboardLayout>
             <div className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900">Bienvenido, {userName}! 👋</h2>
+                <h2 className="text-2xl font-bold text-gray-900">Bienvenido, {user?.nombre} {user?.apellido}! 👋</h2>
                 <p className="mt-1 text-gray-500">Aquí tienes un resumen de tu actividad de hoy.</p>
             </div>
 
