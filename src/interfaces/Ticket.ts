@@ -37,3 +37,33 @@ export interface CreateTicketDto {
     prioridadId?: number;
     subcategoriaId?: number;
 }
+
+export interface TicketDetail extends Ticket {
+    description: string;
+    category: string;
+    subcategory: string;
+    createdDate: string; // ISO string
+    creatorName: string;
+    workflowStep: string;
+    workflowStepId: number;
+    assignedTo?: string;
+    assignedToId?: number;
+}
+
+export interface TicketTimelineItem {
+    id: number;
+    type: 'comment' | 'status_change' | 'assignment' | 'field_update' | 'creation';
+    content: string; // The comment or description of the event
+    author: string;
+    authorRole?: string;
+    authorAvatar?: string; // URL or initials
+    date: string; // ISO string
+    metadata?: {
+        oldStatus?: string;
+        newStatus?: string;
+        oldValue?: string;
+        newValue?: string;
+        fileUrl?: string;
+        fileName?: string;
+    };
+}

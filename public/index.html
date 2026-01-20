@@ -2,7 +2,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Help Desk Ticket List</title>
+<title>Ticket Detail and Timeline</title>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -81,9 +81,14 @@
 </div>
 </aside>
 <main class="flex flex-1 flex-col overflow-hidden bg-[#f6f8f8]">
-<header class="flex h-20 items-center justify-between border-b border-gray-200 bg-white px-8 shadow-sm">
-<div>
-<h1 class="text-xl font-bold text-gray-800">Tickets</h1>
+<header class="flex h-20 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-8 shadow-sm">
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-brand-blue">
+<span class="material-symbols-outlined text-lg">arrow_back</span>
+                        Back to List
+                    </button>
+<div class="h-6 w-px bg-gray-200"></div>
+<h1 class="text-xl font-bold text-gray-800">Ticket Details</h1>
 </div>
 <div class="flex items-center gap-6">
 <button class="relative rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus:outline-none">
@@ -101,258 +106,209 @@
 </div>
 </header>
 <div class="flex-1 overflow-y-auto p-8">
-<div class="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-<div>
-<h2 class="text-2xl font-bold text-gray-900">All Tickets</h2>
-<p class="mt-1 text-sm text-gray-500">Manage support requests and track their progress.</p>
+<div class="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+<div class="space-y-2">
+<div class="flex items-center gap-3">
+<h2 class="text-2xl font-bold text-gray-900">Ticket #2355 - Payment Details</h2>
+<span class="inline-flex items-center rounded-full bg-cyan-50 px-3 py-1 text-xs font-bold text-brand-teal ring-1 ring-inset ring-brand-teal/20">Open</span>
+<span class="inline-flex items-center rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-brand-red ring-1 ring-inset ring-brand-red/20">High Priority</span>
 </div>
-<button class="flex items-center gap-2 rounded-lg bg-brand-red px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-brand-red focus:ring-offset-2">
-<span class="material-symbols-outlined text-xl">add</span>
-                        Create Ticket
-                    </button>
+<div class="flex items-center gap-6 text-sm text-gray-500">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                                Created: Oct 24, 2023
+                            </span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">person</span>
+                                Customer: Acme Corp
+                            </span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">folder</span>
+                                Category: Billing
+                            </span>
 </div>
-<div class="mb-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-<div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-<div class="relative w-full max-w-md">
-<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-<span class="material-symbols-outlined text-gray-400">search</span>
 </div>
-<input class="block w-full rounded-lg border-gray-200 bg-gray-50 py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-500 focus:border-brand-teal focus:bg-white focus:ring-brand-teal" placeholder="Search by ID, subject, or customer..." type="text"/>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50">
+<span class="material-symbols-outlined text-lg">print</span>
+                            Print
+                        </button>
+<button class="flex items-center gap-2 rounded-lg bg-brand-accent px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-800">
+<span class="material-symbols-outlined text-lg">edit</span>
+                            Edit Ticket
+                        </button>
 </div>
-<div class="flex flex-wrap items-center gap-3">
+</div>
+<div class="mb-8 rounded-xl border border-brand-accent/20 bg-white p-6 shadow-sm">
+<h3 class="mb-6 text-sm font-bold uppercase tracking-wider text-gray-500">Workflow Progress</h3>
 <div class="relative">
-<select class="appearance-none rounded-lg border-gray-200 bg-white py-2.5 pl-4 pr-10 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:border-brand-teal focus:ring-brand-teal">
-<option>All Statuses</option>
-<option>Open</option>
-<option>In Progress</option>
-<option>Resolved</option>
-</select>
-<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-<span class="material-symbols-outlined text-lg">expand_more</span>
+<div class="absolute left-0 top-1/2 h-1 w-full -translate-y-1/2 bg-gray-100 rounded-full"></div>
+<div class="absolute left-0 top-1/2 h-1 w-1/2 -translate-y-1/2 bg-brand-accent rounded-full transition-all duration-500"></div>
+<div class="relative flex justify-between">
+<div class="flex flex-col items-center gap-2">
+<div class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-accent text-white shadow-md ring-4 ring-white">
+<span class="material-symbols-outlined text-sm font-bold">check</span>
+</div>
+<span class="text-xs font-semibold text-brand-accent">Request Created</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-accent text-white shadow-md ring-4 ring-white">
+<span class="material-symbols-outlined text-sm font-bold">check</span>
+</div>
+<span class="text-xs font-semibold text-brand-accent">Triage</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-brand-accent bg-white text-brand-accent shadow-md ring-4 ring-white">
+<span class="text-xs font-bold">3</span>
+</div>
+<span class="text-xs font-bold text-brand-accent">Payment Review</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-gray-200 bg-white text-gray-400 ring-4 ring-white">
+<span class="text-xs font-bold">4</span>
+</div>
+<span class="text-xs font-medium text-gray-400">Approval</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-gray-200 bg-white text-gray-400 ring-4 ring-white">
+<span class="text-xs font-bold">5</span>
+</div>
+<span class="text-xs font-medium text-gray-400">Closure</span>
 </div>
 </div>
-<div class="relative">
-<select class="appearance-none rounded-lg border-gray-200 bg-white py-2.5 pl-4 pr-10 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:border-brand-teal focus:ring-brand-teal">
-<option>All Priorities</option>
-<option>High</option>
-<option>Medium</option>
-<option>Low</option>
-</select>
-<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-<span class="material-symbols-outlined text-lg">expand_more</span>
+</div>
+<div class="mt-8 rounded-lg bg-sky-50 p-4 border border-sky-100">
+<h4 class="text-sm font-bold text-brand-accent mb-1">Current Step: Payment Review</h4>
+<p class="text-sm text-gray-600">Task Description: Verify the transaction ID with the finance department. You have <span class="font-semibold text-gray-800">3 business days</span> to complete this step.</p>
 </div>
 </div>
-<button class="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white p-2.5 text-gray-500 hover:border-brand-teal hover:text-brand-teal focus:outline-none focus:ring-2 focus:ring-brand-teal focus:ring-offset-2">
-<span class="material-symbols-outlined">filter_list</span>
-</button>
-</div>
-</div>
-</div>
-<div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-<div class="overflow-x-auto">
-<table class="w-full text-left text-sm text-gray-600">
-<thead class="bg-gray-50 text-xs font-semibold uppercase text-gray-500">
-<tr>
-<th class="px-6 py-4">ID</th>
-<th class="px-6 py-4">Subject</th>
-<th class="px-6 py-4">Customer</th>
-<th class="px-6 py-4">Status</th>
-<th class="px-6 py-4">Priority</th>
-<th class="px-6 py-4">Last Updated</th>
-<th class="px-6 py-4 text-right">Action</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-gray-100 bg-white">
-<tr class="group hover:bg-gray-50">
-<td class="px-6 py-4 font-mono font-medium text-gray-900">#TK-2049</td>
-<td class="px-6 py-4">
-<p class="font-medium text-gray-900">Login authentication failure</p>
-<p class="text-xs text-gray-500">Portal access denied</p>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-600">MS</div>
-<span class="font-medium text-gray-900">Michael Scott</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<span class="inline-flex items-center rounded-full bg-cyan-50 px-2.5 py-0.5 text-xs font-medium text-brand-teal">
-                                            Open
-                                        </span>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<div class="h-2.5 w-2.5 rounded-full bg-brand-red"></div>
-<span class="font-medium text-gray-700">High</span>
-</div>
-</td>
-<td class="px-6 py-4 text-gray-500">2 hours ago</td>
-<td class="px-6 py-4 text-right">
-<button class="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-brand-blue">
-<span class="material-symbols-outlined">more_vert</span>
-</button>
-</td>
-</tr>
-<tr class="group hover:bg-gray-50">
-<td class="px-6 py-4 font-mono font-medium text-gray-900">#TK-2048</td>
-<td class="px-6 py-4">
-<p class="font-medium text-gray-900">Billing invoice mismatch</p>
-<p class="text-xs text-gray-500">Q3 invoice total incorrect</p>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="flex h-8 w-8 items-center justify-center rounded-full bg-yellow-100 text-xs font-bold text-yellow-700">DS</div>
-<span class="font-medium text-gray-900">Dwight Schrute</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-brand-accent">
-                                            In Progress
-                                        </span>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<div class="h-2.5 w-2.5 rounded-full bg-orange-400"></div>
-<span class="font-medium text-gray-700">Medium</span>
-</div>
-</td>
-<td class="px-6 py-4 text-gray-500">4 hours ago</td>
-<td class="px-6 py-4 text-right">
-<button class="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-brand-blue">
-<span class="material-symbols-outlined">more_vert</span>
-</button>
-</td>
-</tr>
-<tr class="group hover:bg-gray-50">
-<td class="px-6 py-4 font-mono font-medium text-gray-900">#TK-2047</td>
-<td class="px-6 py-4">
-<p class="font-medium text-gray-900">Update account preferences</p>
-<p class="text-xs text-gray-500">Change notification email</p>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="flex h-8 w-8 items-center justify-center rounded-full bg-pink-100 text-xs font-bold text-pink-600">PB</div>
-<span class="font-medium text-gray-900">Pam Beesly</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<span class="inline-flex items-center rounded-full bg-cyan-50 px-2.5 py-0.5 text-xs font-medium text-brand-teal">
-                                            Open
-                                        </span>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<div class="h-2.5 w-2.5 rounded-full bg-green-500"></div>
-<span class="font-medium text-gray-700">Low</span>
-</div>
-</td>
-<td class="px-6 py-4 text-gray-500">1 day ago</td>
-<td class="px-6 py-4 text-right">
-<button class="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-brand-blue">
-<span class="material-symbols-outlined">more_vert</span>
-</button>
-</td>
-</tr>
-<tr class="group hover:bg-gray-50">
-<td class="px-6 py-4 font-mono font-medium text-gray-900">#TK-2046</td>
-<td class="px-6 py-4">
-<p class="font-medium text-gray-900">Cannot access reports module</p>
-<p class="text-xs text-gray-500">Error 403 on dashboard</p>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">JH</div>
-<span class="font-medium text-gray-900">Jim Halpert</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-brand-accent">
-                                            In Progress
-                                        </span>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<div class="h-2.5 w-2.5 rounded-full bg-brand-red"></div>
-<span class="font-medium text-gray-700">High</span>
-</div>
-</td>
-<td class="px-6 py-4 text-gray-500">1 day ago</td>
-<td class="px-6 py-4 text-right">
-<button class="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-brand-blue">
-<span class="material-symbols-outlined">more_vert</span>
-</button>
-</td>
-</tr>
-<tr class="group hover:bg-gray-50">
-<td class="px-6 py-4 font-mono font-medium text-gray-900">#TK-2045</td>
-<td class="px-6 py-4">
-<p class="font-medium text-gray-900">Integration API key revoked</p>
-<p class="text-xs text-gray-500">Slack integration stopped</p>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">RM</div>
-<span class="font-medium text-gray-900">Ryan Howard</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<span class="inline-flex items-center rounded-full bg-cyan-50 px-2.5 py-0.5 text-xs font-medium text-brand-teal">
-                                            Open
-                                        </span>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<div class="h-2.5 w-2.5 rounded-full bg-orange-400"></div>
-<span class="font-medium text-gray-700">Medium</span>
-</div>
-</td>
-<td class="px-6 py-4 text-gray-500">2 days ago</td>
-<td class="px-6 py-4 text-right">
-<button class="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-brand-blue">
-<span class="material-symbols-outlined">more_vert</span>
-</button>
-</td>
-</tr>
-<tr class="group hover:bg-gray-50">
-<td class="px-6 py-4 font-mono font-medium text-gray-900">#TK-2044</td>
-<td class="px-6 py-4">
-<p class="font-medium text-gray-900">Mobile app crashing on launch</p>
-<p class="text-xs text-gray-500">iOS version 16.2</p>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="flex h-8 w-8 items-center justify-center rounded-full bg-purple-100 text-xs font-bold text-purple-700">KK</div>
-<span class="font-medium text-gray-900">Kelly Kapoor</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-brand-accent">
-                                            In Progress
-                                        </span>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<div class="h-2.5 w-2.5 rounded-full bg-brand-red"></div>
-<span class="font-medium text-gray-700">High</span>
-</div>
-</td>
-<td class="px-6 py-4 text-gray-500">3 days ago</td>
-<td class="px-6 py-4 text-right">
-<button class="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-brand-blue">
-<span class="material-symbols-outlined">more_vert</span>
-</button>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="flex items-center justify-between border-t border-gray-200 bg-white px-6 py-4">
-<div class="text-sm text-gray-500">
-                            Showing <span class="font-medium text-gray-900">1</span> to <span class="font-medium text-gray-900">6</span> of <span class="font-medium text-gray-900">142</span> results
-                        </div>
+<div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+<div class="lg:col-span-3 space-y-6">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-bold text-gray-900">Activity Timeline</h3>
 <div class="flex gap-2">
-<button class="rounded-lg border border-gray-200 px-3 py-1 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50">Previous</button>
-<button class="rounded-lg border border-gray-200 px-3 py-1 text-sm text-gray-600 hover:bg-gray-50">Next</button>
+<button class="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50">All Activity</button>
+<button class="rounded-lg border border-transparent px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-700">Comments Only</button>
+<button class="rounded-lg border border-transparent px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-700">History</button>
+</div>
+</div>
+<div class="relative space-y-8 pl-4 before:absolute before:inset-0 before:left-[27px] before:h-full before:w-0.5 before:bg-gray-200">
+<div class="relative flex gap-6">
+<div class="absolute left-0 flex h-14 w-14 items-center justify-center rounded-full border-4 border-[#f6f8f8] bg-white">
+<img alt="Sarah" class="h-10 w-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyy-mA7lLNwvle2yDIwwTRdoEh54DI-oMmnL033TX9soSkv-GaF35cBpEQZZD2Cfefr8tNstv3jjyvAVCP03r-i00wlXGD0QuioWScuT8pDEhoBTGSAGyGh_5PGd4jYSVcimjTisRMcBHZXHxA3hWS9nl9uXcPs3jzGN4fbmMythxMOJTmrgq1IxQWP-UwsAZ9j-beFsJraS91nZFqu4iGbUJao_2aE-kQiF8ZOrfiDUA4wnh9g6ookKitgAKnq9IYFY8mVEJY5A"/>
+</div>
+<div class="ml-12 w-full rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+<div class="mb-2 flex items-center justify-between">
+<div>
+<span class="font-bold text-gray-900">Sarah Jenkins</span>
+<span class="ml-2 text-xs text-brand-accent font-medium bg-blue-50 px-2 py-0.5 rounded">Support Lead</span>
+</div>
+<span class="text-xs text-gray-400">Today, 10:23 AM</span>
+</div>
+<p class="text-sm text-gray-600 leading-relaxed">
+                                        I've reviewed the preliminary documents. The invoice number matches our records, but the date seems to be off by one day. Could you please double-check the transaction log?
+                                    </p>
+</div>
+</div>
+<div class="relative flex gap-6">
+<div class="absolute left-0 flex h-14 w-14 items-center justify-center rounded-full border-4 border-[#f6f8f8] bg-white">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-500">
+<span class="material-symbols-outlined text-xl">cached</span>
+</div>
+</div>
+<div class="ml-12 w-full rounded-xl border border-l-4 border-gray-200 border-l-brand-teal bg-white p-4 shadow-sm">
+<div class="flex items-center gap-3">
+<span class="text-sm font-medium text-gray-900">Status updated to <span class="text-brand-teal">In Progress</span></span>
+<span class="text-xs text-gray-400">• Yesterday, 4:45 PM</span>
+</div>
+<p class="mt-1 text-xs text-gray-500">Automated by Workflow Rule #42</p>
+</div>
+</div>
+<div class="relative flex gap-6">
+<div class="absolute left-0 flex h-14 w-14 items-center justify-center rounded-full border-4 border-[#f6f8f8] bg-white">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-brand-accent">
+<span class="material-symbols-outlined text-xl">upload_file</span>
+</div>
+</div>
+<div class="ml-12 w-full rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+<div class="mb-3 flex items-center justify-between">
+<div>
+<span class="font-bold text-gray-900">Michael Scott</span>
+<span class="ml-2 text-xs text-gray-500">Customer</span>
+</div>
+<span class="text-xs text-gray-400">Yesterday, 2:30 PM</span>
+</div>
+<p class="text-sm text-gray-600 mb-3">Uploaded proof of payment for review.</p>
+<div class="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3 w-fit">
+<div class="flex h-8 w-8 items-center justify-center rounded bg-red-100 text-red-600">
+<span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+</div>
+<div>
+<p class="text-sm font-medium text-gray-900">invoice_oct_23.pdf</p>
+<p class="text-xs text-gray-500">2.4 MB</p>
+</div>
+<button class="ml-2 rounded p-1 text-gray-400 hover:bg-white hover:text-brand-blue">
+<span class="material-symbols-outlined text-lg">download</span>
+</button>
+</div>
+</div>
+</div>
+<div class="relative flex gap-6">
+<div class="absolute left-0 flex h-14 w-14 items-center justify-center rounded-full border-4 border-[#f6f8f8] bg-white">
+<img alt="Michael" class="h-10 w-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpPAQkeZgK_Rke5c45Edhzr5I0LjWkOlJ04QSROBROhjdtT7LFhw9M82fxNlxit8iM9W-YXsGmGjsxbbn3wHYzyA1ST-grK08qQoUvTE5a42f2nNldoXuYRtNf7V3VE1URvCQ3UBTg79xvGEndnJpJCgDDdGCfL0ZuYdZB5oxNk7T19vRqa7vtOpBVFsPzR5g-bghxOTB1gvNtK9pJc9HX2eTIiIAXFxz7EOWgraaredXR7mT1mkP7Hao1IdzEJ8ssN6xeprnMdw"/>
+</div>
+<div class="ml-12 w-full rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+<div class="mb-2 flex items-center justify-between">
+<div>
+<span class="font-bold text-gray-900">Michael Scott</span>
+<span class="ml-2 text-xs text-gray-500">Customer</span>
+</div>
+<span class="text-xs text-gray-400">Yesterday, 1:15 PM</span>
+</div>
+<p class="text-sm text-gray-600 leading-relaxed">
+                                        Hi team, I am having trouble reconciling the payments for October. Could you please provide the detailed breakdown?
+                                    </p>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-4">
+<h3 class="mb-4 text-lg font-bold text-gray-900">Register Event</h3>
+<div class="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+<div class="flex items-center gap-1 border-b border-gray-200 bg-gray-50 p-2">
+<button class="rounded p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-900">
+<span class="material-symbols-outlined text-lg">format_bold</span>
+</button>
+<button class="rounded p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-900">
+<span class="material-symbols-outlined text-lg">format_italic</span>
+</button>
+<button class="rounded p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-900">
+<span class="material-symbols-outlined text-lg">format_underlined</span>
+</button>
+<div class="mx-1 h-4 w-px bg-gray-300"></div>
+<button class="rounded p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-900">
+<span class="material-symbols-outlined text-lg">format_list_bulleted</span>
+</button>
+<button class="rounded p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-900">
+<span class="material-symbols-outlined text-lg">link</span>
+</button>
+<button class="rounded p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-900">
+<span class="material-symbols-outlined text-lg">image</span>
+</button>
+</div>
+<textarea class="w-full resize-y border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 min-h-[150px]" placeholder="Type your comment or internal note here..."></textarea>
+<div class="flex items-center justify-between border-t border-gray-100 bg-gray-50 p-3">
+<div class="flex items-center gap-3">
+<label class="flex items-center gap-2 text-sm text-gray-600">
+<input class="rounded border-gray-300 text-brand-blue focus:ring-brand-blue" type="checkbox"/>
+                                            Internal Note (Only visible to team)
+                                        </label>
+</div>
+<div class="flex gap-3">
+<button class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">Cancel</button>
+<button class="rounded-lg bg-brand-red px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700">Add Comment</button>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>

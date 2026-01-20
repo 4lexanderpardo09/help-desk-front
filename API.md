@@ -805,7 +805,32 @@ mysql -u root -p mesa_de_ayuda < migrations/2026-01-18_dynamic_permissions.sql
 
 ---
 
-## 3.3 Módulo de Empresas (`src/modules/companies/`)
+## 12. Módulo de Asignaciones (AssignmentModule)
+
+Este módulo encapsula la lógica para determinar "quién debe atender un ticket". Se utiliza principalmente durante la creación del ticket y transiciones de flujo.
+
+### 12.1 AssignmentService
+
+Servicio encargado de resolver usuarios destino basados en reglas de negocio.
+
+#### Métodos Clave
+
+- `resolveJefeInmediato(userId: number): Promise<number | null>`
+  - Determina el jefe del usuario basado en el `tm_organigrama`.
+  - Prioriza asignar un jefe que esté en la misma `regional` del usuario.
+  - Si no encuentra en la misma regional, busca cualquiera activo con el cargo superior.
+  
+- `resolveRegionalAgent(cargoId: number, regionalId: number): Promise<number | null>`
+  - Busca un usuario con un cargo específico en una regional específica.
+  - Útil para flujos distribuidos (ej. "Coordinador de Soporte - Norte").
+
+### 12.2 Integración
+*   **TicketService**: Al crear un ticket (`create`), si no se especifica `usuarioAsignadoId`, el sistema llama automáticamente a `resolveJefeInmediato`.
+
+---
+
+## Fase 8: Módulo de Empresas (CRUD)
+`src/modules/companies/`)
 
 ### Archivos
 | Archivo | Descripción |
@@ -1134,6 +1159,27 @@ Reemplaza a `TicketService.php`. CRUD y coordinación principal.
 
 ---
 
+## 14. Orquestación de Creación de Tickets
+
+La creación de un ticket (`TicketService.create`) ya no es una simple inserción en base de datos. Es un proceso orquestado que asegura que el ticket nazca "vivo" y en el estado correcto.
+
+### 14.1 Flujo de Creación
+1. **Recuperación de Contexto**: Se obtienen los datos del usuario creador (Empresa, Departamento, Regional).
+2. **Pre-guardado**: Se crea la entidad `Ticket` con estado `Abierto` (1) pero sin paso ni asignado definitivo.
+3. **Inicio de Workflow**: Se invoca `WorkflowEngineService.startTicketFlow(ticket)`.
+    - Determina el paso inicial de la subcategoría.
+    - Resuelve quién debe atenderlo (Jefe, Agente, etc.).
+    - Actualiza el ticket con `pasoActualId` y `usuarioAsignadoIds`.
+    - Genera el primer registro en el historial.
+4. **Generación Documental (Opcional)**: Si el flujo tiene una plantilla PDF configurada (`FlujoPlantilla`), se invoca `PdfStampingService` para crear el documento inicial con los datos básicos y campos configurados en el paso 1.
+
+### 14.2 Beneficios
+- **Tickets nunca huérfanos**: Todos los tickets nacen asignados y en un paso válido.
+- **Reglas Centralizadas**: Si cambia la regla de "Jefe Inmediato", aplica automáticamente a nuevos tickets.
+- **Trazabilidad Total**: Desde el milisegundo 0, existe un registro en `tm_ticket_asignacion`.
+
+---
+
 ### Legacy Services Migrados (Estado Actual)
 | Legacy File | Nuevo Servicio NestJS | Estado |
 |-------------|-----------------------|--------|
@@ -1182,4 +1228,33 @@ Para renderizar la vista completa de un ticket, necesitas llamar a dos endpoints
       "comentario": "Todo en orden"
     }
     ```
+
+---
+
+## 15. Módulo de Plantillas (Motor PDF)
+
+El módulo `TemplatesModule` provee la infraestructura para generar documentos PDF dinámicos, una funcionalidad crítica heredada de la versión legacy (FPDF).
+
+### 15.1 Arquitectura `pdf-lib`
+Se eligió `pdf-lib` sobre librerías como `pdfkit` o `puppeteer` por:
+- **Manipulación de PDFs existentes**: Capacidad nativa de "estampar" sobre plantillas (`.pdf` base).
+- **Rendimiento**: Opera sobre `Uint8Array` sin leaks de memoria.
+- **Portabilidad**: 100% JavaScript/TypeScript, sin dependencias binarias (ej: ImageMagick).
+
+### 15.2 Servicios Core
+
+#### `PdfStampingService`
+Servicio de bajo nivel para manipulación vectorial.
+- **Método**: `stampPdf(inputPath, texts, outputPath?)`
+- **Lógica**: Carga un PDF, inserta texto usando coordenadas Cartesianas (Y=0 es abajo, con autoconversión desde sistema legacy Top-Left).
+- **Entrada**: Array de coordenadas `{x, y, text, page}`.
+
+#### `TemplatesService`
+Servicio de dominio que conecta la base de datos con el motor PDF.
+- **Recuperación de Configuración**: `getPdfFieldsForStep(pasoId)` consulta `tm_campo_plantilla` buscando campos con coordenadas válidas.
+- **Resolución de Plantilla**: `getTemplateForFlow` determina qué archivo base usar según la Empresa y el Flujo.
+
+### 15.3 Integración Futura
+Este módulo será consumido por el `WorkflowEngineService` en transiciones clave (ej: "Firmar Documento" o "Finalizar Ticket") para generar los PDFs anexos al ticket automáticamente.
+
 
