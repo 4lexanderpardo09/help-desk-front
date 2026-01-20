@@ -5,6 +5,7 @@ import { DashboardLayout } from '../layout/DashboardLayout';
 import { rbacService, type Role, type Permission } from '../lib/rbac';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { InfoModal } from '../components/ui/InfoModal';
 
 interface GroupedPermissions {
     [subject: string]: Permission[];
@@ -91,6 +92,18 @@ export default function RoleDetailPage() {
         setSelectedPermissions(next);
     };
 
+    const [infoModal, setInfoModal] = useState<{ isOpen: boolean; title: string; message: string; variant: 'success' | 'error' | 'info'; onClose?: () => void }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        variant: 'info'
+    });
+
+    const closeInfoModal = () => {
+        setInfoModal(prev => ({ ...prev, isOpen: false }));
+        if (infoModal.onClose) infoModal.onClose();
+    };
+
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setSaving(true);
@@ -101,11 +114,21 @@ export default function RoleDetailPage() {
             // 2. Update permissions
             await rbacService.assignPermissions(roleId, Array.from(selectedPermissions));
 
-            alert('Rol actualizado correctamente');
-            navigate('/roles');
+            setInfoModal({
+                isOpen: true,
+                title: 'Éxito',
+                message: 'Rol actualizado correctamente',
+                variant: 'success',
+                onClose: () => navigate('/roles')
+            });
         } catch (error) {
             console.error("Error saving role:", error);
-            alert('Error al guardar cambios');
+            setInfoModal({
+                isOpen: true,
+                title: 'Error',
+                message: 'Ocurrió un error al guardar los cambios',
+                variant: 'error'
+            });
         } finally {
             setSaving(false);
         }
@@ -214,6 +237,15 @@ export default function RoleDetailPage() {
                     </div>
                 </div>
             </div>
-        </DashboardLayout>
+
+
+            <InfoModal
+                isOpen={infoModal.isOpen}
+                onClose={closeInfoModal}
+                title={infoModal.title}
+                message={infoModal.message}
+                variant={infoModal.variant}
+            />
+        </DashboardLayout >
     );
 }

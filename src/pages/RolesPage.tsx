@@ -5,6 +5,7 @@ import { DashboardLayout } from '../layout/DashboardLayout';
 import { rbacService, type Role } from '../lib/rbac';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
+import { ConfirmationModal } from '../components/ui/ConfirmationModal';
 import { Input } from '../components/ui/Input';
 
 export default function RolesPage() {
@@ -49,11 +50,18 @@ export default function RolesPage() {
         }
     };
 
-    const handleDeleteRole = async (id: number) => {
-        if (!confirm('¿Estás seguro de eliminar este rol?')) return;
+    const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+
+    const handleDeleteClick = (id: number) => {
+        setConfirmDeleteId(id);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!confirmDeleteId) return;
         try {
-            await rbacService.deleteRole(id);
-            setRoles(roles.filter(r => r.id !== id));
+            await rbacService.deleteRole(confirmDeleteId);
+            setRoles(roles.filter(r => r.id !== confirmDeleteId));
+            setConfirmDeleteId(null);
         } catch (error) {
             console.error("Error deleting role:", error);
         }
@@ -120,7 +128,7 @@ export default function RolesPage() {
                                                     <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>edit</span>
                                                 </Link>
                                                 <button
-                                                    onClick={() => handleDeleteRole(role.id)}
+                                                    onClick={() => handleDeleteClick(role.id)}
                                                     className="inline-flex items-center justify-center h-8 w-8 rounded text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                                                     title="Eliminar"
                                                 >
@@ -178,6 +186,16 @@ export default function RolesPage() {
                     </div>
                 </form>
             </Modal>
+
+            <ConfirmationModal
+                isOpen={!!confirmDeleteId}
+                onClose={() => setConfirmDeleteId(null)}
+                onConfirm={handleConfirmDelete}
+                title="Eliminar Rol"
+                message="¿Estás seguro de que deseas eliminar este rol? Esta acción no se puede deshacer."
+                confirmText="Eliminar"
+                variant="danger"
+            />
         </DashboardLayout>
     );
 }

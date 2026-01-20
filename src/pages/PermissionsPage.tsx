@@ -4,6 +4,8 @@ import { DashboardLayout } from '../layout/DashboardLayout';
 import { rbacService, type Permission, PERMISSION_SUBJECTS, PERMISSION_ACTIONS } from '../lib/rbac';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
+import { ConfirmationModal } from '../components/ui/ConfirmationModal';
+import { InfoModal } from '../components/ui/InfoModal';
 import { Input } from '../components/ui/Input';
 
 export default function PermissionsPage() {
@@ -33,6 +35,13 @@ export default function PermissionsPage() {
         fetchPermissions();
     }, []);
 
+    const [infoModal, setInfoModal] = useState<{ isOpen: boolean; title: string; message: string; variant: 'success' | 'error' | 'info' }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        variant: 'info'
+    });
+
     const handleCreatePermission = async (e: React.FormEvent) => {
         e.preventDefault();
         setFormLoading(true);
@@ -44,21 +53,40 @@ export default function PermissionsPage() {
             setSubject('');
             setAction('read');
             setDescription('');
+            setInfoModal({
+                isOpen: true,
+                title: 'Éxito',
+                message: 'Permiso creado correctamente',
+                variant: 'success'
+            });
         } catch (error) {
             console.error("Error creating permission:", error);
-            alert('Error al crear permiso');
+            setInfoModal({
+                isOpen: true,
+                title: 'Error',
+                message: 'Error al crear permiso. Verifique los datos.',
+                variant: 'error'
+            });
         } finally {
             setFormLoading(false);
         }
     };
 
-    const handleDeletePermission = async (id: number) => {
-        if (!confirm('¿Estás seguro? Esto podría afectar a los roles que tienen este permiso asignado.')) return;
+    const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+
+    const handleDeleteClick = (id: number) => {
+        setConfirmDeleteId(id);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!confirmDeleteId) return;
         try {
-            await rbacService.deletePermission(id);
-            setPermissions(permissions.filter(p => p.id !== id));
+            await rbacService.deletePermission(confirmDeleteId);
+            setPermissions(permissions.filter(p => p.id !== confirmDeleteId));
+            setConfirmDeleteId(null);
         } catch (error) {
             console.error("Error deleting permission:", error);
+            // Here we could also show an error modal instead of console.error
         }
     };
 
@@ -119,7 +147,7 @@ export default function PermissionsPage() {
                                         <td className="px-6 py-4">{perm.descripcion}</td>
                                         <td className="px-6 py-4 text-right">
                                             <button
-                                                onClick={() => handleDeletePermission(perm.id)}
+                                                onClick={() => handleDeleteClick(perm.id)}
                                                 className="text-gray-400 hover:text-red-600 transition-colors"
                                                 title="Eliminar Definición"
                                             >
@@ -194,6 +222,24 @@ export default function PermissionsPage() {
                     </div>
                 </form>
             </Modal>
+
+            <ConfirmationModal
+                isOpen={!!confirmDeleteId}
+                onClose={() => setConfirmDeleteId(null)}
+                onConfirm={handleConfirmDelete}
+                title="Eliminar Permiso"
+                message="¿Estás seguro de que deseas eliminar este permiso? Esta acción podría afectar a los roles que lo tienen asignado."
+                confirmText="Eliminar"
+                variant="danger"
+            />
+
+            <InfoModal
+                isOpen={infoModal.isOpen}
+                onClose={() => setInfoModal(prev => ({ ...prev, isOpen: false }))}
+                title={infoModal.title}
+                message={infoModal.message}
+                variant={infoModal.variant}
+            />
         </DashboardLayout>
     );
 }
