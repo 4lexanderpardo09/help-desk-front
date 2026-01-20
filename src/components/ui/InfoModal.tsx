@@ -7,10 +7,20 @@ interface InfoModalProps {
     onClose: () => void;
     title: string;
     message: string;
+    /** 
+     * Determines the icon and color scheme.
+     * success: Green + Check icon
+     * error: Red + Error icon
+     * info: Blue + Info icon
+     */
     variant?: 'success' | 'error' | 'info';
     buttonText?: string;
 }
 
+/**
+ * A reusable modal for displaying status messages (Success, Error, Info).
+ * Replaces native `alert()` interactions.
+ */
 export function InfoModal({
     isOpen,
     onClose,

@@ -10,6 +10,10 @@ export interface Role {
     estado: number;
 }
 
+/**
+ * Defined set of actions that can be performed on a subject.
+ * Used to populate UI dropdowns and validate input.
+ */
 export const PERMISSION_ACTIONS = ['manage', 'create', 'read', 'update', 'delete'] as const;
 export type PermissionAction = typeof PERMISSION_ACTIONS[number];
 
@@ -21,6 +25,9 @@ export const PERMISSION_SUBJECTS = [
 
 export type PermissionSubject = typeof PERMISSION_SUBJECTS[number];
 
+/**
+ * Represents a single permission definition in the system.
+ */
 export interface Permission {
     id: number;
     action: PermissionAction;
@@ -47,8 +54,17 @@ export interface UpdateRoleDto {
 
 // --- Service ---
 
+/**
+ * Service for handling Role-Based Access Control (RBAC) operations.
+ * Includes methods for managing Roles and Permissions.
+ */
 export const rbacService = {
     // 1. Gestión de Roles
+
+    /**
+     * Fetches a paginated list of roles.
+     * Handles API responses that might be wrapped in a generic data envelope.
+     */
     async getRoles(params?: { page?: number; limit?: number; search?: string }): Promise<Role[]> {
         // En una implementación real, esto podría devolver { data: Role[], meta: ... }
         const response = await api.get<any>('/roles', { params });
@@ -56,6 +72,9 @@ export const rbacService = {
         return response.data?.data || [];
     },
 
+    /**
+     * Fetches details of a specific role by ID.
+     */
     async getRole(id: number): Promise<Role> {
         const response = await api.get<Role>(`/roles/${id}`);
         return response.data;
@@ -76,17 +95,29 @@ export const rbacService = {
     },
 
     // 2. Asignación de Permisos a Roles
+
+    /**
+     * Fetches permissions assigned to a specific role.
+     */
     async getRolePermissions(roleId: number): Promise<Permission[]> {
         const response = await api.get<any>(`/permissions/role/${roleId}`);
         if (Array.isArray(response.data)) return response.data;
         return response.data?.data || [];
     },
 
+    /**
+     * Assigns a set of permissions to a role.
+     * Uses `permisoIds` payload property as expected by the backend.
+     */
     async assignPermissions(roleId: number, permissionIds: number[]): Promise<void> {
         await api.put(`/permissions/role/${roleId}`, { permisoIds: permissionIds });
     },
 
     // 3. Gestión de Definiciones de Permisos (Catálogo)
+
+    /**
+     * Fetches the full catalog of available permission definitions.
+     */
     async getPermissions(): Promise<Permission[]> {
         const response = await api.get<any>('/permissions');
         if (Array.isArray(response.data)) return response.data;
