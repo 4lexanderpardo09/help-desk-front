@@ -4,6 +4,12 @@ interface LoginLayoutProps {
     children: ReactNode;
 }
 
+/**
+ * Layout específico para la página de Login.
+ * Implementa un diseño de pantalla dividida:
+ * - Izquierda: Panel de branding/marketing (oculto en móviles).
+ * - Derecha: Contenido del formulario (children).
+ */
 export function LoginLayout({ children }: LoginLayoutProps) {
     return (
         <div className="flex min-h-screen w-full flex-row font-display text-[#121617] antialiased bg-background-light dark:bg-background-dark">

@@ -1,11 +1,20 @@
 import { type InputHTMLAttributes, forwardRef } from 'react';
 import { cn } from '../../lib/utils';
 
+/**
+ * Propiedades del componente Input.
+ * @property {string} [label] - Texto opcional para la etiqueta superior.
+ * @property {string} [icon] - Nombre del ícono de Material Symbols a mostrar a la derecha.
+ */
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     icon?: string; // Material symbol name
 }
 
+/**
+ * Componente Input de formulario.
+ * Incluye soporte para etiquetas, íconos y estilos de enfoque personalizados.
+ */
 const Input = forwardRef<HTMLInputElement, InputProps>(
     ({ className, type, label, icon, id, ...props }, ref) => {
         return (

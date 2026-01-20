@@ -6,6 +6,15 @@ import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { LoginLayout } from '../layout/LoginLayout';
 
+/**
+ * Página principal de Inicio de Sesión.
+ * 
+ * Maneja:
+ * - Estado del formulario (email, password).
+ * - Llamada al servicio de autenticación.
+ * - Redirección al Dashboard tras éxito.
+ * - Manejo de errores visuales.
+ */
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
