@@ -6,8 +6,7 @@ export const subcategoryService = {
         const response = await api.get('/subcategorias', {
             params: {
                 'filter[categoriaId]': categoryId,
-                'filter[estado]': 1,
-                sort: 'nombre'
+                'filter[estado]': 1
             }
         });
         // Assuming the API returns a standard ListResponse or array

@@ -53,6 +53,34 @@ export default defineConfig({
           }
         },
       },
+      '/categories': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/subcategorias': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/departments': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/priorities': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/companies': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/documents': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/workflows': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
     },
   },
 })

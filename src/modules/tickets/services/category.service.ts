@@ -6,8 +6,7 @@ export const categoryService = {
         // Using ?filter[estado]=1 to get only active categories
         const response = await api.get<Category[]>('/categories', {
             params: {
-                'filter[estado]': 1,
-                sort: 'nombre'
+                'filter[estado]': 1
             }
         });
         // The API might return { data: [...] } or just [...] depending on pagination. 
@@ -24,5 +23,15 @@ export const categoryService = {
         // Type assertion for wrapped response structure
         const data = response.data as unknown as { data: Category[] };
         return Array.isArray(response.data) ? response.data : (data.data || []);
+    },
+    async getByDepartment(departmentId: number): Promise<Category[]> {
+        const response = await api.get('/categories', {
+            params: {
+                'filter[departamentos.id]': departmentId,
+                'filter[estado]': 1
+            }
+        });
+        const data = response.data as any;
+        return Array.isArray(data) ? data : (data.data || []);
     }
 };
