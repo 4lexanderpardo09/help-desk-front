@@ -10,6 +10,7 @@ const RolesPage = lazy(() => import('../modules/roles/pages/RolesPage'));
 const RoleDetailPage = lazy(() => import('../modules/roles/pages/RoleDetailPage'));
 const PermissionsPage = lazy(() => import('../modules/roles/pages/PermissionsPage'));
 const TicketsPage = lazy(() => import('../modules/tickets/pages/TicketsPage'));
+const CreateTicketPage = lazy(() => import('../modules/tickets/pages/CreateTicketPage'));
 const TicketDetailPage = lazy(() => import('../modules/tickets/pages/TicketDetailPage'));
 const UsersPage = lazy(() => import('../modules/users/pages/UsersPage'));
 
@@ -39,6 +40,14 @@ export const appRoutes: RouteObject[] = [
                 element: (
                     <Suspense fallback={<PageLoader />}>
                         <TicketsPage />
+                    </Suspense>
+                )
+            },
+            {
+                path: '/tickets/create',
+                element: (
+                    <Suspense fallback={<PageLoader />}>
+                        <CreateTicketPage />
                     </Suspense>
                 )
             },

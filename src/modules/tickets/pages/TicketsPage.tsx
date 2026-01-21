@@ -4,7 +4,6 @@ import { DashboardLayout } from '../../../core/layout/DashboardLayout';
 import { ticketService } from '../services/ticket.service';
 import type { Ticket, TicketStatus, TicketPriority } from '../interfaces/Ticket';
 import { Button } from '../../../shared/components/Button';
-import { CreateTicketModal } from '../components/CreateTicketModal';
 import { FilterBar, type FilterConfig } from '../../../shared/components/FilterBar';
 import { DataTable } from '../../../shared/components/DataTable';
 
@@ -12,7 +11,6 @@ export default function TicketsPage() {
     const navigate = useNavigate();
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [loading, setLoading] = useState(true);
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     // Pagination
     const [page, setPage] = useState(1);
@@ -59,35 +57,45 @@ export default function TicketsPage() {
 
     const getStatusColor = (status: TicketStatus) => {
         switch (status) {
-            case 'Abierto': return 'bg-cyan-50 text-brand-teal';
-            case 'Pausado': return 'bg-blue-50 text-brand-accent';
-            case 'Cerrado': return 'bg-gray-100 text-gray-600';
-            default: return 'bg-gray-100 text-gray-600';
+            case 'Abierto': return 'bg-green-100 text-green-800';
+            // case 'En Progreso': return 'bg-blue-100 text-blue-800'; // Not in TicketStatus type
+            case 'Pausado': return 'bg-yellow-100 text-yellow-800';
+            case 'Cerrado': return 'bg-gray-100 text-gray-800';
+            default: return 'bg-gray-100 text-gray-800';
         }
     };
 
     const getPriorityColor = (priority: TicketPriority) => {
         switch (priority) {
-            case 'Alta': return 'bg-brand-red';
-            case 'Media': return 'bg-orange-400';
-            case 'Baja': return 'bg-green-500';
-            default: return 'bg-gray-400';
+            case 'Alta': return 'bg-red-500 text-red-500';
+            case 'Media': return 'bg-yellow-500 text-yellow-500';
+            case 'Baja': return 'bg-green-500 text-green-500';
+            default: return 'bg-gray-400 text-gray-400';
         }
     };
 
     const getInitials = (name: string) => {
-        return name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+        return name
+            .split(' ')
+            .map((n) => n[0])
+            .join('')
+            .toUpperCase()
+            .substring(0, 2);
     };
 
     const getAvatarColor = (name: string) => {
         const colors = [
-            'bg-indigo-100 text-indigo-600', 'bg-yellow-100 text-yellow-700',
-            'bg-pink-100 text-pink-600', 'bg-blue-100 text-blue-600',
-            'bg-green-100 text-green-700', 'bg-purple-100 text-purple-700',
-            'bg-red-100 text-brand-red', 'bg-cyan-100 text-brand-teal'
+            'bg-red-100 text-red-700',
+            'bg-green-100 text-green-700',
+            'bg-blue-100 text-blue-700',
+            'bg-yellow-100 text-yellow-700',
+            'bg-purple-100 text-purple-700',
+            'bg-pink-100 text-pink-700',
         ];
         let hash = 0;
-        for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        }
         return colors[Math.abs(hash) % colors.length];
     };
 
@@ -103,6 +111,7 @@ export default function TicketsPage() {
             type: 'select',
             name: 'status',
             value: statusFilter,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onChange: (val) => setStatusFilter(val as any),
             options: [
                 { label: 'All Statuses', value: 'All Statuses' },
@@ -115,6 +124,7 @@ export default function TicketsPage() {
             type: 'select',
             name: 'priority',
             value: priorityFilter,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onChange: (val) => setPriorityFilter(val as any),
             options: [
                 { label: 'All Priorities', value: 'All Priorities' },
@@ -132,17 +142,11 @@ export default function TicketsPage() {
                     <h2 className="text-2xl font-bold text-gray-900">All Tickets</h2>
                     <p className="mt-1 text-sm text-gray-500">Manage support requests and track their progress.</p>
                 </div>
-                <Button variant="brand" className="shadow-sm" onClick={() => setIsCreateModalOpen(true)}>
+                <Button variant="brand" className="shadow-sm" onClick={() => navigate('/tickets/create')}>
                     <span className="material-symbols-outlined mr-2">add</span>
-                    Create Ticket
+                    Crear Ticket
                 </Button>
             </div>
-
-            <CreateTicketModal
-                isOpen={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
-                onSuccess={fetchTickets}
-            />
 
             <FilterBar filters={filterConfig} className="mb-6" />
 
@@ -221,10 +225,6 @@ export default function TicketsPage() {
                             <div className="flex justify-end">
                                 <button
                                     className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-brand-blue"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        // TODO: Add dropdown menu logic
-                                    }}
                                 >
                                     <span className="material-symbols-outlined">more_vert</span>
                                 </button>

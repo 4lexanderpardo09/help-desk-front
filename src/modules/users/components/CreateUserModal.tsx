@@ -15,13 +15,14 @@ export function CreateUserModal({ isOpen, onClose, onSuccess }: CreateUserModalP
 
     if (!isOpen) return null;
 
-    const handleSubmit = async (data: CreateUserDto) => {
+    const handleSubmit = async (data: CreateUserDto | import('../interfaces/User').UpdateUserDto) => {
         try {
             setIsLoading(true);
             setError(null);
-            await userService.createUser(data);
+            await userService.createUser(data as CreateUserDto);
             onSuccess();
             onClose();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             console.error('Error creating user:', err);
             setError(err.response?.data?.message || 'Error al crear el usuario');

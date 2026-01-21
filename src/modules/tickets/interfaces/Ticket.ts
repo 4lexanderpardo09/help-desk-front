@@ -31,11 +31,13 @@ export interface TicketListResponse {
 }
 
 export interface CreateTicketDto {
+    usuarioId?: number;
     titulo: string;
     descripcion: string;
     categoriaId: number;
+    subcategoriaId: number;
     prioridadId?: number;
-    subcategoriaId?: number;
+    usuarioAsignadoId?: number;
 }
 
 export interface UpdateTicketDto {
