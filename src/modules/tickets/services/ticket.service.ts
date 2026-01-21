@@ -1,5 +1,5 @@
 import { api } from '../../../core/api/api';
-import type { Ticket, TicketFilter, TicketListResponse, CreateTicketDto, TicketStatus, TicketPriority, TicketDetail, TicketTimelineItem } from '../interfaces/Ticket';
+import type { Ticket, TicketFilter, TicketListResponse, CreateTicketDto, UpdateTicketDto, TicketStatus, TicketPriority, TicketDetail, TicketTimelineItem } from '../interfaces/Ticket';
 
 // Interface for the raw backend response (Spanish fields)
 interface RawUser {
@@ -151,6 +151,10 @@ export const ticketService = {
         };
     },
 
+    async updateTicket(id: number, data: UpdateTicketDto): Promise<void> {
+        await api.put(`/tickets/${id}`, data);
+    },
+
     async getTicket(id: number): Promise<TicketDetail> {
         const response = await api.get<RawTicket>(`/tickets/${id}`);
         const t = response.data;
@@ -175,13 +179,16 @@ export const ticketService = {
             // Detail specific
             description: t.descripcion || '',
             category: categoryName,
+            categoryId: t.categoria?.id,
             subcategory: subcategoryName,
+            subcategoryId: t.subcategoria?.id,
             createdDate: t.fechaCreacion,
             creatorName: customerName,
             workflowStep: stepName,
             workflowStepId: stepId,
             assignedTo: 'Unknown', // Not explicitly in JSON top level
-            assignedToId: (t.usuarioAsignadoIds && t.usuarioAsignadoIds.length > 0) ? t.usuarioAsignadoIds[0] : 0
+            assignedToId: (t.usuarioAsignadoIds && t.usuarioAsignadoIds.length > 0) ? t.usuarioAsignadoIds[0] : 0,
+            priorityId: t.prioridad?.id
         };
     },
 

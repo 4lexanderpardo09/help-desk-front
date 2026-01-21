@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
 import type { User, CreateUserDto, UpdateUserDto } from '../interfaces/User';
 import { Button } from '../../../shared/components/Button';
+import { rbacService } from '../../roles/services/rbac.service';
+import { departmentService, positionService, regionService } from '../../../shared/services/catalog.service';
+import type { Role } from '../../roles/interfaces/Role';
+import type { Department, Position, Region } from '../../../shared/interfaces/Catalog';
 
 interface UserFormProps {
     user?: User;
-    onSubmit: (data: any) => Promise<void>; // Accept both CreateUserDto and UpdateUserDto
+    onSubmit: (data: CreateUserDto | UpdateUserDto) => Promise<void>;
     onCancel: () => void;
     isLoading?: boolean;
 }
@@ -24,7 +28,32 @@ export function UserForm({ user, onSubmit, onCancel, isLoading }: UserFormProps)
         estado: user?.estado ?? 1
     });
 
+    const [roles, setRoles] = useState<Role[]>([]);
+    const [departments, setDepartments] = useState<Department[]>([]);
+    const [positions, setPositions] = useState<Position[]>([]);
+    const [regions, setRegions] = useState<Region[]>([]);
+
     const [errors, setErrors] = useState<Record<string, string>>({});
+
+    useEffect(() => {
+        const loadCatalogs = async () => {
+            try {
+                const [rolesData, deptsData, posData, regsData] = await Promise.all([
+                    rbacService.getRoles(),
+                    departmentService.getAllActive(),
+                    positionService.getAllActive(),
+                    regionService.getAllActive()
+                ]);
+                setRoles(rolesData);
+                setDepartments(deptsData);
+                setPositions(posData);
+                setRegions(regsData);
+            } catch (error) {
+                console.error("Error loading catalogs:", error);
+            }
+        };
+        loadCatalogs();
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
@@ -185,10 +214,9 @@ export function UserForm({ user, onSubmit, onCancel, isLoading }: UserFormProps)
                         className={`w-full rounded-lg border ${errors.rolId ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:border-brand-teal focus:ring-brand-teal`}
                     >
                         <option value={0}>Seleccione un rol</option>
-                        {/* TODO: Load roles from API */}
-                        <option value={1}>Super Admin</option>
-                        <option value={2}>Agente</option>
-                        <option value={3}>Usuario</option>
+                        {roles.map((role) => (
+                            <option key={role.id} value={role.id}>{role.nombre}</option>
+                        ))}
                     </select>
                     {errors.rolId && <p className="mt-1 text-xs text-red-500">{errors.rolId}</p>}
                 </div>
@@ -205,7 +233,9 @@ export function UserForm({ user, onSubmit, onCancel, isLoading }: UserFormProps)
                         className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-teal focus:ring-brand-teal"
                     >
                         <option value={0}>Sin regional</option>
-                        {/* TODO: Load regionals from API */}
+                        {regions.map((region) => (
+                            <option key={region.id} value={region.id}>{region.nombre}</option>
+                        ))}
                     </select>
                 </div>
 
@@ -221,7 +251,9 @@ export function UserForm({ user, onSubmit, onCancel, isLoading }: UserFormProps)
                         className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-teal focus:ring-brand-teal"
                     >
                         <option value={0}>Sin cargo</option>
-                        {/* TODO: Load positions from API */}
+                        {positions.map((position) => (
+                            <option key={position.id} value={position.id}>{position.nombre}</option>
+                        ))}
                     </select>
                 </div>
 
@@ -237,7 +269,9 @@ export function UserForm({ user, onSubmit, onCancel, isLoading }: UserFormProps)
                         className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-teal focus:ring-brand-teal"
                     >
                         <option value={0}>Sin departamento</option>
-                        {/* TODO: Load departments from API */}
+                        {departments.map((dept) => (
+                            <option key={dept.id} value={dept.id}>{dept.nombre}</option>
+                        ))}
                     </select>
                 </div>
 

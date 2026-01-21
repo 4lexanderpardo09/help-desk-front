@@ -38,16 +38,27 @@ export interface CreateTicketDto {
     subcategoriaId?: number;
 }
 
+export interface UpdateTicketDto {
+    titulo?: string;
+    descripcion?: string;
+    categoriaId?: number;
+    prioridadId?: number;
+    subcategoriaId?: number;
+}
+
 export interface TicketDetail extends Ticket {
     description: string;
     category: string;
+    categoryId?: number; // Add ID for editing
     subcategory: string;
+    subcategoryId?: number; // Add ID for editing
     createdDate: string; // ISO string
     creatorName: string;
     workflowStep: string;
     workflowStepId: number;
     assignedTo?: string;
     assignedToId?: number;
+    priorityId?: number; // Add ID for editing
 }
 
 export interface TicketTimelineItem {

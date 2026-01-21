@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../../core/layout/DashboardLayout';
 import { ticketService } from '../services/ticket.service';
@@ -6,6 +6,7 @@ import type { TicketDetail, TicketTimelineItem, TicketStatus, TicketPriority } f
 import { Button } from '../../../shared/components/Button';
 import { TicketWorkflow } from '../components/TicketWorkflow';
 import { TicketTimeline } from '../components/TicketTimeline';
+import { EditTicketModal } from '../components/EditTicketModal';
 
 export default function TicketDetailPage() {
     const { id } = useParams<{ id: string }>();
@@ -14,27 +15,33 @@ export default function TicketDetailPage() {
     const [timeline, setTimeline] = useState<TicketTimelineItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeFilter, setActiveFilter] = useState<'all' | 'comments' | 'history'>('all');
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+    const fetchData = useCallback(async () => {
+        if (!id) return;
+        try {
+            // Only set loading on initial fetch or full refresh needed, 
+            // but for simplicity we keep it. maybe guard it?
+            // setLoading(true); 
+            // If we set loading(true), the UI unmounts and remounts. 
+            // Let's keep existing behavior for now.
+            setLoading(true);
+            const [ticketData, timelineData] = await Promise.all([
+                ticketService.getTicket(Number(id)),
+                ticketService.getTicketTimeline(Number(id))
+            ]);
+            setTicket(ticketData);
+            setTimeline(timelineData);
+        } catch (error) {
+            console.error("Error fetching ticket details:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [id]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            if (!id) return;
-            try {
-                setLoading(true);
-                const [ticketData, timelineData] = await Promise.all([
-                    ticketService.getTicket(Number(id)),
-                    ticketService.getTicketTimeline(Number(id))
-                ]);
-                setTicket(ticketData);
-                setTimeline(timelineData);
-            } catch (error) {
-                console.error("Error fetching ticket details:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchData();
-    }, [id]);
+    }, [fetchData]);
 
     const getStatusColor = (status: TicketStatus) => {
         switch (status) {
@@ -122,7 +129,7 @@ export default function TicketDetailPage() {
                         <span className="material-symbols-outlined mr-2">print</span>
                         Imprimir
                     </Button>
-                    <Button variant="brand">
+                    <Button variant="brand" onClick={() => setIsEditModalOpen(true)}>
                         <span className="material-symbols-outlined mr-2">edit</span>
                         Editar Ticket
                     </Button>
@@ -139,8 +146,8 @@ export default function TicketDetailPage() {
                             <button
                                 onClick={() => setActiveFilter('all')}
                                 className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${activeFilter === 'all'
-                                        ? 'border border-gray-200 bg-white text-gray-900 shadow-sm'
-                                        : 'border border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                                    ? 'border border-gray-200 bg-white text-gray-900 shadow-sm'
+                                    : 'border border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                                     }`}
                             >
                                 Toda la Actividad
@@ -148,8 +155,8 @@ export default function TicketDetailPage() {
                             <button
                                 onClick={() => setActiveFilter('comments')}
                                 className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${activeFilter === 'comments'
-                                        ? 'border border-gray-200 bg-white text-gray-900 shadow-sm'
-                                        : 'border border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                                    ? 'border border-gray-200 bg-white text-gray-900 shadow-sm'
+                                    : 'border border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                                     }`}
                             >
                                 Comentarios
@@ -157,8 +164,8 @@ export default function TicketDetailPage() {
                             <button
                                 onClick={() => setActiveFilter('history')}
                                 className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${activeFilter === 'history'
-                                        ? 'border border-gray-200 bg-white text-gray-900 shadow-sm'
-                                        : 'border border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                                    ? 'border border-gray-200 bg-white text-gray-900 shadow-sm'
+                                    : 'border border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                                     }`}
                             >
                                 Historial
@@ -170,6 +177,15 @@ export default function TicketDetailPage() {
                 </div>
             </div>
 
-        </DashboardLayout>
+
+
+            <EditTicketModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                onSuccess={fetchData}
+                ticket={ticket}
+            />
+
+        </DashboardLayout >
     );
 }

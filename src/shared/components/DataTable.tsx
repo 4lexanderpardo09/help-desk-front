@@ -78,6 +78,7 @@ export function DataTable<T>({
                                 >
                                     {columns.map((col) => (
                                         <td key={col.key} className={col.className || 'px-6 py-4'}>
+                                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                             {col.render ? col.render(item) : (item as any)[col.key]}
                                         </td>
                                     ))}
