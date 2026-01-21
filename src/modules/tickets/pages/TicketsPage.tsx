@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../../core/layout/DashboardLayout';
 import { ticketService } from '../services/ticket.service';
@@ -6,9 +6,11 @@ import type { Ticket, TicketStatus, TicketPriority } from '../interfaces/Ticket'
 import { Button } from '../../../shared/components/Button';
 import { FilterBar, type FilterConfig } from '../../../shared/components/FilterBar';
 import { DataTable } from '../../../shared/components/DataTable';
+import { usePermissions } from '../../../shared/hooks/usePermissions';
 
 export default function TicketsPage() {
     const navigate = useNavigate();
+    const { can } = usePermissions();
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -100,6 +102,31 @@ export default function TicketsPage() {
         return colors[Math.abs(hash) % colors.length];
     };
 
+    // Construir opciones de vista basadas en permisos
+    const viewOptions = useMemo(() => {
+        const options: Array<{ label: string; value: string }> = [];
+
+        if (can('view:all', 'Ticket')) {
+            options.push({ label: 'Todos los Tickets', value: 'all' });
+        }
+        if (can('view:created', 'Ticket')) {
+            options.push({ label: 'Creados por mí', value: 'created' });
+        }
+        if (can('view:assigned', 'Ticket')) {
+            options.push({ label: 'Asignados a mí', value: 'assigned' });
+        }
+        if (can('view:observed', 'Ticket')) {
+            options.push({ label: 'Observados', value: 'observed' });
+        }
+
+        // Si no tiene ningún permiso específico, al menos mostrar 'creados'
+        if (options.length === 0) {
+            options.push({ label: 'Creados por mí', value: 'created' });
+        }
+
+        return options;
+    }, [can]);
+
     const filterConfig: FilterConfig[] = [
         {
             type: 'search',
@@ -114,11 +141,7 @@ export default function TicketsPage() {
             value: viewFilter,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onChange: (val) => setViewFilter(val as any),
-            options: [
-                { label: 'Todos los Tickets', value: 'all' },
-                { label: 'Creados por mí', value: 'created' },
-                { label: 'Asignados a mí', value: 'assigned' }
-            ]
+            options: viewOptions
         },
         {
             type: 'select',

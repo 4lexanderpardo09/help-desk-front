@@ -467,6 +467,6 @@ export default function CreateTicketPage() {
                 message="El ticket ha sido registrado en el sistema y se ha iniciado el flujo de trabajo correspondiente. Puede hacer seguimiento en la lista de tickets."
                 variant="success"
             />
-        </DashboardLayout >
+        </DashboardLayout>
     );
 }

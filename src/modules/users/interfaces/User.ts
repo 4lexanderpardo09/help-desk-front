@@ -29,6 +29,12 @@ export interface User {
         id: number;
         nombre: string;
     };
+
+    // Permissions from backend
+    permissions?: Array<{
+        action: string;
+        subject: string;
+    }>;
 }
 
 // Create user DTO
