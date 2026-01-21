@@ -1,17 +1,17 @@
 import { lazy, Suspense } from 'react';
 import { Navigate, type RouteObject } from 'react-router-dom';
-import { AuthGuard } from '../guards/AuthGuard';
-import { PageLoader } from '../components/ui/PageLoader';
+import { AuthGuard } from '../modules/auth/guards/AuthGuard';
+import { PageLoader } from '../shared/components/PageLoader';
 
 // Lazy load pages
-const LoginPage = lazy(() => import('../pages/LoginPage'));
-const DashboardPage = lazy(() => import('../pages/DashboardPage'));
-const RolesPage = lazy(() => import('../pages/RolesPage'));
-const RoleDetailPage = lazy(() => import('../pages/RoleDetailPage'));
-const PermissionsPage = lazy(() => import('../pages/PermissionsPage'));
-const TicketsPage = lazy(() => import('../pages/TicketsPage'));
-const TicketDetailPage = lazy(() => import('../pages/TicketDetailPage'));
-const UsersPage = lazy(() => import('../pages/UsersPage'));
+const LoginPage = lazy(() => import('../modules/auth/pages/LoginPage'));
+const DashboardPage = lazy(() => import('../modules/dashboard/pages/DashboardPage'));
+const RolesPage = lazy(() => import('../modules/roles/pages/RolesPage'));
+const RoleDetailPage = lazy(() => import('../modules/roles/pages/RoleDetailPage'));
+const PermissionsPage = lazy(() => import('../modules/roles/pages/PermissionsPage'));
+const TicketsPage = lazy(() => import('../modules/tickets/pages/TicketsPage'));
+const TicketDetailPage = lazy(() => import('../modules/tickets/pages/TicketDetailPage'));
+const UsersPage = lazy(() => import('../modules/users/pages/UsersPage'));
 
 
 export const appRoutes: RouteObject[] = [
