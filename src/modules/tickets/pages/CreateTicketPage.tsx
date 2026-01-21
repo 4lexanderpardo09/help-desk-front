@@ -5,7 +5,6 @@ import 'react-quill-new/dist/quill.snow.css';
 
 import { DashboardLayout } from '../../../core/layout/DashboardLayout';
 import { Button } from '../../../shared/components/Button';
-import { Input } from '../../../shared/components/Input';
 import { InfoModal } from '../../../shared/components/InfoModal';
 
 import { ticketService } from '../services/ticket.service';
@@ -213,265 +212,250 @@ export default function CreateTicketPage() {
 
     return (
         <DashboardLayout title="Crear Ticket">
-            <div className="mx-auto max-w-5xl">
-                <div className="mb-6">
-                    <Button variant="ghost" onClick={() => navigate('/tickets')} className="pl-0 hover:bg-transparent">
-                        <span className="material-symbols-outlined mr-2">arrow_back</span>
-                        Volver a Tickets
-                    </Button>
-                    <h1 className="text-2xl font-bold text-gray-900 mt-2">Crear Nuevo Ticket</h1>
-                    <p className="text-sm text-gray-500">Complete los detalles para enviar una nueva solicitud de soporte.</p>
+            <div className="mx-auto max-w-6xl">
+                <div className="mb-8">
+                    <h2 className="text-2xl font-bold text-gray-900">Nueva Solicitud de Ticket</h2>
+                    <p className="mt-1 text-sm text-gray-500">Por favor proporcione los detalles del problema que está experimentando.</p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                <div className="bg-white shadow rounded-lg p-8">
+                    <form onSubmit={handleSubmit} className="space-y-6">
 
-                    {/* LEFT COLUMN: FORM */}
-                    <div className="lg:col-span-2 space-y-6">
-                        <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-6 space-y-6">
-
-                            {/* 1. ASUNTO */}
-                            <Input
-                                label="Asunto"
-                                placeholder="Resumen breve del problema"
+                        {/* SUBJECT */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold text-gray-700">Asunto</label>
+                            <input
+                                className="w-full rounded-lg border-gray-300 px-4 py-3 text-sm focus:border-brand-teal focus:ring-brand-teal shadow-sm"
+                                placeholder="Resuma el problema"
+                                type="text"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                                 required
                             />
+                        </div>
 
-                            <div className="grid grid-cols-1 gap-6">
-                                {/* 2. DEPARTAMENTO */}
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Departamento <span className="text-red-500">*</span></label>
-                                    <select
-                                        className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-teal focus:ring-brand-teal sm:text-sm"
-                                        value={departmentId}
-                                        onChange={(e) => setDepartmentId(Number(e.target.value))}
-                                        required
-                                    >
-                                        <option value="">Seleccione Departamento...</option>
-                                        {departments.map(dept => (
-                                            <option key={dept.id} value={dept.id}>{dept.nombre}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                        {/* ROW: DEPARTMENT, CATEGORY, SUBCATEGORY */}
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-gray-700">Departamento</label>
+                                <select
+                                    className="w-full rounded-lg border-gray-300 px-4 py-3 text-sm focus:border-brand-teal focus:ring-brand-teal shadow-sm appearance-none"
+                                    value={departmentId}
+                                    onChange={(e) => setDepartmentId(Number(e.target.value))}
+                                    required
+                                >
+                                    <option value="">Seleccione Departamento</option>
+                                    {departments.map(dept => (
+                                        <option key={dept.id} value={dept.id}>{dept.nombre}</option>
+                                    ))}
+                                </select>
+                            </div>
 
-                                {/* CATEGORIA */}
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Categoría <span className="text-red-500">*</span></label>
-                                    <select
-                                        className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-teal focus:ring-brand-teal sm:text-sm disabled:bg-gray-100 disabled:text-gray-400"
-                                        value={categoryId}
-                                        onChange={(e) => setCategoryId(Number(e.target.value))}
-                                        required
-                                        disabled={!departmentId}
-                                    >
-                                        <option value="">{departmentId ? 'Seleccione Categoría...' : 'Seleccione Departamento primero'}</option>
-                                        {categories.map(cat => (
-                                            <option key={cat.id} value={cat.id}>{cat.nombre}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-gray-700">Categoría</label>
+                                <select
+                                    className="w-full rounded-lg border-gray-300 px-4 py-3 text-sm focus:border-brand-teal focus:ring-brand-teal shadow-sm appearance-none disabled:bg-gray-100 disabled:text-gray-400"
+                                    value={categoryId}
+                                    onChange={(e) => setCategoryId(Number(e.target.value))}
+                                    required
+                                    disabled={!departmentId}
+                                >
+                                    <option value="">{departmentId ? 'Seleccione Categoría' : 'Primero seleccione Departamento'}</option>
+                                    {categories.map(cat => (
+                                        <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+                                    ))}
+                                </select>
+                            </div>
 
-                                {/* 3. SUBCATEGORIA */}
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Subcategoría <span className="text-red-500">*</span></label>
-                                    <select
-                                        className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-teal focus:ring-brand-teal sm:text-sm disabled:bg-gray-100 disabled:text-gray-400"
-                                        value={subcategoryId}
-                                        onChange={(e) => setSubcategoryId(Number(e.target.value))}
-                                        required
-                                        disabled={!categoryId}
-                                    >
-                                        <option value="">{categoryId ? 'Seleccione Subcategoría...' : 'Seleccione Categoría primero'}</option>
-                                        {subcategories.map(sub => (
-                                            <option key={sub.id} value={sub.id}>{sub.nombre}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-gray-700">Subcategoría</label>
+                                <select
+                                    className="w-full rounded-lg border-gray-300 px-4 py-3 text-sm focus:border-brand-teal focus:ring-brand-teal shadow-sm appearance-none disabled:bg-gray-100 disabled:text-gray-400"
+                                    value={subcategoryId}
+                                    onChange={(e) => setSubcategoryId(Number(e.target.value))}
+                                    required
+                                    disabled={!categoryId}
+                                >
+                                    <option value="">{categoryId ? 'Seleccione Subcategoría' : 'Primero seleccione Categoría'}</option>
+                                    {subcategories.map(sub => (
+                                        <option key={sub.id} value={sub.id}>{sub.nombre}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
 
-                                {/* 4. EMPRESA */}
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Empresa <span className="text-red-500">*</span></label>
-                                    <select
-                                        className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-teal focus:ring-brand-teal sm:text-sm"
-                                        value={companyId}
-                                        onChange={(e) => setCompanyId(Number(e.target.value))}
-                                        required
-                                    >
-                                        <option value="">Seleccione Empresa...</option>
-                                        {companies.map(comp => (
-                                            <option key={comp.id} value={comp.id}>{comp.nombre}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                        {/* ROW: COMPANY & PRIORITY */}
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-gray-700">Empresa</label>
+                                <select
+                                    className="w-full rounded-lg border-gray-300 px-4 py-3 text-sm focus:border-brand-teal focus:ring-brand-teal shadow-sm appearance-none"
+                                    value={companyId}
+                                    onChange={(e) => setCompanyId(Number(e.target.value))}
+                                    required
+                                >
+                                    <option value="">Seleccione Empresa</option>
+                                    {companies.map(comp => (
+                                        <option key={comp.id} value={comp.id}>{comp.nombre}</option>
+                                    ))}
+                                </select>
+                            </div>
 
-                                {/* 5. ADJUNTAR ARCHIVO */}
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Adjuntar Archivo</label>
-                                    <div className="flex items-center justify-center rounded-lg border border-dashed border-gray-300 px-6 py-10 hover:bg-gray-50">
-                                        <div className="text-center">
-                                            {file ? (
-                                                <div className="flex flex-col items-center">
-                                                    <span className="material-symbols-outlined text-green-500 text-3xl mb-2">description</span>
-                                                    <p className="text-sm text-gray-900 font-medium">{file.name}</p>
-                                                    <p className="text-xs text-gray-500">{(file.size / 1024).toFixed(2)} KB</p>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setFile(null)}
-                                                        className="mt-2 text-xs font-medium text-red-600 hover:text-red-500"
-                                                    >
-                                                        Eliminar
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <>
-                                                    <span className="material-symbols-outlined mx-auto h-12 w-12 text-gray-300">cloud_upload</span>
-                                                    <div className="mt-4 flex text-sm leading-6 text-gray-600 justify-center">
-                                                        <label
-                                                            htmlFor="file-upload"
-                                                            className="relative cursor-pointer rounded-md bg-white font-semibold text-brand-blue focus-within:outline-none focus-within:ring-2 focus-within:ring-brand-blue focus-within:ring-offset-2 hover:text-blue-500"
-                                                        >
-                                                            <span>Subir un archivo</span>
-                                                            <input
-                                                                id="file-upload"
-                                                                name="file-upload"
-                                                                type="file"
-                                                                className="sr-only"
-                                                                onChange={(e) => e.target.files && setFile(e.target.files[0])}
-                                                            />
-                                                        </label>
-                                                        <p className="pl-1">o arrastrar y soltar</p>
-                                                    </div>
-                                                    <p className="text-xs leading-5 text-gray-600">PNG, JPG, PDF hasta 5MB</p>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* 6. PRIORIDAD */}
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Prioridad (Opcional)</label>
-                                    <select
-                                        className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-teal focus:ring-brand-teal sm:text-sm"
-                                        value={priorityId}
-                                        onChange={(e) => setPriorityId(Number(e.target.value))}
-                                    >
-                                        <option value="">Prioridad por defecto</option>
-                                        {priorities.map(prio => (
-                                            <option key={prio.id} value={prio.id}>{prio.nombre}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                {/* WORKFLOW */}
-                                {subcategoryId && (
-                                    <div className={`rounded-md p-4 border ${checkingFlow ? 'bg-gray-50 border-gray-200' : 'bg-blue-50 border-blue-100'}`}>
-                                        {checkingFlow ? (
-                                            <div className="flex items-center gap-2 text-sm text-gray-500">
-                                                <div className="animate-spin h-4 w-4 border-2 border-gray-300 border-t-brand-blue rounded-full"></div>
-                                                Verificando requisitos del flujo...
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-gray-700">Prioridad</label>
+                                <div className="flex gap-2">
+                                    {priorities.slice(0, 3).map((prio, idx) => (
+                                        <label key={prio.id} className="flex-1">
+                                            <input
+                                                className="peer sr-only"
+                                                name="priority"
+                                                type="radio"
+                                                value={prio.id}
+                                                checked={priorityId === prio.id}
+                                                onChange={() => setPriorityId(prio.id)}
+                                            />
+                                            <div className={`flex cursor-pointer items-center justify-center rounded-lg border bg-white p-3 text-sm font-medium transition-all hover:bg-gray-50
+                                            ${priorityId === prio.id
+                                                    ? idx === 2 ? 'border-brand-red bg-red-50 text-brand-red' : 'border-brand-teal bg-cyan-50 text-brand-teal'
+                                                    : 'border-gray-200 text-gray-600'
+                                                }`}>
+                                                {idx === 0 ? 'Baja' : idx === 1 ? 'Media' : 'Alta'}
                                             </div>
-                                        ) : (
-                                            <div className="space-y-3">
-                                                <div className="flex items-start gap-3">
-                                                    <span className="material-symbols-outlined text-blue-600 mt-0.5">info</span>
-                                                    <div>
-                                                        <p className="text-sm font-medium text-blue-900">
-                                                            Flujo: {initialStepName || 'Flujo Estándar'}
-                                                        </p>
-                                                        <p className="text-xs text-blue-700 mt-1">
-                                                            {requiresManualSelection
-                                                                ? "Este ticket requiere que seleccione un asignado manualmente."
-                                                                : "Este ticket será asignado automáticamente según las reglas del flujo."}
-                                                        </p>
-                                                    </div>
-                                                </div>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
 
-                                                {requiresManualSelection && (
-                                                    <div className="pt-2">
-                                                        <label className="text-sm font-medium text-blue-900 block mb-1">
-                                                            Asignar a <span className="text-red-500">*</span>
-                                                        </label>
-                                                        <select
-                                                            className="block w-full rounded-md border-blue-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                                            value={assigneeId}
-                                                            onChange={(e) => setAssigneeId(Number(e.target.value))}
-                                                            required
-                                                        >
-                                                            <option value="">Seleccione un usuario...</option>
-                                                            {assigneeCandidates.map(cand => (
-                                                                <option key={cand.id} value={cand.id}>
-                                                                    {cand.nombre} {cand.apellido} {cand.cargo ? `(${cand.cargo})` : ''}
-                                                                </option>
-                                                            ))}
-                                                        </select>
-                                                    </div>
-                                                )}
+                        {/* WORKFLOW INFO */}
+                        {subcategoryId && (
+                            <div className={`rounded-xl p-4 border ${checkingFlow ? 'bg-gray-50 border-gray-200' : 'bg-blue-50 border-blue-100'}`}>
+                                {checkingFlow ? (
+                                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                                        <div className="animate-spin h-4 w-4 border-2 border-gray-300 border-t-brand-blue rounded-full"></div>
+                                        Verificando requisitos del flujo...
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        <div className="flex items-start gap-3">
+                                            <span className="material-symbols-outlined text-blue-600 mt-0.5">info</span>
+                                            <div>
+                                                <p className="text-sm font-medium text-blue-900">
+                                                    Flujo: {initialStepName || 'Flujo Estándar'}
+                                                </p>
+                                                <p className="text-xs text-blue-700 mt-1">
+                                                    {requiresManualSelection
+                                                        ? "Este ticket requiere que seleccione un asignado manualmente."
+                                                        : "Este ticket será asignado automáticamente según las reglas del flujo."}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {requiresManualSelection && (
+                                            <div className="pt-2">
+                                                <label className="text-sm font-bold text-blue-900 block mb-2">Asignar a</label>
+                                                <select
+                                                    className="w-full rounded-lg border-blue-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                                                    value={assigneeId}
+                                                    onChange={(e) => setAssigneeId(Number(e.target.value))}
+                                                    required
+                                                >
+                                                    <option value="">Seleccione un usuario...</option>
+                                                    {assigneeCandidates.map(cand => (
+                                                        <option key={cand.id} value={cand.id}>
+                                                            {cand.nombre} {cand.apellido} {cand.cargo ? `(${cand.cargo})` : ''}
+                                                        </option>
+                                                    ))}
+                                                </select>
                                             </div>
                                         )}
                                     </div>
                                 )}
-
-                                {/* 7. DESCRIPCION (React Quill) */}
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Descripción <span className="text-red-500">*</span></label>
-                                    <div className="bg-white">
-                                        <ReactQuill
-                                            theme="snow"
-                                            value={description}
-                                            onChange={setDescription}
-                                            className="h-40 mb-12" // mb to avoid toolbar overlap issues or small space
-                                            modules={{
-                                                toolbar: [
-                                                    [{ 'header': [1, 2, false] }],
-                                                    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-                                                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                                                    ['link', 'clean']
-                                                ],
-                                            }}
-                                        />
-                                    </div>
-                                </div>
                             </div>
+                        )}
 
-                            <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
-                                <Button type="button" variant="ghost" onClick={() => navigate('/tickets')}>
-                                    Cancelar
-                                </Button>
-                                <Button type="submit" variant="brand" disabled={loading || checkingFlow}>
-                                    {loading ? 'Creando Ticket...' : 'Crear Ticket'}
-                                </Button>
-                            </div>
-                        </form>
-                    </div>
-
-                    {/* RIGHT COLUMN */}
-                    <div className="space-y-6">
-                        <div className="bg-white shadow rounded-lg p-6">
-                            <h3 className="text-sm font-medium text-gray-500 mb-4 uppercase tracking-wider">Información del Solicitante</h3>
-                            <div className="flex items-center gap-4">
-                                <div className="h-12 w-12 rounded-full bg-brand-gradient flex items-center justify-center text-white font-bold text-lg shadow-sm">
-                                    {user?.nombre?.[0]}{user?.apellido?.[0]}
-                                </div>
-                                <div>
-                                    <p className="font-medium text-gray-900">{user?.nombre} {user?.apellido}</p>
-                                    <p className="text-sm text-gray-500">{user?.role?.nombre}</p>
-                                    <p className="text-xs text-gray-400 mt-1">{user?.email}</p>
-                                </div>
-                            </div>
-
-                            <div className="mt-6 pt-6 border-t border-gray-100 space-y-3">
-                                <h4 className="text-sm font-medium text-gray-700">Consejos Útiles</h4>
-                                <ul className="text-sm text-gray-500 space-y-2 list-disc pl-4">
-                                    <li>Proporcione un asunto claro y conciso.</li>
-                                    <li>Seleccione la categoría más relevante para asegurar que el ticket llegue al equipo correcto.</li>
-                                    <li>Use el editor de texto para dar formato y claridad a su descripción.</li>
-                                </ul>
+                        {/* DESCRIPTION (Rich Text) */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold text-gray-700">Descripción</label>
+                            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+                                <ReactQuill
+                                    theme="snow"
+                                    value={description}
+                                    onChange={setDescription}
+                                    className="[&_.ql-container]:min-h-[200px] [&_.ql-editor]:min-h-[200px]"
+                                    placeholder="Explique el problema en detalle..."
+                                    modules={{
+                                        toolbar: [
+                                            [{ 'header': [1, 2, false] }],
+                                            ['bold', 'italic', 'underline'],
+                                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                                            ['link', 'image'],
+                                            ['clean']
+                                        ],
+                                    }}
+                                />
                             </div>
                         </div>
-                    </div>
 
+                        {/* ATTACHMENTS */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold text-gray-700">Adjuntos</label>
+                            <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50/50 p-8 transition-colors hover:border-brand-teal hover:bg-sky-50/30">
+                                {file ? (
+                                    <div className="flex flex-col items-center">
+                                        <span className="material-symbols-outlined text-4xl text-green-500 mb-3">description</span>
+                                        <p className="text-sm font-medium text-gray-700">{file.name}</p>
+                                        <p className="mt-1 text-xs text-gray-500">{(file.size / 1024).toFixed(2)} KB</p>
+                                        <button
+                                            type="button"
+                                            onClick={() => setFile(null)}
+                                            className="mt-4 rounded-lg border border-red-300 bg-white px-4 py-2 text-xs font-semibold text-red-600 shadow-sm hover:bg-red-50"
+                                        >
+                                            Eliminar Archivo
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <span className="material-symbols-outlined text-4xl text-gray-400 mb-3">cloud_upload</span>
+                                        <p className="text-sm font-medium text-gray-700">Click para subir o arrastrar y soltar</p>
+                                        <p className="mt-1 text-xs text-gray-500">PNG, JPG, PDF o DOC hasta 10MB</p>
+                                        <input
+                                            className="hidden"
+                                            id="file-upload"
+                                            type="file"
+                                            onChange={(e) => e.target.files && setFile(e.target.files[0])}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => document.getElementById('file-upload')?.click()}
+                                            className="mt-4 rounded-lg border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 shadow-sm hover:bg-gray-50"
+                                        >
+                                            Seleccionar Archivos
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* ACTIONS */}
+                        <div className="mt-10 flex items-center justify-end gap-4 border-t border-gray-100 pt-8">
+                            <button
+                                type="button"
+                                onClick={() => navigate('/tickets')}
+                                className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-800"
+                            >
+                                Cancelar
+                            </button>
+                            <Button
+                                type="submit"
+                                variant="destructive"
+                                disabled={loading || checkingFlow}
+                                className="rounded-lg bg-brand-red px-8 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-red-700 hover:shadow-lg focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                            >
+                                {loading ? 'Enviando...' : 'Enviar Ticket'}
+                            </Button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
@@ -483,6 +467,6 @@ export default function CreateTicketPage() {
                 message="El ticket ha sido registrado en el sistema y se ha iniciado el flujo de trabajo correspondiente. Puede hacer seguimiento en la lista de tickets."
                 variant="success"
             />
-        </DashboardLayout>
+        </DashboardLayout >
     );
 }
