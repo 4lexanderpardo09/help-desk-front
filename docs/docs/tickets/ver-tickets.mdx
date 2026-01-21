@@ -1,0 +1,87 @@
+---
+sidebar_position: 2
+---
+
+# Ver Tickets
+
+## Objetivo
+Consultar y filtrar la lista de tickets según tus permisos.
+
+## Acceder a la lista
+
+Navega a **Tickets** desde el menú principal.
+
+## Vistas Disponibles
+
+El sistema muestra diferentes vistas según tu rol:
+
+### Todos los Tickets
+**Disponible para**: Administradores
+
+Muestra todos los tickets del sistema sin restricciones.
+
+### Creados por mí
+**Disponible para**: Todos los usuarios
+
+Muestra únicamente los tickets que tú has creado.
+
+### Asignados a mí
+**Disponible para**: Agentes y Administradores
+
+Muestra los tickets que están asignados a ti para su resolución.
+
+### Observados
+**Disponible para**: Usuarios configurados como observadores
+
+Muestra tickets de flujos donde estás configurado como observador.
+
+## Filtros
+
+### Búsqueda por texto
+Escribe en el campo de búsqueda para filtrar por:
+- ID del ticket
+- Asunto
+- Nombre del cliente
+
+### Filtro por estado
+Selecciona el estado para ver solo tickets:
+- **Abierto**: Tickets activos en proceso
+- **Pausado**: Tickets temporalmente detenidos
+- **Cerrado**: Tickets resueltos
+
+### Filtro por prioridad
+Filtra por nivel de urgencia:
+- Alta
+- Media
+- Baja
+
+## Información Mostrada
+
+Para cada ticket verás:
+
+| Columna | Descripción |
+|---------|-------------|
+| **ID** | Número único del ticket (ej: #TK-123) |
+| **Asunto** | Título del problema |
+| **Cliente** | Usuario que creó el ticket |
+| **Estado** | Estado actual (Abierto/Pausado/Cerrado) |
+| **Prioridad** | Nivel de urgencia |
+| **Última Actualización** | Fecha del último cambio |
+
+## Ver Detalles
+
+Haz clic en cualquier fila para ver los detalles completos del ticket:
+- Descripción completa
+- Historial de cambios
+- Comentarios
+- Archivos adjuntos
+- Información del flujo de trabajo
+
+## Paginación
+
+La lista muestra 10 tickets por página. Usa los controles de paginación en la parte inferior para navegar entre páginas.
+
+## Próximos Pasos
+
+- [Crear un nuevo ticket](./crear-ticket.mdx)
+- [Entender los estados](./estados-tickets.mdx)

@@ -1,0 +1,135 @@
+---
+sidebar_position: 2
+---
+
+# Roles y Permisos
+
+## Objetivo
+Comprender el sistema de roles y permisos del sistema.
+
+## Roles Disponibles
+
+### 🔴 Super Admin
+
+**Descripción**: Administrador con acceso completo al sistema.
+
+**Permisos**:
+- ✅ Gestión completa de usuarios
+- ✅ Configuración de workflows
+- ✅ Gestión de categorías y subcategorías
+- ✅ Configuración de departamentos
+- ✅ Ver todos los tickets del sistema
+- ✅ Asignar y reasignar tickets
+- ✅ Configurar permisos personalizados
+
+**Vistas de Tickets**:
+- Todos los Tickets
+- Creados por mí
+- Asignados a mí
+- Observados
+
+### 🟡 Agente
+
+**Descripción**: Personal de soporte que resuelve tickets.
+
+**Permisos**:
+- ✅ Ver tickets asignados
+- ✅ Ver tickets creados por ellos
+- ✅ Actualizar estado de tickets
+- ✅ Agregar comentarios y archivos
+- ✅ Crear nuevos tickets
+- ❌ Gestionar usuarios
+- ❌ Ver todos los tickets
+- ❌ Configurar workflows
+
+**Vistas de Tickets**:
+- Creados por mí
+- Asignados a mí
+- Observados
+
+### 🟢 Usuario
+
+**Descripción**: Usuario final que crea solicitudes de soporte.
+
+**Permisos**:
+- ✅ Crear tickets
+- ✅ Ver sus propios tickets
+- ✅ Agregar comentarios a sus tickets
+- ✅ Adjuntar archivos
+- ❌ Ver tickets de otros usuarios
+- ❌ Cambiar estado de tickets
+- ❌ Asignar tickets
+
+**Vistas de Tickets**:
+- Creados por mí
+
+## Permisos Específicos
+
+El sistema usa permisos granulares para controlar el acceso:
+
+### Permisos de Vista
+
+| Permiso | Descripción | Roles |
+|---------|-------------|-------|
+| `view:all` | Ver todos los tickets | Super Admin |
+| `view:assigned` | Ver tickets asignados | Agente, Admin |
+| `view:created` | Ver tickets creados | Usuario, Agente, Admin |
+| `view:observed` | Ver tickets observados | Usuario, Agente, Admin |
+
+### Permisos de Acción
+
+| Permiso | Descripción | Roles |
+|---------|-------------|-------|
+| `create` | Crear tickets | Todos |
+| `update` | Actualizar tickets | Agente, Admin |
+| `delete` | Eliminar tickets | Admin |
+| `manage` | Gestión completa | Admin |
+
+## Asignación de Permisos
+
+:::info Solo Administradores
+La asignación de permisos solo puede ser realizada por Super Admins.
+:::
+
+Los permisos se asignan a nivel de **rol**, no de usuario individual. Esto significa:
+
+- Todos los usuarios con el mismo rol tienen los mismos permisos
+- Cambiar el rol de un usuario cambia inmediatamente sus permisos
+- Los permisos se verifican en cada acción del sistema
+
+## Cambiar el Rol de un Usuario
+
+1. Navega a **Usuarios**
+2. Haz clic en editar el usuario
+3. Selecciona el nuevo rol
+4. Guarda los cambios
+
+:::warning Importante
+El cambio de rol es inmediato. El usuario verá las nuevas opciones al recargar la página.
+:::
+
+## Observadores de Workflow
+
+Además de los roles, los usuarios pueden ser **observadores** de flujos de trabajo específicos:
+
+- Los observadores ven todos los tickets de ese flujo
+- Se configura a nivel de workflow, no de usuario
+- Es independiente del rol del usuario
+
+## Seguridad
+
+El sistema implementa múltiples capas de seguridad:
+
+### Backend
+- Validación de permisos en cada endpoint
+- Tokens JWT con información de rol
+- Verificación de permisos antes de retornar datos
+
+### Frontend
+- Ocultación de opciones sin permiso
+- Validación adicional antes de enviar peticiones
+- Redirección automática si falta permiso
+
+## Próximos Pasos
+
+- [Gestionar usuarios](./gestionar-usuarios.mdx)

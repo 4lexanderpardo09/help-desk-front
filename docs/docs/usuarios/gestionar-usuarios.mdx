@@ -1,0 +1,146 @@
+---
+sidebar_position: 1
+---
+
+# Gestión de Usuarios
+
+## Objetivo
+Administrar usuarios del sistema según los permisos de tu rol.
+
+:::info Permisos Requeridos
+Esta funcionalidad está disponible solo para **Administradores**.
+:::
+
+## Acceder a la Gestión de Usuarios
+
+Navega a **Usuarios** desde el menú principal.
+
+## Crear un Usuario
+
+### 1. Abrir el formulario
+Haz clic en el botón **"Crear Usuario"** en la esquina superior derecha.
+
+### 2. Información Personal
+
+#### Cédula
+Número de identificación único del usuario.
+
+#### Nombre y Apellido
+Nombres completos del usuario.
+
+#### Email
+Correo electrónico que se usará para iniciar sesión.
+
+:::warning Importante
+El email debe ser único en el sistema.
+:::
+
+### 3. Contraseña
+Establece una contraseña inicial. El usuario podrá cambiarla después.
+
+### 4. Asignación de Rol
+
+Selecciona el rol que tendrá el usuario:
+
+| Rol | Permisos | Uso Recomendado |
+|-----|----------|-----------------|
+| **Super Admin** | Acceso total al sistema | Administradores del sistema |
+| **Agente** | Gestionar tickets asignados | Personal de soporte |
+| **Usuario** | Crear y ver sus propios tickets | Usuarios finales |
+
+### 5. Información Organizacional
+
+#### Regional
+Selecciona la regional a la que pertenece el usuario.
+
+#### Cargo
+Asigna el cargo del usuario en la organización.
+
+#### Departamento
+Departamento al que pertenece.
+
+#### Es Nacional
+Marca esta opción si el usuario tiene alcance nacional.
+
+### 6. Empresas Asociadas
+Selecciona las empresas a las que el usuario tiene acceso.
+
+### 7. Guardar
+Haz clic en **"Crear Usuario"** para registrar el nuevo usuario.
+
+## Ver Lista de Usuarios
+
+La lista muestra:
+- **Nombre completo**
+- **Email**
+- **Rol**
+- **Estado** (Activo/Inactivo)
+
+### Filtros Disponibles
+
+#### Búsqueda
+Filtra por nombre, email o cédula.
+
+#### Por Rol
+- Todos los Roles
+- Super Admin
+- Agente
+- Usuario
+
+#### Por Estado
+- Todos
+- Activos
+- Inactivos
+
+## Editar un Usuario
+
+1. Haz clic en el botón de edición (lápiz) en la fila del usuario
+2. Modifica los campos necesarios
+3. Haz clic en **"Guardar Cambios"**
+
+:::tip Consejo
+No puedes cambiar el email de un usuario existente.
+:::
+
+## Desactivar un Usuario
+
+1. Haz clic en el botón de eliminar (papelera) en la fila del usuario
+2. Confirma la acción en el diálogo
+
+:::warning Atención
+Desactivar un usuario no elimina sus datos, solo impide que inicie sesión.
+:::
+
+## Permisos por Rol
+
+### Super Admin
+- ✅ Crear, editar y eliminar usuarios
+- ✅ Ver todos los tickets
+- ✅ Configurar workflows
+- ✅ Gestionar categorías y departamentos
+
+### Agente
+- ✅ Ver tickets asignados
+- ✅ Actualizar estado de tickets
+- ✅ Agregar comentarios
+- ❌ Gestionar usuarios
+
+### Usuario
+- ✅ Crear tickets
+- ✅ Ver sus propios tickets
+- ❌ Ver tickets de otros
+- ❌ Gestionar usuarios
+
+## Errores Comunes
+
+### "El email ya existe"
+**Causa**: Ya hay un usuario registrado con ese email.
+**Solución**: Usa un email diferente.
+
+### "Debe seleccionar un rol"
+**Causa**: No seleccionaste el rol del usuario.
+**Solución**: Selecciona un rol antes de guardar.
+
+## Próximos Pasos
+
+- [Entender roles y permisos](./roles-permisos.mdx)
