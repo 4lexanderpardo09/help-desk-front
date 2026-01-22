@@ -19,12 +19,12 @@ export function usePermissions() {
 
         // Verificar si tiene el permiso específico
         const hasPermission = user.permissions.some(
-            (p) => p.action === action && p.subject === subject
+            (p: { action: string; subject: string }) => p.action === action && p.subject === subject
         );
 
         // Verificar si tiene permiso 'manage' (que implica todos los permisos)
         const hasManagePermission = user.permissions.some(
-            (p) => p.action === 'manage' && p.subject === subject
+            (p: { action: string; subject: string }) => p.action === 'manage' && p.subject === subject
         );
 
         return hasPermission || hasManagePermission;

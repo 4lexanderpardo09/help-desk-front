@@ -13,6 +13,7 @@ const TicketsPage = lazy(() => import('../modules/tickets/pages/TicketsPage'));
 const CreateTicketPage = lazy(() => import('../modules/tickets/pages/CreateTicketPage'));
 const TicketDetailPage = lazy(() => import('../modules/tickets/pages/TicketDetailPage'));
 const UsersPage = lazy(() => import('../modules/users/pages/UsersPage'));
+const DepartmentsPage = lazy(() => import('../modules/departments/pages/DepartmentsPage'));
 
 
 export const appRoutes: RouteObject[] = [
@@ -88,6 +89,14 @@ export const appRoutes: RouteObject[] = [
                 element: (
                     <Suspense fallback={<PageLoader />}>
                         <UsersPage />
+                    </Suspense>
+                )
+            },
+            {
+                path: '/departments',
+                element: (
+                    <Suspense fallback={<PageLoader />}>
+                        <DepartmentsPage />
                     </Suspense>
                 )
             },

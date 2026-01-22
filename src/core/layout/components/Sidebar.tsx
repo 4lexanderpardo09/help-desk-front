@@ -36,6 +36,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
         { to: "/", icon: "dashboard", label: "Dashboard" }, // Public (or authenticated basic)
         { to: "/tickets", icon: "confirmation_number", label: "Tickets", subject: 'Ticket' },
         { to: "/users", icon: "group", label: "Usuarios", subject: 'User' },
+        { to: "/departments", icon: "corporate_fare", label: "Departamentos", subject: 'Department' },
         { to: "/reports", icon: "bar_chart", label: "Reports", subject: 'Report' },
         { to: "/roles", icon: "admin_panel_settings", label: "Roles y Permisos", subject: 'Role' },
         { to: "/permissions", icon: "lock_open", label: "Catálogo Permisos", subject: 'Permission' },
