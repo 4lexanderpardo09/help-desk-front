@@ -14,6 +14,7 @@ const CreateTicketPage = lazy(() => import('../modules/tickets/pages/CreateTicke
 const TicketDetailPage = lazy(() => import('../modules/tickets/pages/TicketDetailPage'));
 const UsersPage = lazy(() => import('../modules/users/pages/UsersPage'));
 const DepartmentsPage = lazy(() => import('../modules/departments/pages/DepartmentsPage'));
+const CategoriesPage = lazy(() => import('../modules/categories/pages/CategoriesPage'));
 
 
 export const appRoutes: RouteObject[] = [
@@ -97,6 +98,14 @@ export const appRoutes: RouteObject[] = [
                 element: (
                     <Suspense fallback={<PageLoader />}>
                         <DepartmentsPage />
+                    </Suspense>
+                )
+            },
+            {
+                path: '/categories',
+                element: (
+                    <Suspense fallback={<PageLoader />}>
+                        <CategoriesPage />
                     </Suspense>
                 )
             },

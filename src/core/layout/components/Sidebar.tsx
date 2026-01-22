@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { cn } from '../../../shared/lib/utils';
 import { useAuth } from '../../../modules/auth/context/useAuth';
-import type { PermissionSubject } from '../../../modules/roles/interfaces/Permission';
+import type { PermissionSubject, Permission } from '../../../modules/roles/interfaces/Permission';
 
 interface SidebarProps {
     isCollapsed: boolean;
@@ -26,7 +26,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
         if (!subject) return true; // Public item
         if (!user?.permissions) return false;
 
-        return user.permissions.some(p =>
+        return user.permissions.some((p: Permission) =>
             (p.subject === subject || p.subject === 'all') &&
             (p.action === action || p.action === 'manage')
         );
@@ -37,6 +37,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
         { to: "/tickets", icon: "confirmation_number", label: "Tickets", subject: 'Ticket' },
         { to: "/users", icon: "group", label: "Usuarios", subject: 'User' },
         { to: "/departments", icon: "corporate_fare", label: "Departamentos", subject: 'Department' },
+        { to: "/categories", icon: "category", label: "Categorías", subject: 'Category' },
         { to: "/reports", icon: "bar_chart", label: "Reports", subject: 'Report' },
         { to: "/roles", icon: "admin_panel_settings", label: "Roles y Permisos", subject: 'Role' },
         { to: "/permissions", icon: "lock_open", label: "Catálogo Permisos", subject: 'Permission' },
