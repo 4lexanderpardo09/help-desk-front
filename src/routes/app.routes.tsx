@@ -137,6 +137,14 @@ export const appRoutes: RouteObject[] = [
                     </Suspense>
                 )
             },
+            {
+                path: '/subcategories',
+                element: (
+                    <Suspense fallback={<PageLoader />}>
+                        <SubcategoriesPage />
+                    </Suspense>
+                )
+            },
         ]
     },
     {
