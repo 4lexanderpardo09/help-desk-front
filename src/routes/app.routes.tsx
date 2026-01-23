@@ -17,6 +17,8 @@ const DepartmentsPage = lazy(() => import('../modules/departments/pages/Departme
 const CategoriesPage = lazy(() => import('../modules/categories/pages/CategoriesPage'));
 const CompaniesPage = lazy(() => import('../modules/companies/pages/CompaniesPage'));
 const SubcategoriesPage = lazy(() => import('../modules/subcategories/pages/SubcategoriesPage'));
+const RegionsPage = lazy(() => import('../modules/regions/pages/RegionsPage'));
+const ZonesPage = lazy(() => import('../modules/zones/pages/ZonesPage'));
 
 
 export const appRoutes: RouteObject[] = [
@@ -120,10 +122,18 @@ export const appRoutes: RouteObject[] = [
                 )
             },
             {
-                path: '/subcategories',
+                path: '/regions',
                 element: (
                     <Suspense fallback={<PageLoader />}>
-                        <SubcategoriesPage />
+                        <RegionsPage />
+                    </Suspense>
+                )
+            },
+            {
+                path: '/zones',
+                element: (
+                    <Suspense fallback={<PageLoader />}>
+                        <ZonesPage />
                     </Suspense>
                 )
             },

@@ -42,6 +42,8 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
         { to: "/companies", icon: "business", label: "Empresas", subject: 'Company' as any },
         { to: "/categories", icon: "category", label: "Categorías", subject: 'Category' },
         { to: "/subcategories", icon: "segment", label: "Subcategorías", subject: 'Category' as any },
+        { to: "/regions", icon: "map", label: "Regionales", subject: 'Regional' as any }, // Assuming Regional permission subject exists or using similar
+        { to: "/zones", icon: "location_on", label: "Zonas", subject: 'Zone' as any },
         { to: "/reports", icon: "bar_chart", label: "Reports", subject: 'Report' },
         { to: "/settings", icon: "settings", label: "Settings" }
     ];
