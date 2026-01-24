@@ -52,6 +52,18 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
                                     Estado actualizado a <span className="text-brand-teal">{item.metadata?.newStatus || 'Desconocido'}</span>
                                 </span>
                             </div>
+                        ) : item.type === 'assignment' ? (
+                            <div className="space-y-1">
+                                <p className="text-sm text-gray-900 font-medium">
+                                    {item.content}
+                                </p>
+                                {item.asignadoA && (
+                                    <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-2 rounded-lg border border-gray-100 w-fit">
+                                        <span className="material-symbols-outlined text-[18px]">person</span>
+                                        <span>Asignado a: <strong>{item.asignadoA.nombre}</strong></span>
+                                    </div>
+                                )}
+                            </div>
                         ) : (
                             <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
                                 {item.content}

@@ -80,63 +80,41 @@ interface RawTimelineItem {
 
     fecha: string;
     metadata?: Record<string, unknown>;
-    adjuntos?: RawAttachment[]; // New field from API 13.5
+    adjuntos?: RawAttachment[];
+    asignadoA?: { id: number; nombre: string }; // New field
 }
 
 export const ticketService = {
     async getTickets(filter: TicketFilter = {}): Promise<TicketListResponse> {
+        // ... existing code ...
         // Map frontend filters to backend query params
         const params: Record<string, string | number> = {};
-
         if (filter.view) params.view = filter.view;
         if (filter.search) params.search = filter.search;
-
-        if (filter.status) {
-            params.status = filter.status;
-        }
-
-        if (filter.priority) {
-            params.priority = filter.priority;
-        }
-
+        if (filter.status) params.status = filter.status;
+        if (filter.priority) params.priority = filter.priority;
         params.page = filter.page || 1;
         params.limit = filter.limit || 10;
-
-        // NOTE: This endpoint is defined in API.md as GET /tickets/list
-        // NOTE: This endpoint is defined in API.md as GET /tickets/list
-        // Updated to handle root-level pagination fields as per user feedback
         const response = await api.get<any>('/tickets/list', { params });
-
         const rawData = response.data.data || [];
         const mappedTickets: Ticket[] = rawData.map((t: RawTicket) => ({
             id: t.id,
             subject: t.titulo,
             customer: t.creadorNombre || (t.usuario ? `${t.usuario.nombre} ${t.usuario.apellido}` : 'Unknown'),
             customerInitials: (t.creadorNombre || (t.usuario ? `${t.usuario.nombre}` : 'U')).split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase(),
-            // Map status. The backend might return 'ticketEstado' OR 'estado' (int or string).
             status: mapStatus(t.ticketEstado || t.estado || 'Abierto'),
-            // Map priority.
             priority: mapPriority(t.prioridad ? t.prioridad.nombre : (t.prioridadUsuario || 'Media')),
             lastUpdated: new Date(t.fechaCreacion).toLocaleDateString()
         }));
-
-        // Handle pagination: Check for 'meta' object OR root-level fields
         const total = response.data.total ?? response.data.meta?.total ?? mappedTickets.length;
         const page = response.data.page ?? response.data.meta?.page ?? 1;
         const limit = response.data.limit ?? response.data.meta?.limit ?? 10;
         const totalPages = response.data.totalPages ?? response.data.meta?.totalPages ?? Math.ceil(total / limit);
-
         return {
             data: mappedTickets,
-            meta: {
-                total,
-                page,
-                limit,
-                totalPages
-            }
+            meta: { total, page, limit, totalPages }
         };
     },
-
     async createTicket(data: CreateTicketDto): Promise<Ticket> {
         const response = await api.post<RawTicket>('/tickets', data);
         const t = response.data;
@@ -145,28 +123,23 @@ export const ticketService = {
             subject: t.titulo,
             customer: 'Me',
             customerInitials: 'ME',
-            status: mapStatus(t.ticketEstado || t.estado || 'Abierto'), // Fallback
-            priority: mapPriority('Media'), // Backend usually sets default
+            status: mapStatus(t.ticketEstado || t.estado || 'Abierto'),
+            priority: mapPriority('Media'),
             lastUpdated: new Date().toLocaleDateString()
         };
     },
-
     async updateTicket(id: number, data: UpdateTicketDto): Promise<void> {
         await api.put(`/tickets/${id}`, data);
     },
-
     async getTicket(id: number): Promise<TicketDetail> {
         const response = await api.get<RawTicket>(`/tickets/${id}`);
         const t = response.data;
-
-        // Safe access helpers in case of nulls
         const customerName = t.usuario ? `${t.usuario.nombre} ${t.usuario.apellido}` : (t.creadorNombre || 'Unknown');
         const categoryName = t.categoria ? t.categoria.nombre : 'General';
         const subcategoryName = t.subcategoria ? t.subcategoria.nombre : '';
         const priorityName = t.prioridad ? t.prioridad.nombre : (t.prioridadUsuario || 'Media');
         const stepName = t.pasoActual ? t.pasoActual.nombre : 'Procesamiento';
         const stepId = t.pasoActual ? t.pasoActual.id : 0;
-
         return {
             id: t.id,
             subject: t.titulo,
@@ -175,8 +148,6 @@ export const ticketService = {
             status: mapStatus(t.ticketEstado || t.estado),
             priority: mapPriority(priorityName),
             lastUpdated: new Date(t.fechaCreacion).toLocaleDateString(),
-
-            // Detail specific
             description: t.descripcion || '',
             category: categoryName,
             categoryId: t.categoria?.id,
@@ -186,38 +157,31 @@ export const ticketService = {
             creatorName: customerName,
             workflowStep: stepName,
             workflowStepId: stepId,
-            assignedTo: 'Unknown', // Not explicitly in JSON top level
+            assignedTo: 'Unknown',
             assignedToId: (t.usuarioAsignadoIds && t.usuarioAsignadoIds.length > 0) ? t.usuarioAsignadoIds[0] : 0,
             priorityId: t.prioridad?.id
         };
     },
-
     async getTicketTimeline(id: number): Promise<TicketTimelineItem[]> {
-        // Updated endpoint based on API 13.5: /tickets/:id/history represents consolidated timeline
         const response = await api.get<RawTimelineItem[]>(`/tickets/${id}/history`);
         console.log('Raw Timeline Data:', response.data);
         return response.data.map((item, index) => {
-            // Determine author name
             const authorName = item.actor?.nombre || item.autor || 'Unknown';
-
-            // Determine content
             const content = item.descripcion || item.contenido || '';
-
-            // Determine type
             const rawType = item.type || item.tipo || 'comment';
-
             return {
                 id: item.id || index,
                 type: mapTimelineType(rawType),
                 content: content,
                 author: authorName,
-                authorRole: item.autorRol, // This might be missing in new response, check logic later
+                authorRole: item.autorRol,
                 authorAvatar: authorName.substring(0, 2).toUpperCase(),
                 date: item.fecha,
                 metadata: {
                     ...item.metadata,
-                    attachments: item.adjuntos // Pass attachments through metadata if UI supports it later
-                }
+                    attachments: item.adjuntos
+                },
+                asignadoA: item.asignadoA // Map the new field
             };
         });
     }

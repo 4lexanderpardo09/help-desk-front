@@ -80,4 +80,5 @@ export interface TicketTimelineItem {
         fileName?: string;
         attachments?: { id: number; nombre: string; url: string }[];
     };
+    asignadoA?: { id: number; nombre: string };
 }
