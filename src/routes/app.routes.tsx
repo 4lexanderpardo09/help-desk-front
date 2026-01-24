@@ -23,6 +23,7 @@ const ZonesPage = lazy(() => import('../modules/zones/pages/ZonesPage'));
 const PositionsPage = lazy(() => import('../modules/positions/pages/PositionsPage'));
 const ProfilesPage = lazy(() => import('../modules/profiles/pages/ProfilesPage'));
 const OrganigramaPage = lazy(() => import('../modules/organigrama/pages/OrganigramaPage'));
+const ErrorTypesPage = lazy(() => import('../modules/error-types/pages/ErrorTypesPage'));
 
 
 export const appRoutes: RouteObject[] = [
@@ -173,6 +174,14 @@ export const appRoutes: RouteObject[] = [
                         element: (
                             <Suspense fallback={<PageLoader />}>
                                 <SubcategoriesPage />
+                            </Suspense>
+                        )
+                    },
+                    {
+                        path: '/error-types',
+                        element: (
+                            <Suspense fallback={<PageLoader />}>
+                                <ErrorTypesPage />
                             </Suspense>
                         )
                     },

@@ -50,6 +50,7 @@ const sidebars: SidebarsConfig = {
         'administracion/gestion-cargos',
         'administracion/gestion-categorias',
         'administracion/gestion-subcategorias',
+        'administracion/gestion-respuestas-rapidas',
       ],
     },
   ],
