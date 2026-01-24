@@ -13,5 +13,12 @@ export const subcategoryService = {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data = response.data as any;
         return Array.isArray(data) ? data : (data.data || []);
+    },
+
+    async getAllowedByCategory(categoryId: number): Promise<Subcategory[]> {
+        const response = await api.get<Subcategory[]>('/subcategorias/allowed', {
+            params: { categoryId }
+        });
+        return response.data;
     }
 };

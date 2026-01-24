@@ -27,7 +27,7 @@ import { useLayout } from '../../../core/layout/context/LayoutContext';
 
 
 export default function CreateTicketPage() {
-    const {setTitle} = useLayout();
+    const { setTitle } = useLayout();
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -114,7 +114,8 @@ export default function CreateTicketPage() {
         }
         const loadSubcategories = async () => {
             try {
-                const subs = await subcategoryService.getByCategory(categoryId as number);
+                // Use getAllowedByCategory instead of getByCategory
+                const subs = await subcategoryService.getAllowedByCategory(categoryId as number);
                 setSubcategories(subs);
             } catch (error) {
                 console.error("Error loading subcategories", error);
@@ -127,7 +128,7 @@ export default function CreateTicketPage() {
         setAssigneeId('');
     }, [categoryId]);
 
-    // 4. Check Workflow & Set Default Priority when Subcategory changes
+    // 4. Check Workflow & Set Default Priority & Template when Subcategory changes
     useEffect(() => {
         if (!subcategoryId) {
             setRequiresManualSelection(false);
@@ -137,12 +138,18 @@ export default function CreateTicketPage() {
             return;
         }
 
-        // 4a. Set Default Priority Logic
+        // 4a. Set Default Priority & Template Logic
         const selectedSub = subcategories.find(s => s.id === subcategoryId);
-        if (selectedSub && selectedSub.prioridadId) {
-            setPriorityId(selectedSub.prioridadId);
+        if (selectedSub) {
+            if (selectedSub.prioridadId) {
+                setPriorityId(selectedSub.prioridadId);
+            }
+            // Template Logic: Use description from Subcategory (if exists) as template for Ticket Description
+            if (selectedSub.descripcion) {
+                setDescription(selectedSub.descripcion);
+            }
         } else {
-            setPriorityId(''); // Or keep previous? Usually reset or set to default if logic dictates
+            setPriorityId('');
         }
 
         // 4b. Workflow Logic
