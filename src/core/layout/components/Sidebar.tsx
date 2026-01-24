@@ -45,6 +45,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
         { to: "/regions", icon: "map", label: "Regionales", subject: 'Regional' as any }, // Assuming Regional permission subject exists or using similar
         { to: "/zones", icon: "location_on", label: "Zonas", subject: 'Zone' as any },
         { to: "/positions", icon: "badge", label: "Cargos", subject: 'Position' as any },
+        { to: "/profiles", icon: "badge", label: "Perfiles", subject: 'Profile' as any },
         { to: "/reports", icon: "bar_chart", label: "Reports", subject: 'Report' },
         { to: "/settings", icon: "settings", label: "Settings" }
     ];

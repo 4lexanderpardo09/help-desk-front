@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { Outlet} from 'react-router-dom';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { LayoutContext } from './context/LayoutContext';
@@ -8,7 +8,6 @@ export function MainLayout() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const [title, setTitle] = useState('');
-    const location = useLocation();
 
     // Reset title on location change? Optional, but pages will usually set it.
     // Actually, pages should set it on mount.

@@ -21,6 +21,7 @@ const SubcategoriesPage = lazy(() => import('../modules/subcategories/pages/Subc
 const RegionsPage = lazy(() => import('../modules/regions/pages/RegionsPage'));
 const ZonesPage = lazy(() => import('../modules/zones/pages/ZonesPage'));
 const PositionsPage = lazy(() => import('../modules/positions/pages/PositionsPage'));
+const ProfilesPage = lazy(() => import('../modules/profiles/pages/ProfilesPage'));
 
 
 export const appRoutes: RouteObject[] = [
@@ -147,6 +148,14 @@ export const appRoutes: RouteObject[] = [
                         element: (
                             <Suspense fallback={<PageLoader />}>
                                 <PositionsPage />
+                            </Suspense>
+                        )
+                    },
+                    {
+                        path: '/profiles',
+                        element: (
+                            <Suspense fallback={<PageLoader />}>
+                                <ProfilesPage />
                             </Suspense>
                         )
                     },
