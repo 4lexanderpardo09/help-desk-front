@@ -34,19 +34,24 @@ Usa el editor de texto enriquecido para formatear tu descripción con negritas, 
 #### Departamento
 Selecciona el departamento relacionado con tu solicitud.
 
-#### Categoría
-Elige la categoría que mejor describe tu problema. Las opciones cambian según el departamento seleccionado.
+#### Categoría y Subcategoría
+Al seleccionar el departamento, el sistema cargará automáticamente todas las **Subcategorías** disponibles para ti. Las opciones se mostrarán con el formato `"Categoría Padre - Subcategoría"` (ej. *Hardware - Mouse*).
 
-#### Subcategoría
-Selecciona la subcategoría específica. Esto ayuda a asignar el ticket al equipo correcto.
+Debes seleccionar directamente la subcategoría específica de tu problema.
 
-:::info Nota
-La prioridad se establece automáticamente según la subcategoría, pero puedes cambiarla si es necesario.
+:::info Plantillas Automáticas
+Si la subcategoría seleccionada tiene una plantilla predefinida, el campo **Descripción** se completará automáticamente con un formato guía. Puedes editarlo libremente.
+:::
+
+:::note Nota
+La **Categoría** general se asigna automáticamente de forma interna según la subcategoría que elijas. No necesitas seleccionarla manualmente.
 :::
 
 ### 4. Establecer prioridad
 
-Selecciona la urgencia del ticket:
+Selecciona la urgencia del ticket.
+*Nota*: Algunas subcategorías pueden preseleccionar una prioridad sugerida, pero puedes cambiarla si es necesario.
+
 - **Alta**: Problemas críticos que bloquean el trabajo
 - **Media**: Problemas importantes pero no urgentes
 - **Baja**: Consultas o mejoras menores
@@ -78,9 +83,9 @@ Puedes ver el estado de tu ticket en la lista de tickets.
 
 ## Errores Comunes
 
-### "Debe seleccionar una categoría"
-**Causa**: No seleccionaste todos los campos obligatorios.
-**Solución**: Completa Departamento, Categoría y Subcategoría.
+### "Debe seleccionar una categoría/subcategoría"
+**Causa**: No seleccionaste el departamento o la subcategoría.
+**Solución**: Asegúrate de elegir primero el departamento y luego una opción válida de la lista de subcategorías.
 
 ### "Error al cargar el archivo"
 **Causa**: El archivo es muy grande o tiene un formato no permitido.
