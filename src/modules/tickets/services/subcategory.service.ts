@@ -20,5 +20,12 @@ export const subcategoryService = {
             params: { categoryId }
         });
         return response.data;
+    },
+
+    async getAllowedByDepartment(departmentId: number): Promise<Subcategory[]> {
+        const response = await api.get<Subcategory[]>('/subcategorias/allowed/by-department', {
+            params: { departmentId }
+        });
+        return response.data;
     }
 };

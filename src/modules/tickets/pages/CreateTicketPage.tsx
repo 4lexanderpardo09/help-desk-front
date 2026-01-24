@@ -38,7 +38,7 @@ export default function CreateTicketPage() {
 
     // Data State
     const [departments, setDepartments] = useState<Department[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]);
+    // Categories removed from UI state
     const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [priorities, setPriorities] = useState<Priority[]>([]);
@@ -47,6 +47,7 @@ export default function CreateTicketPage() {
     // Form State
     const [title, setTitleSubject] = useState('');
     const [departmentId, setDepartmentId] = useState<number | ''>('');
+    // categoryId derived from selected subcategory
     const [categoryId, setCategoryId] = useState<number | ''>('');
     const [subcategoryId, setSubcategoryId] = useState<number | ''>('');
     const [companyId, setCompanyId] = useState<number | ''>('');
@@ -82,40 +83,19 @@ export default function CreateTicketPage() {
         loadInitialData();
     }, []);
 
-    // 2. Load Categories when Department changes
+    // 2. Load Subcategories when Department changes (Logic: Dept -> Categories -> Allowed Subcategories)
+    // 2. Load Subcategories when Department changes (Optimized: Single backend call)
     useEffect(() => {
         if (!departmentId) {
-            setCategories([]);
+            setSubcategories([]);
+            setSubcategoryId('');
             setCategoryId('');
-            setSubcategories([]);
-            setSubcategoryId('');
-            return;
-        }
-        const loadCategories = async () => {
-            try {
-                const cats = await categoryService.getByDepartment(departmentId as number);
-                setCategories(cats);
-            } catch (error) {
-                console.error("Error loading categories", error);
-                setCategories([]);
-            }
-        };
-        loadCategories();
-        setCategoryId('');
-        setSubcategoryId('');
-    }, [departmentId]);
-
-    // 3. Load Subcategories when Category changes
-    useEffect(() => {
-        if (!categoryId) {
-            setSubcategories([]);
-            setSubcategoryId('');
             return;
         }
         const loadSubcategories = async () => {
             try {
-                // Use getAllowedByCategory instead of getByCategory
-                const subs = await subcategoryService.getAllowedByCategory(categoryId as number);
+                // Call the new optimized endpoint
+                const subs = await subcategoryService.getAllowedByDepartment(departmentId as number);
                 setSubcategories(subs);
             } catch (error) {
                 console.error("Error loading subcategories", error);
@@ -124,13 +104,15 @@ export default function CreateTicketPage() {
         };
         loadSubcategories();
         setSubcategoryId('');
+        setCategoryId('');
         setRequiresManualSelection(false);
         setAssigneeId('');
-    }, [categoryId]);
+    }, [departmentId]);
 
-    // 4. Check Workflow & Set Default Priority & Template when Subcategory changes
+    // 3. Set Category, Priority & Template when Subcategory changes
     useEffect(() => {
         if (!subcategoryId) {
+            setCategoryId('');
             setRequiresManualSelection(false);
             setAssigneeCandidates([]);
             setInitialStepName('');
@@ -138,13 +120,15 @@ export default function CreateTicketPage() {
             return;
         }
 
-        // 4a. Set Default Priority & Template Logic
         const selectedSub = subcategories.find(s => s.id === subcategoryId);
         if (selectedSub) {
+            // Auto-set Category ID
+            setCategoryId(selectedSub.categoriaId);
+
             if (selectedSub.prioridadId) {
                 setPriorityId(selectedSub.prioridadId);
             }
-            // Template Logic: Use description from Subcategory (if exists) as template for Ticket Description
+            // Template Logic
             if (selectedSub.descripcion) {
                 setDescription(selectedSub.descripcion);
             }
@@ -152,7 +136,7 @@ export default function CreateTicketPage() {
             setPriorityId('');
         }
 
-        // 4b. Workflow Logic
+        // Workflow Logic
         const checkWorkflow = async () => {
             setCheckingFlow(true);
             try {
@@ -176,10 +160,9 @@ export default function CreateTicketPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Nota: ReactQuill description puede venir vacía o con solo etiquetas HTML vacías
         const cleanDesc = description.replace(/<(.|\n)*?>/g, '').trim();
 
-        if (!title || !departmentId || !categoryId || !subcategoryId || !cleanDesc) {
+        if (!title || !departmentId || !subcategoryId || !categoryId || !cleanDesc) {
             alert("Por favor complete todos los campos obligatorios.");
             return;
         }
@@ -192,7 +175,7 @@ export default function CreateTicketPage() {
         try {
             const payload: CreateTicketDto = {
                 titulo: title,
-                descripcion: description, // Send rich text
+                descripcion: description,
                 categoriaId: Number(categoryId),
                 subcategoriaId: Number(subcategoryId),
                 prioridadId: priorityId ? Number(priorityId) : undefined,
@@ -206,7 +189,6 @@ export default function CreateTicketPage() {
                 await documentService.uploadToTicket(createdTicket.id, file);
             }
 
-            // Show Success Modal instead of navigating immediately
             setShowSuccessModal(true);
 
         } catch (error) {
@@ -246,8 +228,8 @@ export default function CreateTicketPage() {
                             />
                         </div>
 
-                        {/* ROW: DEPARTMENT, CATEGORY, SUBCATEGORY */}
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        {/* ROW: DEPARTMENT, SUBCATEGORY (Category Hidden) */}
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="space-y-2">
                                 <label className="text-sm font-bold text-gray-700">Departamento</label>
                                 <select
@@ -264,33 +246,19 @@ export default function CreateTicketPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-bold text-gray-700">Categoría</label>
-                                <select
-                                    className="w-full rounded-lg border-gray-300 px-4 py-3 text-sm focus:border-brand-teal focus:ring-brand-teal shadow-sm appearance-none disabled:bg-gray-100 disabled:text-gray-400"
-                                    value={categoryId}
-                                    onChange={(e) => setCategoryId(Number(e.target.value))}
-                                    required
-                                    disabled={!departmentId}
-                                >
-                                    <option value="">{departmentId ? 'Seleccione Categoría' : 'Primero seleccione Departamento'}</option>
-                                    {categories.map(cat => (
-                                        <option key={cat.id} value={cat.id}>{cat.nombre}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="space-y-2">
                                 <label className="text-sm font-bold text-gray-700">Subcategoría</label>
                                 <select
                                     className="w-full rounded-lg border-gray-300 px-4 py-3 text-sm focus:border-brand-teal focus:ring-brand-teal shadow-sm appearance-none disabled:bg-gray-100 disabled:text-gray-400"
                                     value={subcategoryId}
                                     onChange={(e) => setSubcategoryId(Number(e.target.value))}
                                     required
-                                    disabled={!categoryId}
+                                    disabled={!departmentId}
                                 >
-                                    <option value="">{categoryId ? 'Seleccione Subcategoría' : 'Primero seleccione Categoría'}</option>
+                                    <option value="">{departmentId ? 'Seleccione Subcategoría' : 'Primero seleccione Departamento'}</option>
                                     {subcategories.map(sub => (
-                                        <option key={sub.id} value={sub.id}>{sub.nombre}</option>
+                                        <option key={sub.id} value={sub.id}>
+                                            {sub.categoria ? `${sub.categoria.nombre} - ${sub.nombre}` : sub.nombre}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
