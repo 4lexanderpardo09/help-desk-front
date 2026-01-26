@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { User, CreateUserDto, UpdateUserDto } from '../interfaces/User';
 import { Button } from '../../../shared/components/Button';
+import { userService } from '../services/user.service';
 import { rbacService } from '../../roles/services/rbac.service';
 import { departmentService, positionService, regionService } from '../../../shared/services/catalog.service';
 import type { Role } from '../../roles/interfaces/Role';
@@ -54,6 +55,46 @@ export function UserForm({ user, onSubmit, onCancel, isLoading }: UserFormProps)
         };
         loadCatalogs();
     }, []);
+
+    // Sync formData when user prop changes from parent (fetch fresh data)
+    useEffect(() => {
+        if (user) {
+            // Fetch fresh user data to ensure we have all relations (role, regional, etc.)
+            userService.getUser(user.id)
+                .then(freshUser => {
+                    setFormData({
+                        cedula: freshUser.cedula || '',
+                        nombre: freshUser.nombre || '',
+                        apellido: freshUser.apellido || '',
+                        email: freshUser.email || '',
+                        password: '',
+                        rolId: freshUser.rolId || freshUser.role?.id || 0,
+                        regionalId: freshUser.regionalId || freshUser.regional?.id || 0,
+                        cargoId: freshUser.cargoId || freshUser.cargo?.id || 0,
+                        departamentoId: freshUser.departamentoId || freshUser.departamento?.id || 0,
+                        esNacional: freshUser.esNacional || false,
+                        estado: freshUser.estado ?? 1
+                    });
+                })
+                .catch(err => {
+                    console.error("Error loading user details", err);
+                    // Fallback to prop data if fetch fails
+                    setFormData({
+                        cedula: user.cedula || '',
+                        nombre: user.nombre || '',
+                        apellido: user.apellido || '',
+                        email: user.email || '',
+                        password: '',
+                        rolId: user.rolId || user.role?.id || 0,
+                        regionalId: user.regionalId || user.regional?.id || 0,
+                        cargoId: user.cargoId || user.cargo?.id || 0,
+                        departamentoId: user.departamentoId || user.departamento?.id || 0,
+                        esNacional: user.esNacional || false,
+                        estado: user.estado ?? 1
+                    });
+                });
+        }
+    }, [user]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;

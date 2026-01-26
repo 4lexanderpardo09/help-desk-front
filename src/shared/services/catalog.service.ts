@@ -21,6 +21,11 @@ class DepartmentService {
         });
         return Array.isArray(data) ? data : data.data || [];
     }
+
+    async getDepartment(id: number): Promise<Department> {
+        const { data } = await api.get<Department>(`/departments/${id}`);
+        return data;
+    }
 }
 
 class PositionService {
@@ -33,6 +38,11 @@ class PositionService {
         });
         return Array.isArray(data) ? data : data.data || [];
     }
+
+    async getPosition(id: number): Promise<Position> {
+        const { data } = await api.get<Position>(`/positions/${id}`);
+        return data;
+    }
 }
 
 class RegionService {
@@ -44,6 +54,11 @@ class RegionService {
             }
         });
         return Array.isArray(data) ? data : data.data || [];
+    }
+
+    async getRegion(id: number): Promise<Region> {
+        const { data } = await api.get<Region>(`/regions/${id}`);
+        return data;
     }
 }
 

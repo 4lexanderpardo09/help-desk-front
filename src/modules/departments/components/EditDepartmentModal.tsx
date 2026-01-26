@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FormModal } from '../../../shared/components/FormModal';
 import { Input } from '../../../shared/components/Input';
 import type { Department, UpdateDepartmentDto } from '../interfaces/Department';
+import { departmentService } from '../../../shared/services/catalog.service';
 
 export interface EditDepartmentModalProps {
     isOpen: boolean;
@@ -10,9 +11,6 @@ export interface EditDepartmentModalProps {
     department: Department | null;
 }
 
-/**
- * Modal para editar un departamento existente
- */
 export function EditDepartmentModal({
     isOpen,
     onClose,
@@ -29,10 +27,21 @@ export function EditDepartmentModal({
     // Cargar datos del departamento cuando se abre el modal
     useEffect(() => {
         if (department) {
-            setFormData({
-                nombre: department.nombre,
-                estado: department.estado
-            });
+            // Fetch fresh data
+            departmentService.getDepartment(department.id)
+                .then(dept => {
+                    setFormData({
+                        nombre: dept.nombre,
+                        estado: dept.estado
+                    });
+                })
+                .catch(err => {
+                    console.error("Error loading department", err);
+                    setFormData({
+                        nombre: department.nombre,
+                        estado: department.estado
+                    });
+                });
         }
     }, [department]);
 

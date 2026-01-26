@@ -4,6 +4,7 @@ import { Input } from '../../../shared/components/Input';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { categoryService } from '../../categories/services/category.service';
+import { subcategoryService } from '../services/subcategory.service';
 import { priorityService } from '../../tickets/services/priority.service';
 import type { Subcategory, UpdateSubcategoryDto } from '../interfaces/Subcategory';
 import type { Category } from '../../categories/interfaces/Category';
@@ -35,15 +36,31 @@ export function EditSubcategoryModal({ isOpen, onClose, onSubmit, subcategory }:
         }
     }, [isOpen]);
 
+    // Sync formData when subcategory prop changes from parent (fetch fresh data)
     useEffect(() => {
         if (subcategory) {
-            setFormData({
-                nombre: subcategory.nombre,
-                categoriaId: subcategory.categoriaId,
-                prioridadId: subcategory.prioridadId || undefined,
-                descripcion: subcategory.descripcion || '',
-                estado: subcategory.estado
-            });
+            // Fetch fresh data
+            subcategoryService.getSubcategory(subcategory.id)
+                .then(freshSub => {
+                    setFormData({
+                        nombre: freshSub.nombre,
+                        categoriaId: freshSub.categoriaId || freshSub.categoria?.id || undefined,
+                        prioridadId: freshSub.prioridadId || freshSub.prioridad?.id || undefined,
+                        descripcion: freshSub.descripcion || '',
+                        estado: freshSub.estado
+                    });
+                })
+                .catch(err => {
+                    console.error("Error loading subcategory details", err);
+                    // Fallback to prop
+                    setFormData({
+                        nombre: subcategory.nombre,
+                        categoriaId: subcategory.categoriaId || subcategory.categoria?.id || undefined,
+                        prioridadId: subcategory.prioridadId || subcategory.prioridad?.id || undefined,
+                        descripcion: subcategory.descripcion || '',
+                        estado: subcategory.estado
+                    });
+                });
         }
     }, [subcategory]);
 

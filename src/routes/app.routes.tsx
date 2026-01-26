@@ -24,6 +24,7 @@ const PositionsPage = lazy(() => import('../modules/positions/pages/PositionsPag
 const ProfilesPage = lazy(() => import('../modules/profiles/pages/ProfilesPage'));
 const OrganigramaPage = lazy(() => import('../modules/organigrama/pages/OrganigramaPage'));
 const ErrorTypesPage = lazy(() => import('../modules/error-types/pages/ErrorTypesPage'));
+const WorkflowListPage = lazy(() => import('../modules/workflows/pages/WorkflowListPage'));
 
 
 export const appRoutes: RouteObject[] = [
@@ -174,6 +175,14 @@ export const appRoutes: RouteObject[] = [
                         element: (
                             <Suspense fallback={<PageLoader />}>
                                 <SubcategoriesPage />
+                            </Suspense>
+                        )
+                    },
+                    {
+                        path: '/workflows',
+                        element: (
+                            <Suspense fallback={<PageLoader />}>
+                                <WorkflowListPage />
                             </Suspense>
                         )
                     },

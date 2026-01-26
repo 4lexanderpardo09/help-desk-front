@@ -20,8 +20,16 @@ export function EditPositionModal({ isOpen, onClose, onSuccess, position }: Edit
 
     useEffect(() => {
         if (position) {
-            setNombre(position.nombre);
-            setEstado(position.estado);
+            positionService.getPosition(position.id)
+                .then(pos => {
+                    setNombre(pos.nombre);
+                    setEstado(pos.estado);
+                })
+                .catch(err => {
+                    console.error("Error loading position", err);
+                    setNombre(position.nombre);
+                    setEstado(position.estado);
+                });
         }
     }, [position]);
 

@@ -42,6 +42,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
         { to: "/companies", icon: "business", label: "Empresas", subject: 'Company' as any },
         { to: "/categories", icon: "category", label: "Categorías", subject: 'Category' },
         { to: "/subcategories", icon: "segment", label: "Subcategorías", subject: 'Category' as any },
+        { to: "/workflows", icon: "schema", label: "Gestión de Flujos", subject: 'Workflow' as any }, // TODO: Define 'Workflow' subject in Permission enum
         { to: "/regions", icon: "map", label: "Regionales", subject: 'Regional' as any }, // Assuming Regional permission subject exists or using similar
         { to: "/zones", icon: "location_on", label: "Zonas", subject: 'Zone' as any },
         { to: "/positions", icon: "badge", label: "Cargos", subject: 'Position' as any },
