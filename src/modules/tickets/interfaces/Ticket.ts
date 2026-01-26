@@ -82,3 +82,61 @@ export interface TicketTimelineItem {
     };
     asignadoA?: { id: number; nombre: string };
 }
+
+// --- WORKFLOW TYPES ---
+
+export interface UserCandidate {
+    id: number;
+    nombre: string;
+    apellido: string;
+    email: string;
+    cargo?: string;
+}
+
+export interface LinearTransition {
+    targetStepId: number;
+    targetStepName: string;
+    requiresManualAssignment: boolean;
+    candidates: UserCandidate[];
+}
+
+export interface DecisionOption {
+    decisionId: string;
+    label: string;
+    targetStepId: number;
+    requiresManualAssignment: boolean;
+}
+
+export interface ParallelStatus {
+    isBlocked: boolean;
+    pendingTasks: any[];
+}
+
+export interface CheckNextStepResponse {
+    transitionType: 'linear' | 'decision' | 'parallel_pending' | 'final';
+    linear?: LinearTransition;
+    decisions?: DecisionOption[];
+    parallelStatus?: ParallelStatus;
+}
+
+export interface TransitionTicketDto {
+    ticketId: number;
+    transitionKeyOrStepId: string;
+    comentario?: string;
+    targetUserId?: number;
+    templateValues?: { campoId: number; valor: string }[];
+    attachmentIds?: number[]; // IDs of uploaded files
+    signature?: string; // base64
+    // parallelAssignments... (future)
+}
+
+export interface TemplateField {
+    id: number;
+    nombre: string;
+    codigo: string;
+    tipo: 'text' | 'number' | 'date' | 'select' | 'textarea' | 'checkbox' | 'file';
+    required: boolean;
+    options?: string[]; // For select types
+    // Add layout coords if needed
+}
+

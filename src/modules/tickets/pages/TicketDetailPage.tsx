@@ -6,6 +6,7 @@ import { Button } from '../../../shared/components/Button';
 import { TicketWorkflow } from '../components/TicketWorkflow';
 import { TicketTimeline } from '../components/TicketTimeline';
 import { EditTicketModal } from '../components/EditTicketModal';
+import { TicketResponsePanel } from '../components/TicketResponsePanel';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
 
 export default function TicketDetailPage() {
@@ -21,7 +22,7 @@ export default function TicketDetailPage() {
     useEffect(() => {
         setTitle('Gestión de Tickets');
     }, [setTitle]);
-        
+
     const fetchData = useCallback(async () => {
         if (!id) return;
         try {
@@ -142,6 +143,12 @@ export default function TicketDetailPage() {
             </div>
 
             <TicketWorkflow ticket={ticket} />
+
+            <TicketResponsePanel
+                ticketId={ticket.id}
+                currentStepId={ticket.workflowStepId}
+                onSuccess={fetchData}
+            />
 
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                 <div className="lg:col-span-3 space-y-6">

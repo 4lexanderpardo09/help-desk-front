@@ -1,5 +1,5 @@
 import { api } from '../../../core/api/api';
-import type { Ticket, TicketFilter, TicketListResponse, CreateTicketDto, UpdateTicketDto, TicketStatus, TicketPriority, TicketDetail, TicketTimelineItem } from '../interfaces/Ticket';
+import type { Ticket, TicketFilter, TicketListResponse, CreateTicketDto, UpdateTicketDto, TicketStatus, TicketPriority, TicketDetail, TicketTimelineItem, CheckNextStepResponse, TransitionTicketDto } from '../interfaces/Ticket';
 
 // Interface for the raw backend response (Spanish fields)
 interface RawUser {
@@ -184,6 +184,17 @@ export const ticketService = {
                 asignadoA: item.asignadoA // Map the new field
             };
         });
+    },
+
+    // --- WORKFLOW METHODS ---
+
+    async checkNextStep(ticketId: number): Promise<CheckNextStepResponse> {
+        const response = await api.get<CheckNextStepResponse>(`/workflows/check-next-step/${ticketId}`);
+        return response.data;
+    },
+
+    async transitionTicket(dto: TransitionTicketDto): Promise<void> {
+        await api.post('/workflows/transition', dto);
     }
 };
 
