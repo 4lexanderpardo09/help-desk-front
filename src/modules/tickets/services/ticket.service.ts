@@ -52,6 +52,7 @@ interface RawTicket {
     pasoActual?: RawWorkflowStep;
 
     usuarioAsignadoIds?: number[];
+    usuariosAsignados?: RawUser[];
 
     // Legacy/List fields fallback (if list endpoint uses different structure)
     creadorNombre?: string;
@@ -140,6 +141,14 @@ export const ticketService = {
         const priorityName = t.prioridad ? t.prioridad.nombre : (t.prioridadUsuario || 'Media');
         const stepName = t.pasoActual ? t.pasoActual.nombre : 'Procesamiento';
         const stepId = t.pasoActual ? t.pasoActual.id : 0;
+
+        let assignedToName = 'Sin Asignar';
+        if (t.usuariosAsignados && t.usuariosAsignados.length > 0) {
+            assignedToName = `${t.usuariosAsignados[0].nombre} ${t.usuariosAsignados[0].apellido}`;
+        } else if (t.usuarioAsignadoIds && t.usuarioAsignadoIds.length > 0) {
+            assignedToName = `Usuario (ID: ${t.usuarioAsignadoIds[0]})`;
+        }
+
         return {
             id: t.id,
             subject: t.titulo,
@@ -155,9 +164,10 @@ export const ticketService = {
             subcategoryId: t.subcategoria?.id,
             createdDate: t.fechaCreacion,
             creatorName: customerName,
+            creatorId: t.usuario?.id || 0,
             workflowStep: stepName,
             workflowStepId: stepId,
-            assignedTo: 'Unknown',
+            assignedTo: assignedToName,
             assignedToId: (t.usuarioAsignadoIds && t.usuarioAsignadoIds.length > 0) ? t.usuarioAsignadoIds[0] : 0,
             priorityId: t.prioridad?.id
         };

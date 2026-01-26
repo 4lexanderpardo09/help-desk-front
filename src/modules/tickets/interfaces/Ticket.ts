@@ -56,6 +56,7 @@ export interface TicketDetail extends Ticket {
     subcategoryId?: number; // Add ID for editing
     createdDate: string; // ISO string
     creatorName: string;
+    creatorId: number;
     workflowStep: string;
     workflowStepId: number;
     assignedTo?: string;

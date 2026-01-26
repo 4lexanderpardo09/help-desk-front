@@ -8,25 +8,34 @@ import { DynamicStepForm } from './DynamicStepForm';
 import { ticketService } from '../services/ticket.service';
 import type { TransitionTicketDto, TemplateField } from '../interfaces/Ticket';
 import { toast } from 'sonner';
+import { useAuth } from '../../auth/context/useAuth';
 
 interface TicketResponsePanelProps {
     ticketId: number;
-    currentStepId: number;
+    assignedToId?: number;
+    assignedToName?: string;
+    creatorId: number; // Required for checking permissions
+    creatorName: string;
     onSuccess: () => void;
-    // In a real app, we would fetch fields from backend based on step. 
-    // For now, accepting them as prop or defaulting to empty.
     templateFields?: TemplateField[];
 }
 
 export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
     ticketId,
-    currentStepId,
+    assignedToId,
+    assignedToName,
+    creatorId,
+    creatorName,
     onSuccess,
     templateFields = []
 }) => {
+    const { user } = useAuth();
     const [comment, setComment] = useState('');
     const [dynamicValues, setDynamicValues] = useState<{ campoId: number; valor: string }[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Permission Logic
+    const canInteract = Number(user?.id) === Number(assignedToId) || Number(user?.id) === Number(creatorId);
 
     // Hook logic
     const {
@@ -39,20 +48,11 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
 
     // Handler for "Enviar" / "Avanzar" click
     const handleMainAction = async () => {
-        // 1. Basic Validation
         const cleanComment = comment.replace(/<[^>]*>/g, '').trim();
         if (!cleanComment) {
             toast.warning('Por favor escriba un comentario o respuesta.');
             return;
         }
-
-        // 2. Dynamic Form Validation (Basic)
-        // If we had the schema here, we could check required fields again.
-        // The DynamicStepForm handles individual validations but we need to ensure blocking.
-        // For MVP, we assume ReactHookForm in child would have blocked if we exposed "isValid".
-        // Let's assume validation passes if values are present for required fields.
-
-        // 3. Check Backend Transition Requirements
         await checkTransition();
     };
 
@@ -66,7 +66,6 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                 comentario: comment,
                 targetUserId,
                 templateValues: dynamicValues.length > 0 ? dynamicValues : undefined,
-                // attachmentIds: ... (Implement upload later)
             };
 
             await ticketService.transitionTicket(dto);
@@ -75,7 +74,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
             setComment('');
             setDynamicValues([]);
             closeModal();
-            onSuccess(); // Refresh parent
+            onSuccess();
 
         } catch (error) {
             console.error(error);
@@ -85,10 +84,22 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
         }
     };
 
-    // If check returned "linear" without manual assignment, we might want to auto-confirm?
-    // The Modal handles "Linear + No Manual" by just showing "Confirm".
-    // Or we could auto-submit here if strictly automatic.
-    // For safety, currently the Modal opens even for Linear to show "Avanzará a X".
+    if (!canInteract) {
+        return (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8 flex flex-col items-center justify-center text-center">
+                <div className="bg-gray-100 p-3 rounded-full mb-3">
+                    <span className="material-symbols-outlined text-gray-500 text-2xl">lock</span>
+                </div>
+                <h3 className="text-gray-900 font-semibold mb-1">Modo de Solo Lectura</h3>
+                <p className="text-gray-500 text-sm max-w-md">
+                    Solo el usuario asignado ({assignedToName || 'Sin asignar'}) o el creador ({creatorName}) pueden responder o avanzar el flujo en este momento.
+                </p>
+                <div className="mt-4 text-xs text-brand-teal font-medium bg-teal-50 px-3 py-1 rounded-full border border-teal-100">
+                    Tú eres: {user?.nombre} {user?.apellido}
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8">
@@ -127,7 +138,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
             {/* MODAL */}
             <WorkflowDecisionModal
                 open={modalOpen}
-                onOpenChange={(v) => !v && closeModal()} // Handle close
+                onOpenChange={(v) => !v && closeModal()}
                 transitionData={transitionData}
                 onConfirm={handleTransitionConfirm}
                 isLoading={isSubmitting}

@@ -26,11 +26,6 @@ export default function TicketDetailPage() {
     const fetchData = useCallback(async () => {
         if (!id) return;
         try {
-            // Only set loading on initial fetch or full refresh needed, 
-            // but for simplicity we keep it. maybe guard it?
-            // setLoading(true); 
-            // If we set loading(true), the UI unmounts and remounts. 
-            // Let's keep existing behavior for now.
             setLoading(true);
             const [ticketData, timelineData] = await Promise.all([
                 ticketService.getTicket(Number(id)),
@@ -74,28 +69,52 @@ export default function TicketDetailPage() {
         return true;
     });
 
+    // Logic to resolve the effective "Assigned To" name
+    // Because the main endpoint might return "Usuario (ID: 123)" if relation is missing,
+    // we look at the timeline history for the latest assignment event to get the real name.
+    const getEffectiveAssignedToName = () => {
+        if (!ticket) return '';
+
+        // If we already have a good name (not unknown/generic), use it.
+        if (ticket.assignedTo &&
+            !ticket.assignedTo.includes('Unknown') &&
+            !ticket.assignedTo.includes('Usuario (ID:')) {
+            return ticket.assignedTo;
+        }
+
+        // Otherwise, look in timeline for the assignedToId
+        if (ticket.assignedToId) {
+            // Find the latest 'assignment' or 'creation' event where asignadoA matches the current ID
+            // Timeline is usually sorted new->old or old->new. Let's find any match.
+            const match = timeline.find(t => t.asignadoA?.id === ticket.assignedToId);
+            if (match?.asignadoA?.nombre) {
+                return match.asignadoA.nombre;
+            }
+        }
+
+        return ticket.assignedTo || 'Sin Asignar';
+    };
+
     if (loading) {
         return (
-            <>
-                <div className="flex h-64 items-center justify-center">
-                    <p className="text-gray-500">Cargando detalle del ticket...</p>
-                </div>
-            </>
+            <div className="flex h-64 items-center justify-center">
+                <p className="text-gray-500">Cargando detalle del ticket...</p>
+            </div>
         );
     }
 
     if (!ticket) {
         return (
-            <>
-                <div className="flex flex-col items-center justify-center h-64 gap-4">
-                    <p className="text-gray-500">El ticket solicitado no pudo ser encontrado.</p>
-                    <Button variant="secondary" onClick={() => navigate('/tickets')}>
-                        Volver a Tickets
-                    </Button>
-                </div>
-            </>
+            <div className="flex flex-col items-center justify-center h-64 gap-4">
+                <p className="text-gray-500">El ticket solicitado no pudo ser encontrado.</p>
+                <Button variant="secondary" onClick={() => navigate('/tickets')}>
+                    Volver a Tickets
+                </Button>
+            </div>
         );
     }
+
+    const effectiveAssignedToName = getEffectiveAssignedToName();
 
     return (
         <>
@@ -146,7 +165,10 @@ export default function TicketDetailPage() {
 
             <TicketResponsePanel
                 ticketId={ticket.id}
-                currentStepId={ticket.workflowStepId}
+                assignedToId={ticket.assignedToId}
+                assignedToName={effectiveAssignedToName}
+                creatorId={ticket.creatorId}
+                creatorName={ticket.creatorName}
                 onSuccess={fetchData}
             />
 
@@ -189,15 +211,12 @@ export default function TicketDetailPage() {
                 </div>
             </div>
 
-
-
             <EditTicketModal
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 onSuccess={fetchData}
                 ticket={ticket}
             />
-
         </>
     );
 }

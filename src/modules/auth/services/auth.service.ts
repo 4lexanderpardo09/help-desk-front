@@ -22,8 +22,31 @@ export const authService = {
      * @returns Promesa con los datos completos del usuario (incluyendo roles y permisos).
      */
     async getProfile(): Promise<User> {
-        const response = await api.get<User>('/auth/profile');
-        return response.data;
+        const response = await api.get<any>('/auth/profile');
+        const raw = response.data;
+
+        // Map backend snake_case to frontend camelCase User interface
+        // Handling both legacy/raw fields and potentially normalized ones
+        return {
+            id: raw.usu_id || raw.id,
+            cedula: raw.usu_cedula || raw.cedula || '',
+            nombre: raw.nombre || raw.usu_nombre || '',
+            apellido: raw.apellido || raw.usu_apellido || '',
+            email: raw.usu_correo || raw.email || '',
+            rolId: raw.rol_id || raw.rolId,
+            regionalId: raw.reg_id || raw.regionalId,
+            cargoId: raw.car_id || raw.cargoId,
+            departamentoId: raw.dp_id || raw.departamentoId,
+            esNacional: raw.es_nacional === 1 || raw.esNacional === true,
+            estado: raw.estado || 1, // Default active if missing
+
+            // Nested relations if present
+            role: raw.role,
+            regional: raw.regional,
+            cargo: raw.cargo,
+            departamento: raw.departamento,
+            permissions: raw.permissions || []
+        };
     },
 
     /**
