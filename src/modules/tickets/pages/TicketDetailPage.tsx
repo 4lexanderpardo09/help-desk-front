@@ -175,14 +175,6 @@ export default function TicketDetailPage() {
 
             <TicketWorkflow ticket={ticket} />
 
-            <TicketResponsePanel
-                ticketId={ticket.id}
-                assignedToId={ticket.assignedToId}
-                assignedToName={effectiveAssignedToName}
-                creatorId={ticket.creatorId}
-                creatorName={ticket.creatorName}
-                onSuccess={fetchData}
-            />
 
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                 <div className="lg:col-span-3 space-y-6">
@@ -254,6 +246,17 @@ export default function TicketDetailPage() {
                         <TicketTimeline items={filteredItems} />
                     )}
                 </div>
+            </div>
+
+            <div className="mt-8">
+                <TicketResponsePanel
+                    ticketId={ticket.id}
+                    assignedToId={ticket.assignedToId}
+                    assignedToName={effectiveAssignedToName}
+                    creatorId={ticket.creatorId}
+                    creatorName={ticket.creatorName}
+                    onSuccess={fetchData}
+                />
             </div>
 
             <EditTicketModal
