@@ -38,6 +38,7 @@ export interface CreateTicketDto {
     subcategoriaId: number;
     prioridadId?: number;
     usuarioAsignadoId?: number;
+    templateValues?: { campoId: number; valor: string }[];
 }
 
 export interface UpdateTicketDto {

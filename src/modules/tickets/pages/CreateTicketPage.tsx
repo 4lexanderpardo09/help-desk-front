@@ -16,7 +16,7 @@ import { documentService } from '../services/document.service';
 import type { Subcategory } from '../interfaces/Subcategory';
 import type { Priority } from '../interfaces/Priority';
 import type { CreateTicketDto } from '../interfaces/Ticket';
-import type { UserCandidate } from '../interfaces/Workflow';
+import type { UserCandidate, CheckStartFlowResponse } from '../interfaces/Workflow';
 import type { Department } from '../interfaces/Department';
 import type { Company } from '../interfaces/Company';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
@@ -55,6 +55,8 @@ export default function CreateTicketPage() {
     // Workflow Logic State
     const [requiresManualSelection, setRequiresManualSelection] = useState(false);
     const [initialStepName, setInitialStepName] = useState<string>('');
+    const [templateFields, setTemplateFields] = useState<CheckStartFlowResponse['templateFields']>([]);
+    const [templateValues, setTemplateValues] = useState<Record<number, string>>({});
 
     useEffect(() => {
         setTitle('Gestión de Tickets');
@@ -112,6 +114,8 @@ export default function CreateTicketPage() {
             setRequiresManualSelection(false);
             setAssigneeCandidates([]);
             setInitialStepName('');
+            setTemplateFields([]);
+            setTemplateValues({});
             setAssigneeId('');
             return;
         }
@@ -145,6 +149,13 @@ export default function CreateTicketPage() {
                 } else {
                     setAssigneeCandidates([]);
                 }
+
+                // Filter out system fields that shouldn't be manually entered
+                const filteredFields = (result.templateFields || []).filter(f =>
+                    !['TICKET_ID', 'FECHA_CREACION', 'TITULO', 'SOLICITANTE', 'CARGO'].includes(f.codigo.toUpperCase())
+                );
+                setTemplateFields(filteredFields);
+                setTemplateValues({});
             } catch (error) {
                 console.error("Error checking workflow", error);
             } finally {
@@ -177,6 +188,10 @@ export default function CreateTicketPage() {
                 prioridadId: priorityId ? Number(priorityId) : undefined,
                 usuarioAsignadoId: assigneeId ? Number(assigneeId) : undefined,
                 usuarioId: user?.id,
+                templateValues: Object.entries(templateValues).map(([key, val]) => ({
+                    campoId: Number(key),
+                    valor: val
+                }))
             };
 
             const createdTicket = await ticketService.createTicket(payload);
@@ -350,6 +365,36 @@ export default function CreateTicketPage() {
                             </div>
                         )}
 
+                        {/* DYNAMIC TEMPLATE FIELDS */}
+                        {templateFields && templateFields.length > 0 && (
+                            <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-6 space-y-4">
+                                <h3 className="text-sm font-bold text-blue-900 flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-blue-600">assignment</span>
+                                    Información Adicional Requerida
+                                </h3>
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                    {templateFields.map(field => (
+                                        <div key={field.id} className="space-y-2">
+                                            <label className="text-sm font-bold text-gray-700">
+                                                {field.nombre}
+                                            </label>
+                                            <input
+                                                type={field.tipo === 'number' ? 'number' : field.tipo === 'date' ? 'date' : 'text'}
+                                                className="w-full rounded-lg border-blue-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm bg-white"
+                                                placeholder={`Ingrese ${field.nombre}`}
+                                                value={templateValues[field.id] || ''}
+                                                onChange={(e) => setTemplateValues(prev => ({
+                                                    ...prev,
+                                                    [field.id]: e.target.value
+                                                }))}
+                                                required
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {/* DESCRIPTION (Rich Text) */}
                         <div className="space-y-2">
                             <label className="text-sm font-bold text-gray-700">Descripción</label>
@@ -432,11 +477,11 @@ export default function CreateTicketPage() {
                             </Button>
                         </div>
                     </form>
-                </div>
-            </div>
+                </div >
+            </div >
 
             {/* SUCCESS MODAL */}
-            <InfoModal
+            < InfoModal
                 isOpen={showSuccessModal}
                 onClose={handleModalClose}
                 title="Ticket Creado Exitosamente"

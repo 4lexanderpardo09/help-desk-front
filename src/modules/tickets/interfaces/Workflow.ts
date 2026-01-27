@@ -11,4 +11,11 @@ export interface CheckStartFlowResponse {
     candidates: UserCandidate[];
     initialStepId: number;
     initialStepName: string;
+    templateFields?: {
+        id: number;
+        nombre: string;
+        codigo: string;
+        tipo: string;
+        etiqueta?: string;
+    }[];
 }
