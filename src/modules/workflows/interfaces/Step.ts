@@ -40,6 +40,7 @@ export interface StepSignature {
     coordX: number;
     coordY: number;
     pagina: number;
+    etiqueta?: string;
 }
 
 export interface StepSpecificUser {

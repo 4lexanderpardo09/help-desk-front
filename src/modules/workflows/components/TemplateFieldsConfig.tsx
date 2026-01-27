@@ -89,7 +89,8 @@ export const TemplateFieldsConfig = ({ campos, onChange }: TemplateFieldsConfigP
                             <div className="flex-1">
                                 <p className="font-medium text-sm text-gray-900">{campo.nombre}</p>
                                 <p className="text-xs text-gray-500">
-                                    Código: {campo.codigo} | Tipo: {campo.tipo} | Pág: {campo.pagina} | X: {campo.coordX}, Y: {campo.coordY}
+                                    Código: {campo.codigo} | Tipo: {campo.tipo} | Pág: {campo.pagina}
+                                    {campo.etiqueta ? <span className="ml-2 text-blue-600 bg-blue-50 px-1 rounded">🏷️ {campo.etiqueta}</span> : ` | X: ${campo.coordX}, Y: ${campo.coordY}`}
                                 </p>
                             </div>
                             <div className="flex gap-2">
@@ -170,6 +171,15 @@ export const TemplateFieldsConfig = ({ campos, onChange }: TemplateFieldsConfigP
                             type="number"
                             {...register('fontSize')}
                             placeholder="10"
+                        />
+                    </div>
+
+                    <div className="space-y-1">
+                        <label className="text-sm font-semibold text-gray-700">Etiqueta PDF (Smart Tag)</label>
+                        <input
+                            {...register('etiqueta')}
+                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                            placeholder="Ej. CAMPO_FECHA_1 (Opcional, anula coordenadas)"
                         />
                     </div>
 

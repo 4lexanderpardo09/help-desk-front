@@ -11,6 +11,7 @@ export interface StepTemplateField {
     campoTrigger: number; // 0 o 1
     campoQuery?: string;
     mostrarDiasTranscurridos: boolean;
+    etiqueta?: string; // Smart Tag (PDF Form Field Name)
     estado?: number; // 1 = activo, 0 = inactivo
 }
 

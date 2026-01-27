@@ -107,6 +107,11 @@ export const SignatureConfig = ({ firmas, onChange, positions, pdfUrl }: Signatu
                             <span>
                                 <span className="font-medium">Y:</span> {firma.coordY}
                             </span>
+                            {firma.etiqueta && (
+                                <span className="col-span-2 text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded truncate" title="Smart Tag">
+                                    🏷️ {firma.etiqueta}
+                                </span>
+                            )}
                             <span className="truncate col-span-2">
                                 {firma.cargoId
                                     ? positions.find(p => p.id === firma.cargoId)?.nombre
@@ -146,25 +151,32 @@ export const SignatureConfig = ({ firmas, onChange, positions, pdfUrl }: Signatu
                             Seleccionar Visualmente
                         </Button>
                     </h5>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-2 gap-3">
                         <Input
-                            label="Página"
-                            type="number"
-                            {...register('pagina', { required: true, min: 1 })}
-                            placeholder="1"
+                            label="Etiqueta PDF (Smart Tag)"
+                            {...register('etiqueta')}
+                            placeholder="Ej. FIRMA_GERENTE"
                         />
-                        <Input
-                            label="Coord X"
-                            type="number"
-                            step="0.1"
-                            {...register('coordX', { required: true })}
-                        />
-                        <Input
-                            label="Coord Y"
-                            type="number"
-                            step="0.1"
-                            {...register('coordY', { required: true })}
-                        />
+                        <div className="grid grid-cols-3 gap-3">
+                            <Input
+                                label="Página"
+                                type="number"
+                                {...register('pagina', { required: true, min: 1 })}
+                                placeholder="1"
+                            />
+                            <Input
+                                label="Coord X"
+                                type="number"
+                                step="0.1"
+                                {...register('coordX', { required: true })}
+                            />
+                            <Input
+                                label="Coord Y"
+                                type="number"
+                                step="0.1"
+                                {...register('coordY', { required: true })}
+                            />
+                        </div>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Cargo (Opcional)</label>
