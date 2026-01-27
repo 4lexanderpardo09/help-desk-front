@@ -130,10 +130,40 @@ export interface TransitionTicketDto {
     transitionKeyOrStepId: string;
     comentario?: string;
     targetUserId?: number;
-    templateValues?: { campoId: number; valor: string }[];
+    templateValues?: TemplateFieldValue[];
     attachmentIds?: number[]; // IDs of uploaded files
     signature?: string; // base64
     manualAssignments?: Record<string, number>;
+}
+
+// Parallel Task Interfaces
+export interface ParallelTask {
+    id: number;
+    ticketId: number;
+    pasoId: number;
+    usuarioId: number;
+    estado: 'Pendiente' | 'Completado';
+    estadoTiempoPaso?: string;
+    fechaCreacion?: string;
+    fechaCierre?: string;
+    comentario?: string;
+    usuario?: {
+        id: number;
+        nombre: string;
+        email: string;
+    };
+}
+
+export interface SignParallelTaskDto {
+    ticketId: number;
+    comentario?: string;
+    signature?: string;
+}
+
+export interface SignParallelTaskResponse {
+    message: string;
+    autoAdvanced: boolean;
+    ticket?: any;
 }
 
 export interface TemplateField {

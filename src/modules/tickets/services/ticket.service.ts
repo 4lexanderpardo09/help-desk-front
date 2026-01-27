@@ -1,5 +1,5 @@
 import { api } from '../../../core/api/api';
-import type { Ticket, TicketFilter, TicketListResponse, CreateTicketDto, UpdateTicketDto, TicketStatus, TicketPriority, TicketDetail, TicketTimelineItem, CheckNextStepResponse, TransitionTicketDto } from '../interfaces/Ticket';
+import type { Ticket, TicketFilter, TicketListResponse, CreateTicketDto, UpdateTicketDto, TicketStatus, TicketPriority, TicketDetail, TicketTimelineItem, CheckNextStepResponse, TransitionTicketDto, ParallelTask, SignParallelTaskDto, SignParallelTaskResponse } from '../interfaces/Ticket';
 
 // Interface for the raw backend response (Spanish fields)
 interface RawUser {
@@ -204,8 +204,19 @@ export const ticketService = {
         return response.data;
     },
 
-    async transitionTicket(dto: TransitionTicketDto): Promise<void> {
-        await api.post('/workflows/transition', dto);
+    async transitionTicket(dto: TransitionTicketDto): Promise<any> {
+        const response = await api.post('/workflows/transition', dto);
+        return response.data;
+    },
+
+    async getParallelTasks(ticketId: number): Promise<ParallelTask[]> {
+        const response = await api.get(`/tickets/${ticketId}/parallel-tasks`);
+        return response.data;
+    },
+
+    async signParallelTask(dto: SignParallelTaskDto): Promise<SignParallelTaskResponse> {
+        const response = await api.post('/workflows/sign-parallel-task', dto);
+        return response.data;
     },
 
     async getTicketMasterPdf(ticketId: number): Promise<Blob> {
