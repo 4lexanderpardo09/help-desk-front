@@ -9,6 +9,7 @@ interface WorkflowDecisionModalProps {
     transitionData: CheckNextStepResponse | null;
     onConfirm: (decisionKey: string, targetUserId?: number) => void;
     isLoading?: boolean;
+    isAssignedUser: boolean; // Re-added
 }
 
 export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
@@ -16,11 +17,13 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
     onOpenChange,
     transitionData,
     onConfirm,
-    isLoading
+    isLoading,
+    isAssignedUser
 }) => {
     const [selectedDecision, setSelectedDecision] = useState<string>('');
     const [selectedUser, setSelectedUser] = useState<string>('');
     const [stepCandidates, setStepCandidates] = useState<UserCandidate[]>([]);
+    const [verified, setVerified] = useState(false);
 
     // Derived state
     const isDecisionMode = transitionData?.transitionType === 'decision';
@@ -31,6 +34,7 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
             // Reset states when opening
             setSelectedDecision('');
             setSelectedUser('');
+            setVerified(false);
 
             if (isLinearMode && transitionData?.linear?.candidates) {
                 setStepCandidates(transitionData.linear.candidates);
@@ -75,8 +79,8 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
                                         key={d.decisionId}
                                         onClick={() => setSelectedDecision(d.decisionId)}
                                         className={`w-full text-left px-4 py-3 rounded-lg border transition-all ${selectedDecision === d.decisionId
-                                                ? 'border-brand-teal bg-teal-50 text-brand-teal shadow-sm'
-                                                : 'border-gray-200 hover:bg-slate-50 text-gray-700'
+                                            ? 'border-brand-teal bg-teal-50 text-brand-teal shadow-sm'
+                                            : 'border-gray-200 hover:bg-slate-50 text-gray-700'
                                             }`}
                                     >
                                         <div className="font-medium">{d.label}</div>
@@ -110,32 +114,61 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
                     )}
 
                     {/* LINEAR INFO */}
-                    {isLinearMode && !needsUserSelection() && (
-                        <div className="p-4 bg-sky-50 text-sky-800 rounded-lg text-sm border border-sky-100 flex items-start gap-3">
-                            <span className="material-symbols-outlined text-lg mt-0.5">info</span>
-                            <div>
-                                El ticket avanzará automáticamente al paso: <br />
-                                <strong className="font-bold">{transitionData?.linear?.targetStepName}</strong>
+                    {transitionData?.linear && (
+                        <div className="p-4 bg-sky-50 text-sky-800 rounded-lg text-sm border border-sky-100 space-y-2">
+                            <div className="flex items-start gap-3">
+                                <span className="material-symbols-outlined text-lg mt-0.5">info</span>
+                                <div>
+                                    El ticket avanzará al paso: <strong className="font-bold">{transitionData?.linear?.targetStepName}</strong>
+                                    {transitionData?.parallelStatus && (
+                                        <div className="mt-1 flex items-center gap-1 text-xs font-bold text-brand-orange uppercase">
+                                            <span className="material-symbols-outlined text-base">call_split</span>
+                                            Paso Paralelo
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     )}
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                    <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={isLoading}>
-                        Cancelar
-                    </Button>
-                    <Button
-                        variant="brand"
-                        onClick={handleConfirm}
-                        disabled={
-                            isLoading ||
-                            (isDecisionMode && !selectedDecision) ||
-                            (needsUserSelection() && !selectedUser)
-                        }
-                    >
-                        {isLoading ? 'Procesando...' : 'Confirmar y Avanzar'}
-                    </Button>
+                {/* FOOTER: Checkbox + Actions */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100 gap-4">
+
+                    {/* VERIFICATION CHECKBOX (Left Side) - ONLY FOR ASSIGNED USER */}
+                    {isAssignedUser && (
+                        <div className="flex items-center gap-2">
+                            <input
+                                id="verify-check"
+                                type="checkbox"
+                                checked={verified}
+                                onChange={(e) => setVerified(e.target.checked)}
+                                className="h-4 w-4 rounded border-gray-300 text-brand-teal focus:ring-brand-teal"
+                            />
+                            <label htmlFor="verify-check" className="text-xs text-gray-600 cursor-pointer select-none leading-tight">
+                                Confirmar información
+                            </label>
+                        </div>
+                    )}
+
+                    {/* BUTTONS (Right Side) */}
+                    <div className="flex gap-3 ml-auto">
+                        <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={isLoading}>
+                            Cancelar
+                        </Button>
+                        <Button
+                            variant="brand"
+                            onClick={handleConfirm}
+                            disabled={
+                                isLoading ||
+                                (isAssignedUser && !verified) ||
+                                (isDecisionMode && !selectedDecision) ||
+                                (needsUserSelection() && !selectedUser)
+                            }
+                        >
+                            {isLoading ? 'Wait...' : 'Avanzar'}
+                        </Button>
+                    </div>
                 </div>
             </div>
         </Modal>

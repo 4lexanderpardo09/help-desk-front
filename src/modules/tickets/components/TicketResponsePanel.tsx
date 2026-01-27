@@ -173,6 +173,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                 transitionData={transitionData}
                 onConfirm={handleTransitionConfirm}
                 isLoading={isSubmitting}
+                isAssignedUser={Number(user?.id) === Number(assignedToId)}
             />
 
             <SignatureModal
