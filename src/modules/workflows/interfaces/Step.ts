@@ -27,6 +27,7 @@ export interface Step {
     permiteDespachoMasivo?: boolean;
     firmas?: StepSignature[];
     campos?: StepTemplateField[];
+    usuarios?: StepSpecificUser[];
 }
 
 export interface StepSignature {
@@ -39,6 +40,15 @@ export interface StepSignature {
     coordX: number;
     coordY: number;
     pagina: number;
+}
+
+export interface StepSpecificUser {
+    id?: number;
+    pasoId?: number;
+    usuarioId?: number;
+    usuario?: { id: number; nombre: string; apellido: string };
+    cargoId?: number;
+    cargo?: { id: number; nombre: string };
 }
 
 export interface CreateStepDto {
@@ -67,6 +77,7 @@ export interface CreateStepDto {
     permiteDespachoMasivo?: boolean;
     firmas?: StepSignature[];
     campos?: StepTemplateField[];
+    usuariosEspecificos?: Array<{ usuarioId?: number; cargoId?: number }>;
 }
 
 export interface UpdateStepDto extends Partial<CreateStepDto> {

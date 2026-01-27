@@ -14,6 +14,7 @@ import type { TemplateField } from '../../templates/interfaces/TemplateField';
 import { toast } from 'sonner';
 import { SignatureConfig } from './SignatureConfig';
 import { TemplateFieldsConfig } from './TemplateFieldsConfig';
+import { SpecificAssignmentConfig } from './SpecificAssignmentConfig';
 
 interface StepModalProps {
     isOpen: boolean;
@@ -56,7 +57,11 @@ export const StepModal = ({ isOpen, onClose, onSuccess, step, flujoId }: StepMod
                         cerrarTicketObligatorio: !!fullStep.cerrarTicketObligatorio,
                         permiteDespachoMasivo: !!fullStep.permiteDespachoMasivo,
                         firmas: fullStep.firmas || [],
-                        campos: fullStep.campos || []
+                        campos: fullStep.campos || [],
+                        usuariosEspecificos: fullStep.usuarios?.map(u => ({
+                            usuarioId: u.usuarioId || undefined,
+                            cargoId: u.cargoId || undefined
+                        })) || []
                     });
                 }).catch(err => {
                     console.error(err);
@@ -221,6 +226,23 @@ export const StepModal = ({ isOpen, onClose, onSuccess, step, flujoId }: StepMod
                             <input type="checkbox" {...register('requiereSeleccionManual')} className="rounded text-brand-teal focus:ring-brand-teal" />
                             <span className="text-sm text-gray-700">Selección Manual</span>
                         </label>
+
+                        {/* Show Specific Assignment Config when manual selection is enabled */}
+                        {watch('requiereSeleccionManual') && (
+                            <div className="col-span-full mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                <h4 className="text-sm font-semibold text-gray-900 mb-3">Usuarios y Cargos Específicos</h4>
+                                <Controller
+                                    control={control}
+                                    name="usuariosEspecificos"
+                                    render={({ field }) => (
+                                        <SpecificAssignmentConfig
+                                            assignments={field.value || []}
+                                            onChange={field.onChange}
+                                        />
+                                    )}
+                                />
+                            </div>
+                        )}
 
                         <label className="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" {...register('necesitaAprobacionJefe')} className="rounded text-brand-teal focus:ring-brand-teal" />
