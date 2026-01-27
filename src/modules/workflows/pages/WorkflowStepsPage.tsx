@@ -10,7 +10,9 @@ import { StepModal } from '../components/StepModal';
 import { TransitionModal } from '../components/TransitionModal';
 import { ImportStepsModal } from '../components/ImportStepsModal';
 import { workflowService } from '../services/workflow.service';
+import { CompanyTemplateManager } from '../components/CompanyTemplateManager';
 import type { Workflow } from '../interfaces/Workflow';
+
 
 export const WorkflowStepsPage = () => {
     const { id } = useParams<{ id: string }>();
@@ -253,6 +255,17 @@ export const WorkflowStepsPage = () => {
                     flujoId={workflowId}
                 />
             )}
+
+            <div className="mt-8 border-t border-gray-200 pt-8">
+                <div className="mb-4">
+                    <h2 className="text-xl font-bold text-gray-900">Gestión de Plantillas por Empresa</h2>
+                    <p className="text-sm text-gray-500">
+                        Suba versiones específicas del PDF para cada empresa. Si no existe una versión específica, se usará la configuración por defecto.
+                    </p>
+                </div>
+                <CompanyTemplateManager flujoId={workflowId} />
+            </div>
         </div>
     );
 };
+
