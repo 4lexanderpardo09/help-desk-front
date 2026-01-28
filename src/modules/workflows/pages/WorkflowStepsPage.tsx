@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '../../../shared/components/Button';
 import { DataTable } from '../../../shared/components/DataTable';
-import { IconPlus, IconArrowLeft, IconPencil, IconTrash, IconArrowsSplit, IconFileSpreadsheet } from '@tabler/icons-react';
+
 import { stepService } from '../services/step.service';
 import type { Step } from '../interfaces/Step';
 import { toast } from 'sonner';
 import { StepModal } from '../components/StepModal';
 import { TransitionModal } from '../components/TransitionModal';
-import { ImportStepsModal } from '../components/ImportStepsModal';
 import { workflowService } from '../services/workflow.service';
 import { CompanyTemplateManager } from '../components/CompanyTemplateManager';
 import type { Workflow } from '../interfaces/Workflow';
@@ -23,7 +22,6 @@ export const WorkflowStepsPage = () => {
 
     // Modal states
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const [selectedStep, setSelectedStep] = useState<Step | null>(null);
 
     // Transition Modal state
@@ -64,10 +62,6 @@ export const WorkflowStepsPage = () => {
         setIsModalOpen(true);
     };
 
-    const handleImport = () => {
-        setIsImportModalOpen(true);
-    };
-
     const handleEdit = (step: Step) => {
         setSelectedStep(step);
         setIsModalOpen(true);
@@ -96,10 +90,6 @@ export const WorkflowStepsPage = () => {
         loadData();
     };
 
-    const handleImportSuccess = () => {
-        setIsImportModalOpen(false);
-        loadData();
-    };
 
     return (
         <div className="space-y-6">
@@ -114,15 +104,11 @@ export const WorkflowStepsPage = () => {
                 </div>
                 <div className="flex gap-2">
                     <Button variant="outline" onClick={() => navigate('/workflows')}>
-                        <IconArrowLeft size={20} className="mr-2" />
+                        <span className="material-symbols-outlined mr-2">arrow_back</span>
                         Volver
                     </Button>
-                    <Button variant="outline" onClick={handleImport}>
-                        <IconFileSpreadsheet size={20} className="mr-2" />
-                        Carga Masiva (Excel)
-                    </Button>
                     <Button variant="brand" onClick={handleCreate}>
-                        <IconPlus size={20} className="mr-2" />
+                        <span className="material-symbols-outlined mr-2">add</span>
                         Nuevo Paso
                     </Button>
                 </div>
@@ -192,24 +178,24 @@ export const WorkflowStepsPage = () => {
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => handleTransitions(step)}
-                                    className="p-1 hover:bg-purple-100 rounded text-purple-600"
+                                    className="text-gray-400 hover:text-purple-600"
                                     title="Gestionar Transiciones"
                                 >
-                                    <IconArrowsSplit size={18} />
+                                    <span className="material-symbols-outlined text-[20px]">call_split</span>
                                 </button>
                                 <button
                                     onClick={() => handleEdit(step)}
-                                    className="p-1 hover:bg-gray-100 rounded text-blue-600"
+                                    className="text-gray-400 hover:text-brand-blue"
                                     title="Editar"
                                 >
-                                    <IconPencil size={18} />
+                                    <span className="material-symbols-outlined text-[20px]">edit</span>
                                 </button>
                                 <button
                                     onClick={() => handleDelete(step.id)}
-                                    className="p-1 hover:bg-gray-100 rounded text-red-600"
+                                    className="text-gray-400 hover:text-red-600"
                                     title="Eliminar"
                                 >
-                                    <IconTrash size={18} />
+                                    <span className="material-symbols-outlined text-[20px]">delete</span>
                                 </button>
                             </div>
                         )
@@ -237,14 +223,6 @@ export const WorkflowStepsPage = () => {
                 />
             )}
 
-            {isImportModalOpen && (
-                <ImportStepsModal
-                    isOpen={isImportModalOpen}
-                    onClose={() => setIsImportModalOpen(false)}
-                    onSuccess={handleImportSuccess}
-                    flujoId={workflowId}
-                />
-            )}
 
             {isTransitionModalOpen && selectedStepForTransition && (
                 <TransitionModal
@@ -255,6 +233,7 @@ export const WorkflowStepsPage = () => {
                     flujoId={workflowId}
                 />
             )}
+
 
             <div className="mt-8 border-t border-gray-200 pt-8">
                 <div className="mb-4">

@@ -4,7 +4,7 @@ import { Button } from '../../../shared/components/Button';
 import { Input } from '../../../shared/components/Input';
 import type { StepTemplateField } from '../interfaces/TemplateField';
 import { FIELD_TYPES } from '../interfaces/TemplateField';
-import { IconPlus, IconTrash, IconEdit } from '@tabler/icons-react';
+
 
 interface TemplateFieldsConfigProps {
     campos: StepTemplateField[];
@@ -22,8 +22,9 @@ export const TemplateFieldsConfig = ({ campos, onChange }: TemplateFieldsConfigP
     const handleAdd = (data: StepTemplateField) => {
         const newCampo: StepTemplateField = {
             ...data,
-            coordX: Number(data.coordX),
-            coordY: Number(data.coordY),
+            coordX: Number(data.coordX) || 0,
+            coordY: Number(data.coordY) || 0,
+
             pagina: Number(data.pagina),
             fontSize: Number(data.fontSize) || 10,
             campoTrigger: data.campoTrigger ? 1 : 0,
@@ -75,7 +76,7 @@ export const TemplateFieldsConfig = ({ campos, onChange }: TemplateFieldsConfigP
                 <h4 className="font-semibold text-gray-700">Campos de Plantilla</h4>
                 {!isAdding && (
                     <Button size="sm" variant="outline" onClick={() => setIsAdding(true)}>
-                        <IconPlus size={16} className="mr-1" />
+                        <span className="material-symbols-outlined mr-1 text-[18px]">add</span>
                         Agregar Campo
                     </Button>
                 )}
@@ -99,14 +100,14 @@ export const TemplateFieldsConfig = ({ campos, onChange }: TemplateFieldsConfigP
                                     onClick={() => handleEdit(index)}
                                     className="text-gray-400 hover:text-brand-blue"
                                 >
-                                    <IconEdit size={18} />
+                                    <span className="material-symbols-outlined text-[20px]">edit</span>
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => handleDelete(index)}
                                     className="text-gray-400 hover:text-red-600"
                                 >
-                                    <IconTrash size={18} />
+                                    <span className="material-symbols-outlined text-[20px]">delete</span>
                                 </button>
                             </div>
                         </div>
@@ -116,7 +117,7 @@ export const TemplateFieldsConfig = ({ campos, onChange }: TemplateFieldsConfigP
 
             {/* Formulario para agregar/editar */}
             {isAdding && (
-                <form onSubmit={handleSubmit(handleAdd)} className="bg-white p-4 rounded border border-gray-300 space-y-3">
+                <div className="bg-white p-4 rounded border border-gray-300 space-y-3">
                     <div className="grid grid-cols-2 gap-3">
                         <Input
                             label="Nombre"
@@ -151,35 +152,22 @@ export const TemplateFieldsConfig = ({ campos, onChange }: TemplateFieldsConfigP
                         />
                     </div>
 
-                    <div className="grid grid-cols-3 gap-3">
-                        <Input
-                            label="Coord X"
-                            type="number"
-                            step="0.01"
-                            {...register('coordX', { required: true })}
-                            placeholder="0.00"
-                        />
-                        <Input
-                            label="Coord Y"
-                            type="number"
-                            step="0.01"
-                            {...register('coordY', { required: true })}
-                            placeholder="0.00"
-                        />
-                        <Input
-                            label="Font Size"
-                            type="number"
-                            {...register('fontSize')}
-                            placeholder="10"
-                        />
-                    </div>
-
                     <div className="space-y-1">
                         <label className="text-sm font-semibold text-gray-700">Etiqueta PDF (Smart Tag)</label>
                         <input
                             {...register('etiqueta')}
                             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                            placeholder="Ej. CAMPO_FECHA_1 (Opcional, anula coordenadas)"
+                            placeholder="Ej. CAMPO_FECHA_1"
+                        />
+                        <p className="text-xs text-gray-500">Etiqueta en el PDF para ubicar el campo automáticamente</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <Input
+                            label="Font Size"
+                            type="number"
+                            {...register('fontSize')}
+                            placeholder="10"
                         />
                     </div>
 
@@ -213,14 +201,14 @@ export const TemplateFieldsConfig = ({ campos, onChange }: TemplateFieldsConfigP
                     </div>
 
                     <div className="flex gap-2 pt-2">
-                        <Button type="submit" size="sm" variant="brand">
+                        <Button type="button" size="sm" variant="brand" onClick={handleSubmit(handleAdd)}>
                             {editingIndex !== null ? 'Actualizar' : 'Agregar'}
                         </Button>
                         <Button type="button" size="sm" variant="ghost" onClick={handleCancel}>
                             Cancelar
                         </Button>
                     </div>
-                </form>
+                </div>
             )}
         </div>
     );

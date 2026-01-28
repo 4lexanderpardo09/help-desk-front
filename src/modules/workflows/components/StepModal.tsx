@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
@@ -15,7 +15,6 @@ import { toast } from 'sonner';
 import { SignatureConfig } from './SignatureConfig';
 import { TemplateFieldsConfig } from './TemplateFieldsConfig';
 import { SpecificAssignmentConfig } from './SpecificAssignmentConfig';
-import { IconUpload } from '@tabler/icons-react';
 
 interface StepModalProps {
     isOpen: boolean;
@@ -32,65 +31,79 @@ export const StepModal = ({ isOpen, onClose, onSuccess, step, flujoId }: StepMod
     const [templateFields, setTemplateFields] = useState<TemplateField[]>([]);
     const [pdfFile, setPdfFile] = useState<File | null>(null);
 
-    // Derived URL for preview: local file or existing remote file
-    const pdfUrl = pdfFile
-        ? URL.createObjectURL(pdfFile)
-        : step?.nombreAdjunto
-            // Assumption: document/paso/ is the path. Adjust based on real API static serving setup.
-            ? `/document/paso/${step.nombreAdjunto}`
-            : null;
+
+
+    // Track the last loaded step ID to prevent unwanted resets during re-renders
+    const lastStepIdRef = useRef<number | null>(null);
 
     useEffect(() => {
         if (isOpen) {
-            loadCatalogs();
-            setPdfFile(null); // Reset file on open
-            if (step) {
-                // Fetch fresh data for step to get standard DTO structure
-                stepService.getStep(step.id).then(fullStep => {
-                    reset({
-                        flujoId: fullStep.flujoId,
-                        orden: fullStep.orden,
-                        nombre: fullStep.nombre,
-                        descripcion: fullStep.descripcion,
-                        cargoAsignadoId: fullStep.cargoAsignadoId,
-                        tiempoHabil: fullStep.tiempoHabil,
-                        campoReferenciaJefeId: fullStep.campoReferenciaJefeId,
-                        esAprobacion: !!fullStep.esAprobacion,
-                        esTareaNacional: !!fullStep.esTareaNacional,
-                        requiereSeleccionManual: fullStep.requiereSeleccionManual,
-                        nombreAdjunto: fullStep.nombreAdjunto || '',
-                        permiteCerrar: fullStep.permiteCerrar,
-                        necesitaAprobacionJefe: !!fullStep.necesitaAprobacionJefe,
-                        esParalelo: !!fullStep.esParalelo,
-                        requiereFirma: !!fullStep.requiereFirma,
-                        requiereCamposPlantilla: fullStep.requiereCamposPlantilla,
-                        asignarCreador: !!fullStep.asignarCreador,
-                        cerrarTicketObligatorio: !!fullStep.cerrarTicketObligatorio,
-                        permiteDespachoMasivo: !!fullStep.permiteDespachoMasivo,
-                        firmas: fullStep.firmas || [],
-                        campos: fullStep.campos || [],
-                        usuariosEspecificos: fullStep.usuarios?.map(u => ({
-                            usuarioId: u.usuarioId || undefined,
-                            cargoId: u.cargoId || undefined
-                        })) || []
+            const currentId = step ? step.id : -1; // -1 represents 'new step' mode
+
+            // Only load/reset data if we haven't loaded this step yet
+            if (currentId !== lastStepIdRef.current) {
+                console.log('[StepModal] Initializing form for step ID:', currentId);
+                lastStepIdRef.current = currentId;
+
+                loadCatalogs();
+                setPdfFile(null);
+
+                if (step) {
+                    // Fetch fresh data for step to get standard DTO structure
+                    stepService.getStep(step.id).then(fullStep => {
+                        console.log('[StepModal] Loaded full step data:', fullStep);
+                        reset({
+                            flujoId: fullStep.flujoId,
+                            orden: fullStep.orden,
+                            nombre: fullStep.nombre,
+                            descripcion: fullStep.descripcion,
+                            cargoAsignadoId: fullStep.cargoAsignadoId,
+                            tiempoHabil: fullStep.tiempoHabil,
+                            campoReferenciaJefeId: fullStep.campoReferenciaJefeId,
+                            esAprobacion: !!fullStep.esAprobacion,
+                            esTareaNacional: !!fullStep.esTareaNacional,
+                            requiereSeleccionManual: fullStep.requiereSeleccionManual,
+                            nombreAdjunto: fullStep.nombreAdjunto || '',
+                            permiteCerrar: fullStep.permiteCerrar,
+                            necesitaAprobacionJefe: !!fullStep.necesitaAprobacionJefe,
+                            esParalelo: !!fullStep.esParalelo,
+                            requiereFirma: !!fullStep.requiereFirma,
+                            requiereCamposPlantilla: fullStep.requiereCamposPlantilla,
+                            asignarCreador: !!fullStep.asignarCreador,
+                            cerrarTicketObligatorio: !!fullStep.cerrarTicketObligatorio,
+                            permiteDespachoMasivo: !!fullStep.permiteDespachoMasivo,
+                            firmas: fullStep.firmas || [],
+                            campos: fullStep.campos || [],
+                            usuariosEspecificos: fullStep.usuarios?.map(u => ({
+                                usuarioId: u.usuarioId || undefined,
+                                cargoId: u.cargoId || undefined
+                            })) || []
+                        });
+                    }).catch(err => {
+                        console.error('[StepModal] Error loading step details:', err);
+                        // Fallback to basic data if fetch fails
+                        reset({
+                            flujoId: step.flujoId,
+                            orden: step.orden,
+                            nombre: step.nombre,
+                            esAprobacion: !!step.esAprobacion
+                        });
                     });
-                }).catch(err => {
-                    console.error(err);
+                } else {
+                    console.log('[StepModal] Resetting for new step');
                     reset({
-                        flujoId: step.flujoId,
-                        orden: step.orden,
-                        nombre: step.nombre,
-                        esAprobacion: !!step.esAprobacion
+                        flujoId,
+                        orden: 0,
+                        nombre: '',
+                        esAprobacion: false,
+                        campos: [],
+                        firmas: []
                     });
-                });
-            } else {
-                reset({
-                    flujoId,
-                    orden: 0,
-                    nombre: '',
-                    esAprobacion: false
-                });
+                }
             }
+        } else {
+            // Reset the ref when modal closes so it reloads next time
+            lastStepIdRef.current = null;
         }
     }, [isOpen, step, flujoId, reset]);
 
@@ -107,6 +120,15 @@ export const StepModal = ({ isOpen, onClose, onSuccess, step, flujoId }: StepMod
 
     const onSubmit = async (data: CreateStepDto) => {
         try {
+            // DEBUG: Log form data to verify all fields are present
+            console.log('[StepModal] Form data before processing:', {
+                nombre: data.nombre,
+                orden: data.orden,
+                camposCount: data.campos?.length || 0,
+                firmasCount: data.firmas?.length || 0,
+                fullData: data
+            });
+
             data.orden = Number(data.orden);
             data.flujoId = Number(flujoId);
             if (data.cargoAsignadoId) data.cargoAsignadoId = Number(data.cargoAsignadoId);
@@ -115,6 +137,8 @@ export const StepModal = ({ isOpen, onClose, onSuccess, step, flujoId }: StepMod
             data.requiereSeleccionManual = data.requiereSeleccionManual ? 1 : 0;
             data.permiteCerrar = data.permiteCerrar ? 1 : 0;
             data.requiereCamposPlantilla = data.requiereCamposPlantilla ? 1 : 0;
+
+            console.log('[StepModal] Sending to API:', data);
 
             let stepId = step?.id;
 
@@ -133,7 +157,7 @@ export const StepModal = ({ isOpen, onClose, onSuccess, step, flujoId }: StepMod
             toast.success(isEdit ? 'Paso actualizado' : 'Paso creado');
             onSuccess();
         } catch (error) {
-            console.error(error);
+            console.error('[StepModal] Error saving step:', error);
             toast.error('Error al guardar el paso');
         }
     };
@@ -311,7 +335,7 @@ export const StepModal = ({ isOpen, onClose, onSuccess, step, flujoId }: StepMod
                                 </label>
                                 <div className="flex gap-2 items-center">
                                     <label className="cursor-pointer bg-white px-3 py-2 border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2 shadow-sm">
-                                        <IconUpload size={18} />
+                                        <span className="material-symbols-outlined text-[20px]">upload</span>
                                         <span>
                                             {pdfFile ? pdfFile.name : step?.nombreAdjunto ? 'Cambiar PDF' : 'Subir PDF'}
                                         </span>
@@ -334,7 +358,6 @@ export const StepModal = ({ isOpen, onClose, onSuccess, step, flujoId }: StepMod
                                 firmas={(watch('firmas') || []) as unknown as StepSignature[]}
                                 onChange={(newFirmas) => setValue('firmas', newFirmas)}
                                 positions={positions}
-                                pdfUrl={pdfUrl}
                             />
                         </div>
                     )}

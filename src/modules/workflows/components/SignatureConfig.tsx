@@ -2,34 +2,30 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '../../../shared/components/Button';
 import { Input } from '../../../shared/components/Input';
-import { IconTrash, IconPlus, IconCrosshair, IconEdit } from '@tabler/icons-react';
+
 import type { StepSignature } from '../interfaces/Step';
 import type { Position } from '../../../shared/interfaces/Catalog';
-import { PdfCoordinateSelector } from './PdfCoordinateSelector';
 import { toast } from 'sonner';
 
 interface SignatureConfigProps {
     firmas: StepSignature[];
     onChange: (firmas: StepSignature[]) => void;
     positions: Position[];
-    pdfUrl?: string | null;
 }
 
-export const SignatureConfig = ({ firmas, onChange, positions, pdfUrl }: SignatureConfigProps) => {
+export const SignatureConfig = ({ firmas, onChange, positions }: SignatureConfigProps) => {
     // Local state for the form being added
     const [isAdding, setIsAdding] = useState(false);
-    const [selectorOpen, setSelectorOpen] = useState(false);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
-    // targetIndex: number (direct update list), 'form' (update form inputs)
-    const [targetIndex, setTargetIndex] = useState<number | 'form' | null>(null);
 
     const { register, handleSubmit, reset, setValue } = useForm<StepSignature>();
 
     const onSubmit = (data: StepSignature) => {
         const newFirma = {
             ...data,
-            coordX: Number(data.coordX),
-            coordY: Number(data.coordY),
+            coordX: Number(data.coordX) || 0,
+            coordY: Number(data.coordY) || 0,
+
             pagina: Number(data.pagina),
             cargoId: data.cargoId ? Number(data.cargoId) : undefined,
             usuarioId: undefined
@@ -78,37 +74,6 @@ export const SignatureConfig = ({ firmas, onChange, positions, pdfUrl }: Signatu
         onChange(newFirmas);
     };
 
-    const openSelector = (target: number | 'form') => {
-        if (!pdfUrl) {
-            toast.error('Debe cargar un PDF base primero para usar el selector visual.');
-            return;
-        }
-        setTargetIndex(target);
-        setSelectorOpen(true);
-    };
-
-    const handleCoordinatesSelected = (page: number, x: number, y: number) => {
-        setSelectorOpen(false);
-        if (targetIndex === 'form') {
-            setValue('pagina', page);
-            setValue('coordX', x);
-            setValue('coordY', y);
-            toast.success('Coordenadas capturadas en formulario');
-        } else if (typeof targetIndex === 'number') {
-            // Updating existing signature directly from list button
-            const newFirmas = [...firmas];
-            newFirmas[targetIndex] = {
-                ...newFirmas[targetIndex],
-                pagina: page,
-                coordX: x,
-                coordY: y
-            };
-            onChange(newFirmas);
-            toast.success('Coordenadas actualizadas');
-        }
-    };
-
-
 
     return (
         <div className="border rounded-lg p-4 bg-gray-50 space-y-4">
@@ -116,7 +81,7 @@ export const SignatureConfig = ({ firmas, onChange, positions, pdfUrl }: Signatu
                 <h4 className="font-semibold text-gray-700">Zonas de Firma</h4>
                 {!isAdding && (
                     <Button type="button" size="sm" variant="outline" onClick={() => { setEditingIndex(null); reset(); setIsAdding(true); }}>
-                        <IconPlus size={16} className="mr-1" />
+                        <span className="material-symbols-outlined mr-1 text-[18px]">add</span>
                         Agregar Zona
                     </Button>
                 )}
@@ -156,26 +121,18 @@ export const SignatureConfig = ({ firmas, onChange, positions, pdfUrl }: Signatu
                             <button
                                 type="button"
                                 onClick={() => handleEdit(idx)}
-                                className="text-gray-500 hover:bg-gray-100 p-1 rounded"
+                                className="text-gray-400 hover:text-brand-blue"
                                 title="Editar configuración"
                             >
-                                <IconEdit size={16} />
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => openSelector(idx)}
-                                className="text-blue-500 hover:bg-blue-50 p-1 rounded"
-                                title="Actualizar posición visualmente"
-                            >
-                                <IconCrosshair size={16} />
+                                <span className="material-symbols-outlined text-[20px]">edit</span>
                             </button>
                             <button
                                 type="button"
                                 onClick={() => handleRemove(idx)}
-                                className="text-red-500 hover:bg-red-50 p-1 rounded"
+                                className="text-gray-400 hover:text-red-600"
                                 title="Eliminar"
                             >
-                                <IconTrash size={16} />
+                                <span className="material-symbols-outlined text-[20px]">delete</span>
                             </button>
                         </div>
                     </div>
@@ -186,42 +143,23 @@ export const SignatureConfig = ({ firmas, onChange, positions, pdfUrl }: Signatu
                 <div className="bg-white p-3 rounded border border-blue-200 space-y-3 shadow-md">
                     <h5 className="text-xs font-bold uppercase text-blue-600 flex justify-between items-center">
                         {editingIndex !== null ? 'Editar Zona' : 'Nueva Zona'}
-                        <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            onClick={() => openSelector('form')}
-                        >
-                            <IconCrosshair size={14} className="mr-1" />
-                            Seleccionar Visualmente
-                        </Button>
                     </h5>
-                    <div className="grid grid-cols-2 gap-3">
-                        <Input
-                            label="Etiqueta PDF (Smart Tag)"
-                            {...register('etiqueta')}
-                            placeholder="Ej. FIRMA_GERENTE"
-                        />
-                        <div className="grid grid-cols-3 gap-3">
+                    <div className="space-y-3">
+                        <div>
                             <Input
-                                label="Página"
-                                type="number"
-                                {...register('pagina', { required: true, min: 1 })}
-                                placeholder="1"
+                                label="Etiqueta PDF (Smart Tag)"
+                                {...register('etiqueta')}
+                                placeholder="Ej. FIRMA_GERENTE"
                             />
-                            <Input
-                                label="Coord X"
-                                type="number"
-                                step="0.1"
-                                {...register('coordX', { required: true })}
-                            />
-                            <Input
-                                label="Coord Y"
-                                type="number"
-                                step="0.1"
-                                {...register('coordY', { required: true })}
-                            />
+                            <p className="text-xs text-gray-500 mt-1">Etiqueta en el PDF para ubicar la firma automáticamente</p>
                         </div>
+
+                        <Input
+                            label="Página"
+                            type="number"
+                            {...register('pagina', { required: true, min: 1 })}
+                            placeholder="1"
+                        />
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Cargo (Opcional)</label>
@@ -242,14 +180,6 @@ export const SignatureConfig = ({ firmas, onChange, positions, pdfUrl }: Signatu
                         </Button>
                     </div>
                 </div>
-            )}
-
-            {selectorOpen && pdfUrl && (
-                <PdfCoordinateSelector
-                    file={pdfUrl}
-                    onClose={() => setSelectorOpen(false)}
-                    onSelect={handleCoordinatesSelected}
-                />
             )}
         </div>
     );

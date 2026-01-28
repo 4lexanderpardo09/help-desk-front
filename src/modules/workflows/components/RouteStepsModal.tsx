@@ -20,8 +20,6 @@ export const RouteStepsModal = ({ isOpen, onClose, route, flujoId }: RouteStepsM
     const [availableSteps, setAvailableSteps] = useState<Step[]>([]);
     const [selectedStepId, setSelectedStepId] = useState<string>('');
     const [order, setOrder] = useState<number>(1);
-    const [isLoading, setIsLoading] = useState(false);
-
     useEffect(() => {
         if (isOpen) {
             loadData();
@@ -29,7 +27,6 @@ export const RouteStepsModal = ({ isOpen, onClose, route, flujoId }: RouteStepsM
     }, [isOpen]);
 
     const loadData = async () => {
-        setIsLoading(true);
         try {
             const [rSteps, allSteps] = await Promise.all([
                 routeService.getRouteSteps(route.id),
@@ -44,8 +41,6 @@ export const RouteStepsModal = ({ isOpen, onClose, route, flujoId }: RouteStepsM
         } catch (error) {
             console.error(error);
             toast.error('Error al cargar datos');
-        } finally {
-            setIsLoading(false);
         }
     };
 
