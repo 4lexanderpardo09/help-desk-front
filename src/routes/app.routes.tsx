@@ -26,6 +26,7 @@ const OrganigramaPage = lazy(() => import('../modules/organigrama/pages/Organigr
 const ErrorTypesPage = lazy(() => import('../modules/error-types/pages/ErrorTypesPage'));
 const WorkflowListPage = lazy(() => import('../modules/workflows/pages/WorkflowListPage'));
 const WorkflowStepsPage = lazy(() => import('../modules/workflows/pages/WorkflowStepsPage').then(module => ({ default: module.WorkflowStepsPage })));
+const MappingRulesPage = lazy(() => import('../modules/mapping-rules/pages/MappingRulesPage'));
 
 
 export const appRoutes: RouteObject[] = [
@@ -203,6 +204,15 @@ export const appRoutes: RouteObject[] = [
                             </Suspense>
                         )
                     },
+                    {
+                        path: '/mapping-rules',
+                        element: (
+                            <Suspense fallback={<PageLoader />}>
+                                <MappingRulesPage />
+                            </Suspense>
+                        )
+                    },
+
                 ]
             },
             {

@@ -49,7 +49,9 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
         { to: "/profiles", icon: "badge", label: "Perfiles", subject: 'Profile' as any },
         { to: "/organigrama", icon: "account_tree", label: "Organigrama", subject: 'Organigrama' as any },
         { to: "/error-types", icon: "quick_phrases", label: "Tipos de Error", subject: 'FastAnswer' as any },
+        { to: "/mapping-rules", icon: "rule", label: "Reglas de Mapeo", subject: 'Rule' as any },
         { to: "/reports", icon: "bar_chart", label: "Reports", subject: 'Report' },
+
         { to: "/settings", icon: "settings", label: "Settings" }
     ];
 
