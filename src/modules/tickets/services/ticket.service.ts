@@ -33,6 +33,7 @@ interface RawWorkflowStep {
     id: number;
     nombre: string;
     descripcion: string;
+    esParalelo?: boolean;
     // ...
 }
 
@@ -135,6 +136,11 @@ export const ticketService = {
     async getTicket(id: number): Promise<TicketDetail> {
         const response = await api.get<RawTicket>(`/tickets/${id}`);
         const t = response.data;
+
+        console.log('🔍 RAW TICKET DATA:', t);
+        console.log('🔍 Paso Actual:', t.pasoActual);
+        console.log('🔍 Es Paralelo Raw:', t.pasoActual?.esParalelo);
+
         const customerName = t.usuario ? `${t.usuario.nombre} ${t.usuario.apellido}` : (t.creadorNombre || 'Unknown');
         const categoryName = t.categoria ? t.categoria.nombre : 'General';
         const subcategoryName = t.subcategoria ? t.subcategoria.nombre : '';
@@ -170,7 +176,8 @@ export const ticketService = {
             assignedTo: assignedToName,
             assignedToId: (t.usuarioAsignadoIds && t.usuarioAsignadoIds.length > 0) ? t.usuarioAsignadoIds[0] : 0,
             assignedToIds: t.usuarioAsignadoIds || [],
-            priorityId: t.prioridad?.id
+            priorityId: t.prioridad?.id,
+            isParallelStep: t.pasoActual?.esParalelo || false
         };
     },
     async getTicketTimeline(id: number): Promise<TicketTimelineItem[]> {

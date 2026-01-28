@@ -257,6 +257,7 @@ export default function TicketDetailPage() {
                     creatorId={ticket.creatorId}
                     creatorName={ticket.creatorName}
                     onSuccess={fetchData}
+                    isParallelStep={ticket.isParallelStep}
                 />
             </div>
 

@@ -64,6 +64,7 @@ export interface TicketDetail extends Ticket {
     assignedToId?: number;
     assignedToIds?: number[];
     priorityId?: number; // Add ID for editing
+    isParallelStep?: boolean; // Indicates if current step is parallel
 }
 
 export interface TicketTimelineItem {
@@ -174,5 +175,10 @@ export interface TemplateField {
     required: boolean;
     options?: string[]; // For select types
     // Add layout coords if needed
+}
+
+export interface TemplateFieldValue {
+    campoId: number;
+    valor: string;
 }
 
