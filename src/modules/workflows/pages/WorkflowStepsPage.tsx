@@ -96,7 +96,7 @@ export const WorkflowStepsPage = () => {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">
-                        {workflow ? `Pasos: ${workflow.nombre}` : 'Cargando...'}
+                        {workflow ? `Pasos: ${workflow.subcategoria?.nombre || workflow.nombre}` : 'Cargando...'}
                     </h1>
                     <p className="mt-1 text-sm text-gray-500">
                         Gestione el orden y configuración de los pasos del flujo
@@ -141,23 +141,36 @@ export const WorkflowStepsPage = () => {
                                         ⏱️ {step.tiempoHabil} días
                                     </span>
                                 ) : null}
-                                {step.esAprobacion && (
+                                {!!step.esAprobacion && (
                                     <span className="px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
                                         Aprobación
                                     </span>
                                 )}
-                                {/* ... existing badges ... */}
-                                {step.esTareaNacional && (
+                                {!!step.esTareaNacional && (
                                     <span className="px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
                                         Nacional
                                     </span>
                                 )}
-                                {step.permiteCerrar === 1 && (
+                                {!!step.permiteCerrar && (
                                     <span className="px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 border border-green-200">
                                         Cierra Ticket
                                     </span>
                                 )}
-                                {/* ... more badges ... */}
+                                {!!step.necesitaAprobacionJefe && (
+                                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">
+                                        Aprueba Jefe
+                                    </span>
+                                )}
+                                {!!step.requiereFirma && (
+                                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200">
+                                        Firma
+                                    </span>
+                                )}
+                                {!!step.esParalelo && (
+                                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-teal-100 text-teal-800 border border-teal-200">
+                                        Paralelo
+                                    </span>
+                                )}
                             </div>
                         )
                     },

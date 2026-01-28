@@ -21,7 +21,9 @@ export const workflowService = {
     },
 
     async getWorkflow(id: number): Promise<Workflow> {
-        const response = await api.get<Workflow>(`/workflows/${id}`);
+        const response = await api.get<Workflow>(`/workflows/${id}`, {
+            params: { included: 'subcategoria' }
+        });
         return response.data;
     },
 

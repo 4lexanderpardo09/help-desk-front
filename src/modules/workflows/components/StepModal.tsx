@@ -270,7 +270,7 @@ export const StepModal = ({ isOpen, onClose, onSuccess, step, flujoId }: StepMod
                         </label>
 
                         {/* Show Specific Assignment Config when manual selection is enabled */}
-                        {watch('requiereSeleccionManual') && (
+                        {!!watch('requiereSeleccionManual') && (
                             <div className="col-span-full mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
                                 <h4 className="text-sm font-semibold text-gray-900 mb-3">Usuarios y Cargos Específicos</h4>
                                 <Controller
@@ -327,7 +327,7 @@ export const StepModal = ({ isOpen, onClose, onSuccess, step, flujoId }: StepMod
                         </label>
                     </div>
 
-                    {watch('requiereFirma') && (
+                    {!!watch('requiereFirma') && (
                         <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
                             <div className="mb-4">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -362,7 +362,7 @@ export const StepModal = ({ isOpen, onClose, onSuccess, step, flujoId }: StepMod
                         </div>
                     )}
 
-                    {watch('requiereCamposPlantilla') && (
+                    {!!watch('requiereCamposPlantilla') && (
                         <div className="mt-4">
                             <TemplateFieldsConfig
                                 campos={(watch('campos') || []) as unknown as StepTemplateField[]}
