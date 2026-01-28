@@ -1,4 +1,5 @@
 import type { TicketTimelineItem } from '../interfaces/Ticket';
+import DOMPurify from 'dompurify';
 
 interface TicketTimelineProps {
     items: TicketTimelineItem[];
@@ -65,9 +66,10 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
                                 )}
                             </div>
                         ) : (
-                            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
-                                {item.content}
-                            </p>
+                            <div
+                                className="text-sm text-gray-600 leading-relaxed [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-2 [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4"
+                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.content) }}
+                            />
                         )}
 
                         {item.metadata?.attachments && item.metadata.attachments.length > 0 && (
