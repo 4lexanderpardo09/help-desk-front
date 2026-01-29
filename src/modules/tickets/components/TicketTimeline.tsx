@@ -54,16 +54,30 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
                                 </span>
                             </div>
                         ) : item.type === 'assignment' ? (
-                            <div className="space-y-1">
+                            <div className="space-y-2">
                                 <p className="text-sm text-gray-900 font-medium">
                                     {item.content}
                                 </p>
-                                {item.asignadoA && (
-                                    <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-2 rounded-lg border border-gray-100 w-fit">
-                                        <span className="material-symbols-outlined text-[18px]">person</span>
-                                        <span>Asignado a: <strong>{item.asignadoA.nombre}</strong></span>
-                                    </div>
-                                )}
+                                <div className="flex flex-wrap gap-2 items-center">
+                                    {item.asignadoA && (
+                                        <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-2 rounded-lg border border-gray-100 w-fit">
+                                            <span className="material-symbols-outlined text-[18px]">person</span>
+                                            <span>Asignado a: <strong>{item.asignadoA.nombre}</strong></span>
+                                        </div>
+                                    )}
+                                    {/* SLA Status Badge */}
+                                    {item.metadata?.estadoTiempoPaso && (
+                                        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${['Atrasado', 'Vencido'].includes(item.metadata.estadoTiempoPaso)
+                                                ? 'bg-red-50 text-red-700 border-red-100'
+                                                : 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                                            }`}>
+                                            <span className="material-symbols-outlined text-[14px]">
+                                                {['Atrasado', 'Vencido'].includes(item.metadata.estadoTiempoPaso) ? 'warning' : 'check_circle'}
+                                            </span>
+                                            {item.metadata.estadoTiempoPaso}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         ) : (
                             <div
