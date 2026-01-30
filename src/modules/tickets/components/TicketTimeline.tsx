@@ -74,9 +74,24 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
 
                                     {/* Show assignment context if it was an assignment that failed */}
                                     {item.type === 'assignment' && item.asignadoA && (
-                                        <div className="flex items-center gap-2 text-sm text-red-600 bg-white/50 border border-red-100 p-2 rounded-lg w-fit">
-                                            <span className="material-symbols-outlined text-[18px]">person_off</span>
-                                            <span>Responsable: <strong>{item.asignadoA.nombre}</strong></span>
+                                        <div className="flex flex-wrap gap-2 items-center mt-2">
+                                            <div className="flex items-center gap-2 text-sm text-red-600 bg-white/50 border border-red-100 p-2 rounded-lg w-fit">
+                                                <span className="material-symbols-outlined text-[18px]">person_off</span>
+                                                <span>Responsable: <strong>{item.asignadoA.nombre}</strong></span>
+                                            </div>
+
+                                            {/* SLA Status Badge for Errors */}
+                                            {item.metadata?.estadoTiempoPaso && (
+                                                <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${['Atrasado', 'Vencido'].includes(item.metadata.estadoTiempoPaso)
+                                                    ? 'bg-red-50 text-red-700 border-red-100'
+                                                    : 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                                                    }`}>
+                                                    <span className="material-symbols-outlined text-[14px]">
+                                                        {['Atrasado', 'Vencido'].includes(item.metadata.estadoTiempoPaso) ? 'warning' : 'check_circle'}
+                                                    </span>
+                                                    {item.metadata.estadoTiempoPaso}
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
