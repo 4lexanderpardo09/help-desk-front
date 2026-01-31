@@ -7,6 +7,7 @@ import { FilterBar, type FilterConfig } from '../../../shared/components/FilterB
 import { DataTable } from '../../../shared/components/DataTable';
 import { usePermissions } from '../../../shared/hooks/usePermissions';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
+import TagManagementModal from '../components/TagManagementModal';
 
 export default function TicketsPage() {
     const navigate = useNavigate();
@@ -14,6 +15,10 @@ export default function TicketsPage() {
     const { setTitle } = useLayout();
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [loading, setLoading] = useState(true);
+
+    // Tag Modal State
+    const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+    const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
 
     // Pagination
     const [page, setPage] = useState(1);
@@ -254,6 +259,42 @@ export default function TicketsPage() {
                         )
                     },
                     {
+                        key: 'tags',
+                        header: 'Etiquetas',
+                        render: (ticket: Ticket) => (
+                            <div className="flex flex-wrap gap-1 items-center">
+                                {ticket.tags && ticket.tags.length > 0 ? (
+                                    ticket.tags.map((tag, index) => (
+                                        <span
+                                            key={index}
+                                            className="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ring-gray-500/10"
+                                            style={{
+                                                backgroundColor: tag.color + '20',
+                                                color: tag.color,
+                                                borderColor: tag.color + '40'
+                                            }}
+                                        >
+                                            {tag.name}
+                                        </span>
+                                    ))
+                                ) : (
+                                    <span className="text-gray-400 text-xs italic">Sin etiquetas</span>
+                                )}
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedTicketId(ticket.id);
+                                        setIsTagModalOpen(true);
+                                    }}
+                                    className="ml-1 rounded-full p-0.5 text-gray-400 hover:bg-gray-100 hover:text-brand-blue"
+                                    title="Gestionar etiquetas"
+                                >
+                                    <span className="material-symbols-outlined text-[16px]">add_circle</span>
+                                </button>
+                            </div>
+                        )
+                    },
+                    {
                         key: 'lastUpdated',
                         header: 'Última Actualización',
                         render: (ticket: Ticket) => <span className="text-gray-500">{ticket.lastUpdated}</span>
@@ -273,6 +314,17 @@ export default function TicketsPage() {
                         )
                     }
                 ]}
+            />
+
+            <TagManagementModal
+                isOpen={isTagModalOpen}
+                onClose={() => {
+                    setIsTagModalOpen(false);
+                    setSelectedTicketId(null);
+                }}
+                ticketId={selectedTicketId}
+                currentTags={tickets.find(t => t.id === selectedTicketId)?.tags}
+                onTagAssigned={fetchTickets}
             />
         </>
     );

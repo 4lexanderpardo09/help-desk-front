@@ -1,6 +1,12 @@
 export type TicketStatus = 'Abierto' | 'Pausado' | 'Cerrado';
 export type TicketPriority = 'Alta' | 'Media' | 'Baja';
 
+export interface Tag {
+    id: number;
+    name: string;
+    color: string;
+}
+
 export interface Ticket {
     id: number;
     subject: string; // Asunto
@@ -9,6 +15,7 @@ export interface Ticket {
     status: TicketStatus;
     priority: TicketPriority;
     lastUpdated: string; // Fecha relativa o absoluta formataeda
+    tags: Tag[];
 }
 
 export interface TicketFilter {

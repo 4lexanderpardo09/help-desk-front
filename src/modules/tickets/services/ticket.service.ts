@@ -60,6 +60,7 @@ interface RawTicket {
     estado?: string;
     prioridadUsuario?: string;
     prioridadDefecto?: string;
+    etiquetas?: { id?: number; nombre: string; color: string }[];
 }
 
 interface RawAttachment {
@@ -106,7 +107,8 @@ export const ticketService = {
             customerInitials: (t.creadorNombre || (t.usuario ? `${t.usuario.nombre}` : 'U')).split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase(),
             status: mapStatus(t.ticketEstado || t.estado || 'Abierto'),
             priority: mapPriority(t.prioridad ? t.prioridad.nombre : (t.prioridadUsuario || 'Media')),
-            lastUpdated: new Date(t.fechaCreacion).toLocaleDateString()
+            lastUpdated: new Date(t.fechaCreacion).toLocaleDateString(),
+            tags: (t.etiquetas || []).map(e => ({ id: e.id || 0, name: e.nombre, color: e.color }))
         }));
         const total = response.data.total ?? response.data.meta?.total ?? mappedTickets.length;
         const page = response.data.page ?? response.data.meta?.page ?? 1;
@@ -127,7 +129,8 @@ export const ticketService = {
             customerInitials: 'ME',
             status: mapStatus(t.ticketEstado || t.estado || 'Abierto'),
             priority: mapPriority('Media'),
-            lastUpdated: new Date().toLocaleDateString()
+            lastUpdated: new Date().toLocaleDateString(),
+            tags: []
         };
     },
     async updateTicket(id: number, data: UpdateTicketDto): Promise<void> {
@@ -177,7 +180,8 @@ export const ticketService = {
             assignedToId: (t.usuarioAsignadoIds && t.usuarioAsignadoIds.length > 0) ? t.usuarioAsignadoIds[0] : 0,
             assignedToIds: t.usuarioAsignadoIds || [],
             priorityId: t.prioridad?.id,
-            isParallelStep: t.pasoActual?.esParalelo || false
+            isParallelStep: t.pasoActual?.esParalelo || false,
+            tags: (t.etiquetas || []).map(e => ({ id: e.id || 0, name: e.nombre, color: e.color }))
         };
     },
     async getTicketTimeline(id: number): Promise<TicketTimelineItem[]> {
@@ -275,11 +279,19 @@ export const ticketService = {
         await api.put(`/tickets/${ticketId}/novelties/resolve`);
     },
 
-    async closeTicket(ticketId: number, comentario: string): Promise<void> {
-        await api.post(`/tickets/${ticketId}/close`, { comentario });
+    async closeTicket(ticketId: number, comentario: string): Promise<Ticket> {
+        const response = await api.post(`/tickets/${ticketId}/close`, { comentario });
+        return response.data;
+    },
+
+    async addTag(ticketId: number, tagId: number): Promise<void> {
+        await api.post(`/tickets/${ticketId}/tags`, { tagId });
+    },
+
+    async removeTag(ticketId: number, tagId: number): Promise<void> {
+        await api.delete(`/tickets/${ticketId}/tags/${tagId}`);
     }
 };
-
 export interface ErrorSubtype {
     id: number;
     title: string;
