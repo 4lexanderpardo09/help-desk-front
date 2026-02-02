@@ -21,6 +21,8 @@ const sidebars: SidebarsConfig = {
       items: [
         'tickets/crear-ticket',
         'tickets/ver-tickets',
+        'tickets/responder-ticket',
+        'tickets/gestionar-etiquetas',
         'tickets/estados-tickets',
       ],
     },
