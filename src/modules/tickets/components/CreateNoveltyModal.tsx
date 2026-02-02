@@ -5,11 +5,12 @@ import type { User } from '../../users/interfaces/User';
 import { toast } from 'sonner';
 
 import { Modal } from '../../../shared/components/Modal';
+import { FileUploader } from '../../../shared/components/FileUploader';
 
 interface CreateNoveltyModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (data: { usuarioAsignadoId: number; descripcion: string }) => void;
+    onConfirm: (data: { usuarioAsignadoId: number; descripcion: string }, files: File[]) => void;
     isLoading?: boolean;
 }
 
@@ -22,6 +23,7 @@ export const CreateNoveltyModal: React.FC<CreateNoveltyModalProps> = ({
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUser, setSelectedUser] = useState<string>('');
     const [description, setDescription] = useState('');
+    const [files, setFiles] = useState<File[]>([]);
     const [loadingUsers, setLoadingUsers] = useState(false);
 
     useEffect(() => {
@@ -35,6 +37,7 @@ export const CreateNoveltyModal: React.FC<CreateNoveltyModalProps> = ({
             // Reset form
             setSelectedUser('');
             setDescription('');
+            setFiles([]);
         }
     }, [isOpen]);
 
@@ -53,7 +56,7 @@ export const CreateNoveltyModal: React.FC<CreateNoveltyModalProps> = ({
         onConfirm({
             usuarioAsignadoId: Number(selectedUser),
             descripcion: description
-        });
+        }, files);
     };
 
     return (
@@ -103,6 +106,16 @@ export const CreateNoveltyModal: React.FC<CreateNoveltyModalProps> = ({
                             onChange={(e) => setDescription(e.target.value)}
                             placeholder="Describa la novedad..."
                             disabled={isLoading}
+                        />
+                    </div>
+
+                    <div>
+                        <FileUploader
+                            files={files}
+                            onFilesChange={setFiles}
+                            label="Adjuntos (Opcional)"
+                            maxFiles={5}
+                            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
                         />
                     </div>
                 </form>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import { FileUploader } from '../../../shared/components/FileUploader';
 import { Button } from '../../../shared/components/Button';
 import { InfoModal } from '../../../shared/components/InfoModal';
 import { useAuth } from '../../auth/context/useAuth';
@@ -50,7 +51,7 @@ export default function CreateTicketPage() {
     const [priorityId, setPriorityId] = useState<number | ''>('');
     const [description, setDescription] = useState('');
     const [assigneeId, setAssigneeId] = useState<number | ''>('');
-    const [file, setFile] = useState<File | null>(null);
+    const [files, setFiles] = useState<File[]>([]);
 
     // Workflow Logic State
     const [requiresManualSelection, setRequiresManualSelection] = useState(false);
@@ -198,11 +199,9 @@ export default function CreateTicketPage() {
                 }))
             };
 
-            const createdTicket = await ticketService.createTicket(payload);
+            const createdTicket = await ticketService.createTicket(payload, files);
 
-            if (file && createdTicket.id) {
-                await documentService.uploadToTicket(createdTicket.id, file);
-            }
+            // Removed separate document upload as it is now handled in createTicket
 
             setShowSuccessModal(true);
 
@@ -447,42 +446,13 @@ export default function CreateTicketPage() {
 
                         {/* ATTACHMENTS */}
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-700">Adjuntos</label>
-                            <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50/50 p-8 transition-colors hover:border-brand-teal hover:bg-sky-50/30">
-                                {file ? (
-                                    <div className="flex flex-col items-center">
-                                        <span className="material-symbols-outlined text-4xl text-green-500 mb-3">description</span>
-                                        <p className="text-sm font-medium text-gray-700">{file.name}</p>
-                                        <p className="mt-1 text-xs text-gray-500">{(file.size / 1024).toFixed(2)} KB</p>
-                                        <button
-                                            type="button"
-                                            onClick={() => setFile(null)}
-                                            className="mt-4 rounded-lg border border-red-300 bg-white px-4 py-2 text-xs font-semibold text-red-600 shadow-sm hover:bg-red-50"
-                                        >
-                                            Eliminar Archivo
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <span className="material-symbols-outlined text-4xl text-gray-400 mb-3">cloud_upload</span>
-                                        <p className="text-sm font-medium text-gray-700">Click para subir o arrastrar y soltar</p>
-                                        <p className="mt-1 text-xs text-gray-500">PNG, JPG, PDF o DOC hasta 10MB</p>
-                                        <input
-                                            className="hidden"
-                                            id="file-upload"
-                                            type="file"
-                                            onChange={(e) => e.target.files && setFile(e.target.files[0])}
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => document.getElementById('file-upload')?.click()}
-                                            className="mt-4 rounded-lg border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 shadow-sm hover:bg-gray-50"
-                                        >
-                                            Seleccionar Archivos
-                                        </button>
-                                    </>
-                                )}
-                            </div>
+                            <FileUploader
+                                files={files}
+                                onFilesChange={setFiles}
+                                label="Adjuntos"
+                                maxFiles={5}
+                                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx"
+                            />
                         </div>
 
                         {/* ACTIONS */}

@@ -15,7 +15,9 @@ import { ParallelSignatureModal } from './ParallelSignatureModal';
 import { Modal } from '../../../shared/components/Modal';
 import type { ParallelTask, TicketStatus } from '../interfaces/Ticket'; // Added TicketStatus
 import { ErrorEventsPanel } from './ErrorEventsPanel';
-import { CreateNoveltyModal } from './CreateNoveltyModal'; // Added Import
+import { CreateNoveltyModal } from './CreateNoveltyModal';
+import { ResolveNoveltyModal } from './ResolveNoveltyModal';
+import { FileUploader } from '../../../shared/components/FileUploader';
 
 interface TicketResponsePanelProps {
     ticketId: number;
@@ -44,6 +46,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
 }) => {
     const { user } = useAuth();
     const [comment, setComment] = useState('');
+    const [files, setFiles] = useState<File[]>([]);
     const [dynamicValues, setDynamicValues] = useState<{ campoId: number; valor: string }[]>([]);
 
     const isPaused = status === 'Pausado';
@@ -62,6 +65,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
 
     // Novelty Modal State
     const [isCreateNoveltyModalOpen, setIsCreateNoveltyModalOpen] = useState(false);
+    const [isResolveNoveltyModalOpen, setIsResolveNoveltyModalOpen] = useState(false);
 
     // Close Confirmation Modal State
     const [isCloseConfirmationOpen, setIsCloseConfirmationOpen] = useState(false);
@@ -166,10 +170,11 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                 signature: signature || undefined
             };
 
-            await ticketService.transitionTicket(dto);
+            await ticketService.transitionTicket(dto, files);
 
             toast.success('Ticket actualizado correctamente');
             setComment('');
+            setFiles([]);
             setDynamicValues([]);
             setSignature(null);
             closeModal();
@@ -217,10 +222,10 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
     };
 
     // Handler: Create Novelty
-    const handleCreateNovelty = async (data: { usuarioAsignadoId: number; descripcion: string }) => {
+    const handleCreateNovelty = async (data: { usuarioAsignadoId: number; descripcion: string }, files: File[]) => {
         setIsSubmitting(true);
         try {
-            await ticketService.createNovelty(ticketId, data);
+            await ticketService.createNovelty(ticketId, data, files);
             toast.success('Novedad creada. El ticket ha sido pausado.');
             setIsCreateNoveltyModalOpen(false);
             onSuccess();
@@ -232,13 +237,12 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
         }
     };
 
-    const handleResolveNovelty = async () => {
-        if (!confirm('¿Está seguro de resolver la novedad y reanudar el ticket?')) return;
-
+    const handleResolveNovelty = async (files: File[]) => {
         setIsSubmitting(true);
         try {
-            await ticketService.resolveNovelty(ticketId);
+            await ticketService.resolveNovelty(ticketId, files);
             toast.success('Novedad resuelta. El ticket ha sido reanudado.');
+            setIsResolveNoveltyModalOpen(false);
             onSuccess();
         } catch (error: any) {
             console.error(error);
@@ -325,11 +329,22 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                             </Button>
                         </div>
                     ) : (
-                        <Button variant="secondary" size="sm" onClick={() => setIsSignatureModalOpen(true)}>
-                            <span className="material-symbols-outlined text-sm mr-2">ink_pen</span>
-                            Agregar Firma
-                        </Button>
+                        <div className="flex justify-between items-center bg-gray-50 p-2 rounded-lg border border-dashed border-gray-300">
+                            <Button variant="secondary" size="sm" onClick={() => setIsSignatureModalOpen(true)}>
+                                <span className="material-symbols-outlined text-sm mr-2">ink_pen</span>
+                                Agregar Firma
+                            </Button>
+                            <span className="text-xs text-gray-400">Opcionalmente, puedes adjuntar archivos abajo</span>
+                        </div>
                     )}
+
+                    <FileUploader
+                        files={files}
+                        onFilesChange={setFiles}
+                        label="Adjuntos (Opcional)"
+                        maxFiles={5}
+                        accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx"
+                    />
                 </div>
             )}
 
@@ -395,7 +410,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                 {isPaused ? (
                     <Button
                         variant="brand"
-                        onClick={handleResolveNovelty}
+                        onClick={() => setIsResolveNoveltyModalOpen(true)}
                         disabled={isSubmitting}
                         className="bg-orange-600 hover:bg-orange-700 text-white"
                     >
@@ -476,6 +491,13 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                 isOpen={isCreateNoveltyModalOpen}
                 onClose={() => setIsCreateNoveltyModalOpen(false)}
                 onConfirm={handleCreateNovelty}
+                isLoading={isSubmitting}
+            />
+
+            <ResolveNoveltyModal
+                isOpen={isResolveNoveltyModalOpen}
+                onClose={() => setIsResolveNoveltyModalOpen(false)}
+                onConfirm={handleResolveNovelty}
                 isLoading={isSubmitting}
             />
 

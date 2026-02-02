@@ -119,8 +119,32 @@ export const ticketService = {
             meta: { total, page, limit, totalPages }
         };
     },
-    async createTicket(data: CreateTicketDto): Promise<Ticket> {
-        const response = await api.post<RawTicket>('/tickets', data);
+    async createTicket(data: CreateTicketDto, files: File[] = []): Promise<Ticket> {
+        let payload: any = data;
+        let headers = {};
+
+        if (files.length > 0) {
+            const formData = new FormData();
+            // Append all DTO fields
+            Object.keys(data).forEach(key => {
+                const value = (data as any)[key];
+                if (value !== undefined && value !== null) {
+                    if (Array.isArray(value) || typeof value === 'object') {
+                        formData.append(key, JSON.stringify(value));
+                    } else {
+                        formData.append(key, String(value));
+                    }
+                }
+            });
+            // Append files
+            files.forEach(file => {
+                formData.append('files', file);
+            });
+            payload = formData;
+            headers = { 'Content-Type': 'multipart/form-data' };
+        }
+
+        const response = await api.post<RawTicket>('/tickets', payload, { headers });
         const t = response.data;
         return {
             id: t.id,
@@ -238,8 +262,30 @@ export const ticketService = {
         return flows.length > 0 ? flows[0] : null;
     },
 
-    async transitionTicket(dto: TransitionTicketDto): Promise<any> {
-        const response = await api.post('/workflows/transition', dto);
+    async transitionTicket(dto: TransitionTicketDto, files: File[] = []): Promise<any> {
+        let payload: any = dto;
+        let headers = {};
+
+        if (files.length > 0) {
+            const formData = new FormData();
+            Object.keys(dto).forEach(key => {
+                const value = (dto as any)[key];
+                if (value !== undefined && value !== null) {
+                    if (key === 'manualAssignments' || key === 'templateValues') {
+                        formData.append(key, JSON.stringify(value));
+                    } else {
+                        formData.append(key, String(value));
+                    }
+                }
+            });
+            files.forEach(file => {
+                formData.append('files', file);
+            });
+            payload = formData;
+            headers = { 'Content-Type': 'multipart/form-data' };
+        }
+
+        const response = await api.post('/workflows/transition', payload, { headers });
         return response.data;
     },
 
@@ -271,12 +317,38 @@ export const ticketService = {
         await api.post(`/tickets/${ticketId}/events`, data);
     },
 
-    async createNovelty(ticketId: number, data: { usuarioAsignadoId: number; descripcion: string }): Promise<void> {
-        await api.post(`/tickets/${ticketId}/novelties`, data);
+    async createNovelty(ticketId: number, data: { usuarioAsignadoId: number; descripcion: string }, files: File[] = []): Promise<void> {
+        let payload: any = data;
+        let headers = {};
+
+        if (files.length > 0) {
+            const formData = new FormData();
+            formData.append('usuarioAsignadoId', String(data.usuarioAsignadoId));
+            formData.append('descripcion', data.descripcion);
+            files.forEach(file => {
+                formData.append('files', file);
+            });
+            payload = formData;
+            headers = { 'Content-Type': 'multipart/form-data' };
+        }
+
+        await api.post(`/tickets/${ticketId}/novelties`, payload, { headers });
     },
 
-    async resolveNovelty(ticketId: number): Promise<void> {
-        await api.put(`/tickets/${ticketId}/novelties/resolve`);
+    async resolveNovelty(ticketId: number, files: File[] = []): Promise<void> {
+        let payload: any = {};
+        let headers = {};
+
+        if (files.length > 0) {
+            const formData = new FormData();
+            files.forEach(file => {
+                formData.append('files', file);
+            });
+            payload = formData;
+            headers = { 'Content-Type': 'multipart/form-data' };
+        }
+
+        await api.put(`/tickets/${ticketId}/novelties/resolve`, payload, { headers });
     },
 
     async closeTicket(ticketId: number, comentario: string): Promise<Ticket> {
