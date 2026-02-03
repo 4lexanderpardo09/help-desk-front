@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
@@ -12,14 +12,13 @@ import { priorityService } from '../services/priority.service';
 import { workflowService } from '../services/workflow.service';
 import { departmentService } from '../services/department.service';
 import { companyService } from '../services/company.service';
-import { documentService } from '../services/document.service';
-
 import type { Subcategory } from '../interfaces/Subcategory';
 import type { Priority } from '../interfaces/Priority';
 import type { CreateTicketDto } from '../interfaces/Ticket';
-import type { UserCandidate, CheckStartFlowResponse } from '../interfaces/Workflow';
+import type { UserCandidate} from '../interfaces/Workflow';
 import type { Department } from '../interfaces/Department';
 import type { Company } from '../interfaces/Company';
+import type { TemplateField } from '../interfaces/Ticket';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
 import { DynamicStepForm } from '../components/DynamicStepForm';
 
@@ -58,7 +57,7 @@ export default function CreateTicketPage() {
     const [requiresManualSelection, setRequiresManualSelection] = useState(false);
     const [initialStepName, setInitialStepName] = useState<string>('');
     const [pdfTemplate, setPdfTemplate] = useState<string | undefined>(undefined);
-    const [templateFields, setTemplateFields] = useState<CheckStartFlowResponse['templateFields']>([]);
+    const [templateFields, setTemplateFields] = useState<TemplateField[]>([]);
     const [templateValues, setTemplateValues] = useState<Record<number, string>>({});
 
     useEffect(() => {
@@ -156,9 +155,12 @@ export default function CreateTicketPage() {
                 }
 
                 // Filter out system fields that shouldn't be manually entered
-                const filteredFields = (result.templateFields || []).filter(f =>
+                const filteredFields: TemplateField[] = (result.templateFields || []).filter(f =>
                     !['TICKET_ID', 'FECHA_CREACION', 'TITULO', 'SOLICITANTE', 'CARGO'].includes(f.codigo.toUpperCase())
-                );
+                ).map(f => ({
+                    ...f,
+                    required: !!f.required
+                })) as TemplateField[];
                 setTemplateFields(filteredFields);
                 setTemplateValues({});
             } catch (error) {
@@ -200,7 +202,7 @@ export default function CreateTicketPage() {
                 }))
             };
 
-            const createdTicket = await ticketService.createTicket(payload, files);
+            await ticketService.createTicket(payload, files);
 
             // Removed separate document upload as it is now handled in createTicket
 
@@ -218,6 +220,14 @@ export default function CreateTicketPage() {
         setShowSuccessModal(false);
         navigate('/tickets');
     };
+
+    const handleTemplateChange = useCallback((values: { campoId: number; valor: string }[]) => {
+        const newValues: Record<number, string> = {};
+        values.forEach(v => {
+            newValues[v.campoId] = v.valor;
+        });
+        setTemplateValues(newValues);
+    }, []);
 
     return (
         <>
@@ -395,14 +405,8 @@ export default function CreateTicketPage() {
                         {/* DYNAMIC TEMPLATE FIELDS */}
                         {templateFields && templateFields.length > 0 && (
                             <DynamicStepForm
-                                fields={templateFields as any}
-                                onChange={(values) => {
-                                    const newValues: Record<number, string> = {};
-                                    values.forEach(v => {
-                                        newValues[v.campoId] = v.valor;
-                                    });
-                                    setTemplateValues(newValues);
-                                }}
+                                fields={templateFields}
+                                onChange={handleTemplateChange}
                             />
                         )}
 

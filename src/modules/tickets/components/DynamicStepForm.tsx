@@ -14,6 +14,8 @@ export const DynamicStepForm: React.FC<DynamicStepFormProps> = ({ fields, onChan
     const { control, watch, setValue, formState: { errors } } = useForm();
     const allValues = watch();
 
+    const prevValuesRef = React.useRef<string>('');
+
     // Propagate changes up to parent
     useEffect(() => {
         if (!fields || fields.length === 0) return;
@@ -29,7 +31,11 @@ export const DynamicStepForm: React.FC<DynamicStepFormProps> = ({ fields, onChan
             return null;
         }).filter((v): v is { campoId: number; valor: string } => v !== null && v.valor !== '');
 
-        onChange(formattedValues);
+        const stringified = JSON.stringify(formattedValues);
+        if (stringified !== prevValuesRef.current) {
+            prevValuesRef.current = stringified;
+            onChange(formattedValues);
+        }
     }, [allValues, fields, onChange]);
 
     if (!fields || fields.length === 0) return null;

@@ -20,5 +20,6 @@ export interface CheckStartFlowResponse {
         etiqueta?: string;
         campoQuery?: string;
         campoTrigger?: number;
+        required?: boolean;
     }[];
 }
