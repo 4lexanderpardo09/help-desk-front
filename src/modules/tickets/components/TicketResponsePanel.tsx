@@ -83,7 +83,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
     }, [ticketId, isParallelStep]);
 
     const myParallelTask = parallelTasks.find(t => Number(t.usuarioId) === Number(user?.id));
-    const hasSigned = myParallelTask?.estado === 'Completado';
+    const hasSigned = myParallelTask?.estado === 'Completado' || myParallelTask?.estado === 'Aprobado';
     const isPending = myParallelTask?.estado === 'Pendiente';
 
     // Permission Logic
@@ -355,16 +355,23 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                             <div className="mt-3 text-xs bg-white bg-opacity-60 p-2 rounded">
                                 <p className="font-semibold mb-1 text-gray-700">Progreso de Firmas:</p>
                                 <ul className="space-y-1">
-                                    {parallelTasks.map(task => (
-                                        <li key={task.id} className="flex items-center gap-2">
-                                            <span className={`w-2 h-2 rounded-full ${task.estado === 'Completado' ? 'bg-green-500' : 'bg-gray-300'}`} />
-                                            <span className="text-gray-600">
-                                                {task.usuario?.nombre || 'Usuario'}
-                                                {Number(task.usuarioId) === Number(user?.id) && ' (Tú)'}
-                                            </span>
-                                            <span className="text-gray-400 italic">- {task.estado}</span>
-                                        </li>
-                                    ))}
+                                    {parallelTasks.map(task => {
+                                        const isApproved = task.estado === 'Completado' || task.estado === 'Aprobado';
+                                        const isPending = task.estado === 'Pendiente';
+
+                                        return (
+                                            <li key={task.id} className="flex items-center gap-2">
+                                                <span className={`w-2 h-2 rounded-full ${isApproved ? 'bg-green-500' : (isPending ? 'bg-orange-300' : 'bg-gray-300')}`} />
+                                                <span className="text-gray-600">
+                                                    {task.usuario ? `${task.usuario.nombre} ${task.usuario.apellido || ''}` : 'Usuario'}
+                                                    {Number(task.usuarioId) === Number(user?.id) && ' (Tú)'}
+                                                </span>
+                                                <span className={`italic text-xs ${isApproved ? 'text-green-600' : (isPending ? 'text-orange-400' : 'text-gray-400')}`}>
+                                                    - {task.estado}
+                                                </span>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
                             </div>
                         </div>

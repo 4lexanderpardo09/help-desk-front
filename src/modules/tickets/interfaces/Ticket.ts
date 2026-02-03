@@ -167,6 +167,7 @@ export interface ParallelTask {
     usuario?: {
         id: number;
         nombre: string;
+        apellido: string;
         email: string;
     };
 }
