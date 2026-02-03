@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useForm, useWatch, type Control,type UseFormSetValue } from 'react-hook-form';
+import { useForm, useWatch, type Control, type UseFormSetValue } from 'react-hook-form';
 import { Button } from '../../../shared/components/Button';
 import { Input } from '../../../shared/components/Input';
 import type { StepTemplateField } from '../interfaces/TemplateField';
@@ -29,28 +29,39 @@ const ExcelQueryConfig = ({ control, flujoId, setValue }: { control: Control<Ste
     const currentCol = parts[2] || '';
 
     useEffect(() => {
-        if (flujoId) {
+        const fetchFiles = async () => {
+            if (!flujoId) return;
             setLoadingFiles(true);
-            excelDataService.getByFlow(flujoId)
-                .then(setExcelFiles)
-                .catch(err => {
-                    console.error(err);
-                    toast.error('Error cargando archivos Excel');
-                })
-                .finally(() => setLoadingFiles(false));
-        }
+            try {
+                const data = await excelDataService.getByFlow(flujoId);
+                setExcelFiles(data);
+            } catch (err) {
+                console.error(err);
+                toast.error('Error cargando archivos Excel');
+            } finally {
+                setLoadingFiles(false);
+            }
+        };
+        fetchFiles();
     }, [flujoId]);
 
     useEffect(() => {
-        if (currentFileId) {
+        const fetchColumns = async () => {
+            if (!currentFileId) {
+                setColumns([]);
+                return;
+            }
             setLoadingCols(true);
-            excelDataService.getColumns(Number(currentFileId))
-                .then(setColumns)
-                .catch(console.error)
-                .finally(() => setLoadingCols(false));
-        } else {
-            setColumns([]);
-        }
+            try {
+                const data = await excelDataService.getColumns(Number(currentFileId));
+                setColumns(data);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoadingCols(false);
+            }
+        };
+        fetchColumns();
     }, [currentFileId]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
