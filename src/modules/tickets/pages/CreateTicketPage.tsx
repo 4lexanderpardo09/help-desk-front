@@ -390,8 +390,8 @@ export default function CreateTicketPage() {
                                                     required
                                                 >
                                                     <option value="">-- Seleccione una opción --</option>
-                                                    {availableDecisions.map(d => (
-                                                        <option key={d.decisionId} value={d.decisionId}>
+                                                    {availableDecisions.map((d, idx) => (
+                                                        <option key={`${d.decisionId}-${idx}`} value={d.decisionId}>
                                                             {d.label}
                                                         </option>
                                                     ))}
