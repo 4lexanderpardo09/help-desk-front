@@ -6,6 +6,14 @@ export interface UserCandidate {
     email?: string;
 }
 
+export interface DecisionOption {
+    decisionId: string;
+    label: string;
+    targetStepId: number;
+    requiresManualAssignment: boolean;
+    candidates: UserCandidate[];
+}
+
 export interface CheckStartFlowResponse {
     requiresManualSelection: boolean;
     candidates: UserCandidate[];
@@ -22,4 +30,5 @@ export interface CheckStartFlowResponse {
         campoTrigger?: number;
         required?: boolean;
     }[];
+    decisions?: DecisionOption[];
 }

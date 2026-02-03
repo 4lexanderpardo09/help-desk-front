@@ -15,7 +15,7 @@ import { companyService } from '../services/company.service';
 import type { Subcategory } from '../interfaces/Subcategory';
 import type { Priority } from '../interfaces/Priority';
 import type { CreateTicketDto } from '../interfaces/Ticket';
-import type { UserCandidate} from '../interfaces/Workflow';
+import type { UserCandidate, DecisionOption } from '../interfaces/Workflow';
 import type { Department } from '../interfaces/Department';
 import type { Company } from '../interfaces/Company';
 import type { TemplateField } from '../interfaces/Ticket';
@@ -35,7 +35,6 @@ export default function CreateTicketPage() {
 
     // Data State
     const [departments, setDepartments] = useState<Department[]>([]);
-    // Categories removed from UI state
     const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [priorities, setPriorities] = useState<Priority[]>([]);
@@ -60,20 +59,24 @@ export default function CreateTicketPage() {
     const [templateFields, setTemplateFields] = useState<TemplateField[]>([]);
     const [templateValues, setTemplateValues] = useState<Record<number, string>>({});
 
+    // Step 0 Decision State
+    const [availableDecisions, setAvailableDecisions] = useState<DecisionOption[]>([]);
+    const [selectedDecision, setSelectedDecision] = useState<DecisionOption | null>(null);
+
     useEffect(() => {
         setTitle('Gestión de Tickets');
     }, [setTitle]);
 
-    // 1. Initial Load (Departments, Companies, Priorities)
+    // 1. Initial Load
     useEffect(() => {
         const loadInitialData = async () => {
             try {
-                const [depts, comps, prios] = await Promise.all([
+                const [deps, comps, prios] = await Promise.all([
                     departmentService.getDepartments(),
                     companyService.getCompanies(),
                     priorityService.getPriorities()
                 ]);
-                setDepartments(depts);
+                setDepartments(deps);
                 setCompanies(comps);
                 setPriorities(prios);
             } catch (error) {
@@ -83,13 +86,11 @@ export default function CreateTicketPage() {
         loadInitialData();
     }, []);
 
-    // 2. Load Subcategories when Department changes (Logic: Dept -> Categories -> Allowed Subcategories)
-    // 2. Load Subcategories when Department changes (Optimized: Single backend call)
+    // 2. Load Subcategories when Department changes
     useEffect(() => {
         if (!departmentId) {
             setSubcategories([]);
             setSubcategoryId('');
-            setCategoryId('');
             return;
         }
         const loadSubcategories = async () => {
@@ -97,16 +98,12 @@ export default function CreateTicketPage() {
                 // Call the new optimized endpoint
                 const subs = await subcategoryService.getAllowedByDepartment(departmentId as number);
                 setSubcategories(subs);
+                setSubcategoryId(''); // Reset subcategory selection
             } catch (error) {
                 console.error("Error loading subcategories", error);
-                setSubcategories([]);
             }
         };
         loadSubcategories();
-        setSubcategoryId('');
-        setCategoryId('');
-        setRequiresManualSelection(false);
-        setAssigneeId('');
     }, [departmentId]);
 
     // 3. Set Category, Priority & Template when Subcategory changes
@@ -119,6 +116,8 @@ export default function CreateTicketPage() {
             setPdfTemplate(undefined);
             setTemplateFields([]);
             setTemplateValues({});
+            setAvailableDecisions([]);
+            setSelectedDecision(null);
             setAssigneeId('');
             return;
         }
@@ -142,11 +141,18 @@ export default function CreateTicketPage() {
         // Workflow Logic
         const checkWorkflow = async () => {
             setCheckingFlow(true);
+            setAvailableDecisions([]);
+            setSelectedDecision(null);
             try {
                 const result = await workflowService.checkStartFlow(subcategoryId as number, companyId ? Number(companyId) : undefined);
                 setRequiresManualSelection(result.requiresManualSelection);
                 setInitialStepName(result.initialStepName);
                 setPdfTemplate(result.pdfTemplate);
+
+                // Handle Step 0 Decisions
+                if (result.decisions && result.decisions.length > 0) {
+                    setAvailableDecisions(result.decisions);
+                }
 
                 if (result.requiresManualSelection) {
                     setAssigneeCandidates(result.candidates);
@@ -184,6 +190,10 @@ export default function CreateTicketPage() {
             alert("Por favor seleccione un usuario para asignar el ticket.");
             return;
         }
+        if (availableDecisions.length > 0 && !selectedDecision) {
+            alert("Por favor seleccione el tipo de solicitud (Siguiente paso).");
+            return;
+        }
 
         setLoading(true);
         try {
@@ -196,6 +206,8 @@ export default function CreateTicketPage() {
                 prioridadId: priorityId ? Number(priorityId) : undefined,
                 usuarioAsignadoId: assigneeId ? Number(assigneeId) : undefined,
                 usuarioId: user?.id,
+                initialTransitionKey: selectedDecision ? selectedDecision.decisionId : undefined,
+                initialTargetStepId: selectedDecision ? selectedDecision.targetStepId : undefined,
                 templateValues: Object.entries(templateValues).map(([key, val]) => ({
                     campoId: Number(key),
                     valor: val
@@ -356,6 +368,40 @@ export default function CreateTicketPage() {
                                             </div>
                                         </div>
 
+                                        {/* STEP 0 DECISIONS (If available) */}
+                                        {availableDecisions.length > 0 && (
+                                            <div className="pt-2">
+                                                <label className="text-sm font-bold text-blue-900 block mb-2">Seleccione Siguiente Acción</label>
+                                                <select
+                                                    className="w-full rounded-lg border-blue-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm font-medium bg-white"
+                                                    value={selectedDecision?.decisionId || ''}
+                                                    onChange={(e) => {
+                                                        const dec = availableDecisions.find(d => d.decisionId === e.target.value);
+                                                        setSelectedDecision(dec || null);
+                                                        // Update manual assignment requirements based on decision
+                                                        if (dec) {
+                                                            setRequiresManualSelection(dec.requiresManualAssignment);
+                                                            if (dec.candidates) {
+                                                                setAssigneeCandidates(dec.candidates);
+                                                            }
+                                                            setAssigneeId(''); // Reset assignment when decision changes
+                                                        }
+                                                    }}
+                                                    required
+                                                >
+                                                    <option value="">-- Seleccione una opción --</option>
+                                                    {availableDecisions.map(d => (
+                                                        <option key={d.decisionId} value={d.decisionId}>
+                                                            {d.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <p className="text-xs text-blue-600 mt-1 ml-1">
+                                                    Debe seleccionar una opción para continuar.
+                                                </p>
+                                            </div>
+                                        )}
+
                                         {requiresManualSelection && (
                                             <div className="pt-2">
                                                 <label className="text-sm font-bold text-blue-900 block mb-2">Asignar a</label>
@@ -459,7 +505,7 @@ export default function CreateTicketPage() {
                                 disabled={loading || checkingFlow}
                                 className="rounded-lg bg-brand-red px-8 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-red-700 hover:shadow-lg focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                             >
-                                {loading ? 'Enviando...' : 'Enviar Ticket'}
+                                {loading || checkingFlow ? 'Procesando...' : 'Enviar Ticket'}
                             </Button>
                         </div>
                     </form>

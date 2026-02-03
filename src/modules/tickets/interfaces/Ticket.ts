@@ -54,6 +54,8 @@ export interface CreateTicketDto {
     prioridadId?: number;
     empresaId?: number;
     usuarioAsignadoId?: number;
+    initialTransitionKey?: string;
+    initialTargetStepId?: number;
     templateValues?: { campoId: number; valor: string }[];
 }
 
