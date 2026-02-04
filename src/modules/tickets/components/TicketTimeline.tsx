@@ -9,7 +9,17 @@ interface TicketTimelineProps {
 export function TicketTimeline({ items }: TicketTimelineProps) {
     return (
         <div className="relative space-y-8 pl-4 before:absolute before:inset-0 before:left-[27px] before:h-full before:w-0.5 before:bg-gray-200">
-            {items.map((item, index) => {
+            {items.filter((item, index, array) => {
+                // Filter out redundant system assignments (e.g. "Advanced to step") if assignee hasn't changed
+                if (item.type === 'assignment' && item.author === 'Sistema' && item.content.includes('Avanzó al paso')) {
+                    // Check previous item (Top-Down order) to see if assignee is the same
+                    const prevItem = array[index - 1];
+                    if (prevItem && prevItem.asignadoA?.id === item.asignadoA?.id) {
+                        return false; // Hide this redundant item
+                    }
+                }
+                return true;
+            }).map((item, index) => {
                 const isError = item.type === 'error_report' || !!item.metadata?.error;
 
                 return (
