@@ -1,7 +1,7 @@
 import type { TicketDetail } from '../interfaces/Ticket';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.bubble.css';
-import { WorkflowGraph } from './WorkflowGraph';
+import { MermaidGraph } from './MermaidGraph';
 
 interface TicketWorkflowProps {
     ticket: TicketDetail;
@@ -16,7 +16,7 @@ export function TicketWorkflow({ ticket }: TicketWorkflowProps) {
 
             <div className="relative mb-6">
                 {ticket.subcategoryId ? (
-                    <WorkflowGraph
+                    <MermaidGraph
                         subcategoryId={ticket.subcategoryId}
                         currentStepId={ticket.workflowStepId}
                     />
