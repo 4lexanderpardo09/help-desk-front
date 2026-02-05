@@ -29,6 +29,7 @@ interface TicketResponsePanelProps {
     onSuccess: () => void;
     templateFields?: TemplateField[];
     isParallelStep?: boolean;
+    stepRequiresSignature?: boolean;
     status: TicketStatus; // Added status prop
 }
 
@@ -42,6 +43,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
     onSuccess,
     templateFields = [],
     isParallelStep = false,
+    stepRequiresSignature = false,
     status
 }) => {
     const { user } = useAuth();
@@ -149,6 +151,13 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
             toast.warning('Por favor escriba un comentario o respuesta.');
             return;
         }
+
+        // Check Linear Signature Requirement
+        if (stepRequiresSignature && !signature) {
+            setIsSignatureModalOpen(true);
+            return; // Stop here, wait for signature
+        }
+
         await checkTransition();
     };
 
@@ -320,7 +329,18 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                         className="bg-white"
                     />
 
-
+                    {/* Show Signature Preview if Linear Step Signature is captured */}
+                    {!isParallelStep && signature && (
+                        <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <span className="material-symbols-outlined text-green-600">verified</span>
+                                <span className="text-sm font-medium text-gray-700">Firma capturada correctamente</span>
+                            </div>
+                            <Button variant="ghost" size="sm" onClick={() => setIsSignatureModalOpen(true)}>
+                                Cambiar Firma
+                            </Button>
+                        </div>
+                    )}
 
 
                     <FileUploader
@@ -449,7 +469,13 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                                 onClick={handleMainAction}
                                 disabled={isChecking || isSubmitting}
                             >
-                                {isSubmitting ? 'Procesando...' : (isChecking ? 'Verificando...' : 'Enviar y Avanzar')}
+                                {isSubmitting
+                                    ? 'Procesando...'
+                                    : (isChecking
+                                        ? 'Verificando...'
+                                        : (stepRequiresSignature && !signature ? 'Firmar y Avanzar' : 'Enviar y Avanzar')
+                                    )
+                                }
                             </Button>
                         )}
                     </>

@@ -34,6 +34,7 @@ interface RawWorkflowStep {
     nombre: string;
     descripcion: string;
     esParalelo?: boolean;
+    requiereFirma?: boolean;
     // ...
 }
 
@@ -218,6 +219,7 @@ export const ticketService = {
             assignedToIds: t.usuarioAsignadoIds || [],
             priorityId: t.prioridad?.id,
             isParallelStep: t.pasoActual?.esParalelo || false,
+            stepRequiresSignature: t.pasoActual?.requiereFirma || false,
             tags: (t.etiquetas || []).map(e => ({ id: e.id || 0, name: e.nombre, color: e.color }))
         };
     },

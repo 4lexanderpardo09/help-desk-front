@@ -83,6 +83,7 @@ export interface TicketDetail extends Ticket {
     assignedToIds?: number[];
     priorityId?: number; // Add ID for editing
     isParallelStep?: boolean; // Indicates if current step is parallel
+    stepRequiresSignature?: boolean;
 }
 
 export interface TicketTimelineItem {
@@ -176,7 +177,7 @@ export interface ParallelTask {
     ticketId: number;
     pasoId: number;
     usuarioId: number;
-    estado: 'Pendiente' | 'Completado';
+    estado: 'Pendiente' | 'Completado' | 'Aprobado';
     estadoTiempoPaso?: string;
     fechaCreacion?: string;
     fechaCierre?: string;
