@@ -30,9 +30,9 @@ interface TicketResponsePanelProps {
     templateFields?: TemplateField[];
     isParallelStep?: boolean;
     stepRequiresSignature?: boolean;
-    stepRequiresSignature?: boolean;
     status: TicketStatus;
     isForcedClose?: boolean;
+    allowsClosing?: boolean;
 }
 
 export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
@@ -47,7 +47,8 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
     isParallelStep = false,
     stepRequiresSignature = false,
     status,
-    isForcedClose = false
+    isForcedClose = false,
+    allowsClosing = false
 }) => {
     const { user } = useAuth();
     const [comment, setComment] = useState('');
@@ -460,6 +461,19 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                             >
                                 <span className="material-symbols-outlined text-sm mr-2">pause_circle</span>
                                 Crear Novedad
+                            </Button>
+                        )}
+
+                        {/* Optional Close Button */}
+                        {!isForcedClose && allowsClosing && (
+                            <Button
+                                variant="secondary"
+                                onClick={handleCloseTicket}
+                                disabled={isSubmitting}
+                                className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 border-emerald-200"
+                            >
+                                <span className="material-symbols-outlined text-sm mr-2">check_circle</span>
+                                Cerrar Ticket
                             </Button>
                         )}
 

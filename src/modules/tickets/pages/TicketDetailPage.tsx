@@ -128,22 +128,7 @@ export default function TicketDetailPage() {
 
     const effectiveAssignedToName = getEffectiveAssignedToName();
 
-    const handleCloseTicket = async () => {
-        if (!ticket) return;
-        const comment = window.prompt('Ingrese el motivo del cierre manual:', 'Cierre administrativo');
-        if (!comment) return; // Cancelled
-
-        try {
-            setLoading(true);
-            await ticketService.closeTicket(ticket.id, comment);
-            await fetchData(); // Refresh data
-        } catch (error) {
-            console.error('Error closing ticket:', error);
-            alert('Error al cerrar el ticket');
-        } finally {
-            setLoading(false);
-        }
-    };
+    // handleCloseTicket moved to TicketResponsePanel
 
     return (
         <>
@@ -183,12 +168,7 @@ export default function TicketDetailPage() {
                         <span className="material-symbols-outlined mr-2">print</span>
                         Imprimir
                     </Button>
-                    {ticket && ticket.allowsClosing && (
-                        <Button variant="secondary" className="text-red-600 hover:bg-red-50 ring-red-200" onClick={handleCloseTicket}>
-                            <span className="material-symbols-outlined mr-2">block</span>
-                            Cerrar Ticket
-                        </Button>
-                    )}
+                    {/* Cerrar Ticket button moved to TicketResponsePanel */}
                     <Button variant="brand" onClick={() => setIsEditModalOpen(true)}>
                         <span className="material-symbols-outlined mr-2">edit</span>
                         Editar Ticket
@@ -283,6 +263,7 @@ export default function TicketDetailPage() {
                     stepRequiresSignature={ticket.stepRequiresSignature}
                     status={ticket.status}
                     isForcedClose={ticket.isForcedClose}
+                    allowsClosing={ticket.allowsClosing}
                 />
             </div>
 
