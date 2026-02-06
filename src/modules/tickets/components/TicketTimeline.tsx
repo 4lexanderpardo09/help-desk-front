@@ -10,13 +10,18 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
     return (
         <div className="relative space-y-8 pl-4 before:absolute before:inset-0 before:left-[27px] before:h-full before:w-0.5 before:bg-gray-200">
             {items.filter((item, index, array) => {
-                // Filter out redundant assignments (e.g. "Advanced to step") if assignee hasn't changed.
-                // This handles both "Sistema" events and "User" events (after backend fix) that are redundant.
-                if (item.type === 'assignment' && item.content.includes('Avanzó al paso')) {
-                    // Check previous item (Top-Down order) to see if assignee is the same
-                    const prevItem = array[index - 1];
-                    if (prevItem && prevItem.asignadoA?.id === item.asignadoA?.id) {
-                        return false; // Hide this redundant item
+                // Filter out "Inicio del flujo de trabajo" if there is an adjacent "Avanzó al paso" for the same user.
+                // We prefer "Avanzó al paso" because it contains the correct SLA status (A Tiempo/Atrasado).
+                if (item.type === 'assignment' && item.content.includes('Inicio del flujo de trabajo')) {
+                    const prev = array[index - 1];
+                    const next = array[index + 1];
+
+                    // Check if adjacent is the "Avanzó al paso" record with same assignee
+                    const isDuplicateOfPrev = prev && prev.type === 'assignment' && prev.content.includes('Avanzó al paso') && prev.asignadoA?.id === item.asignadoA?.id;
+                    const isDuplicateOfNext = next && next.type === 'assignment' && next.content.includes('Avanzó al paso') && next.asignadoA?.id === item.asignadoA?.id;
+
+                    if (isDuplicateOfPrev || isDuplicateOfNext) {
+                        return false; // Hide "Inicio del flujo", keep "Avanzó al paso"
                     }
                 }
                 return true;
