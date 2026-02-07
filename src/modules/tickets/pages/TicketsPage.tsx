@@ -30,7 +30,8 @@ export default function TicketsPage() {
 
     // Filters
     const [statusFilter, setStatusFilter] = useState<TicketStatus | 'Todos'>('Todos');
-    const [priorityFilter, setPriorityFilter] = useState<TicketPriority | 'Todas'>('Todas');
+    const [userPriorityFilter, setUserPriorityFilter] = useState<TicketPriority | 'Todas'>('Todas');
+    const [subcategoryPriorityFilter, setSubcategoryPriorityFilter] = useState<TicketPriority | 'Todas'>('Todas');
     const [searchQuery, setSearchQuery] = useState('');
     const [advancedFilters, setAdvancedFilters] = useState<Partial<TicketFilter>>({});
 
@@ -93,7 +94,8 @@ export default function TicketsPage() {
             const params = {
                 view: viewFilter,
                 status: statusFilter === 'Todos' ? undefined : statusFilter,
-                priority: priorityFilter === 'Todas' ? undefined : priorityFilter,
+                userPriority: userPriorityFilter === 'Todas' ? undefined : userPriorityFilter,
+                subcategoryPriority: subcategoryPriorityFilter === 'Todas' ? undefined : subcategoryPriorityFilter,
                 search: searchQuery,
                 page,
                 limit,
@@ -109,11 +111,11 @@ export default function TicketsPage() {
         } finally {
             setLoading(false);
         }
-    }, [viewFilter, statusFilter, priorityFilter, searchQuery, page, limit, advancedFilters]);
+    }, [viewFilter, statusFilter, userPriorityFilter, subcategoryPriorityFilter, searchQuery, page, limit, advancedFilters]);
 
     useEffect(() => {
         setPage(1);
-    }, [viewFilter, statusFilter, priorityFilter, searchQuery]);
+    }, [viewFilter, statusFilter, userPriorityFilter, subcategoryPriorityFilter, searchQuery]);
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -197,12 +199,25 @@ export default function TicketsPage() {
         },
         {
             type: 'select',
-            name: 'priority',
-            value: priorityFilter,
+            name: 'userPriority',
+            value: userPriorityFilter,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            onChange: (val) => setPriorityFilter(val as any),
+            onChange: (val) => setUserPriorityFilter(val as any),
             options: [
-                { label: 'Todas las Prioridades', value: 'Todas' },
+                { label: 'Prioridad Usuario (Todas)', value: 'Todas' },
+                { label: 'Alta', value: 'Alta' },
+                { label: 'Media', value: 'Media' },
+                { label: 'Baja', value: 'Baja' }
+            ]
+        },
+        {
+            type: 'select',
+            name: 'subcategoryPriority',
+            value: subcategoryPriorityFilter,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onChange: (val) => setSubcategoryPriorityFilter(val as any),
+            options: [
+                { label: 'Prioridad Flujo (Todas)', value: 'Todas' },
                 { label: 'Alta', value: 'Alta' },
                 { label: 'Media', value: 'Media' },
                 { label: 'Baja', value: 'Baja' }
@@ -293,11 +308,21 @@ export default function TicketsPage() {
                     },
                     {
                         key: 'priority',
-                        header: 'Prioridad',
+                        header: 'Prioridad Usuario',
                         render: (ticket: Ticket) => (
                             <div className="flex items-center gap-2">
                                 <div className={`h-2.5 w-2.5 rounded-full ${getPriorityColor(ticket.priority).split(' ')[0]}`}></div>
                                 <span className="font-medium text-gray-700">{ticket.priority}</span>
+                            </div>
+                        )
+                    },
+                    {
+                        key: 'prioritySubcategory',
+                        header: 'Prioridad Flujo',
+                        render: (ticket: Ticket) => (
+                            <div className="flex items-center gap-2">
+                                <div className={`h-2.5 w-2.5 rounded-full ${getPriorityColor(ticket.prioritySubcategory || 'Media').split(' ')[0]}`}></div>
+                                <span className="font-medium text-gray-700">{ticket.prioritySubcategory || 'Media'}</span>
                             </div>
                         )
                     },

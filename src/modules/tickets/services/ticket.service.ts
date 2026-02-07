@@ -57,12 +57,13 @@ interface RawTicket {
 
     usuarioAsignadoIds?: number[];
     usuariosAsignados?: RawUser[];
+    prioridadUsuario?: string;
+    prioridadDefecto?: string;
+    prioridadSubcategoria?: string;
 
     // Legacy/List fields fallback (if list endpoint uses different structure)
     creadorNombre?: string;
     estado?: string;
-    prioridadUsuario?: string;
-    prioridadDefecto?: string;
     etiquetas?: { id?: number; nombre: string; color: string }[];
 }
 
@@ -122,7 +123,8 @@ export const ticketService = {
             customer: t.creadorNombre || (t.usuario ? `${t.usuario.nombre} ${t.usuario.apellido}` : 'Unknown'),
             customerInitials: (t.creadorNombre || (t.usuario ? `${t.usuario.nombre}` : 'U')).split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase(),
             status: mapStatus(t.ticketEstado || t.estado || 'Abierto'),
-            priority: mapPriority(t.prioridad ? t.prioridad.nombre : (t.prioridadUsuario || 'Media')),
+            priority: mapPriority(t.prioridadUsuario || t.prioridad?.nombre || 'Media'),
+            prioritySubcategory: mapPriority(t.prioridadSubcategoria || t.prioridadDefecto || 'Media'),
             lastUpdated: new Date(t.fechaCreacion).toLocaleDateString(),
             tags: (t.etiquetas || []).map(e => ({ id: e.id || 0, name: e.nombre, color: e.color }))
         }));

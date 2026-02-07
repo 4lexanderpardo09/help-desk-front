@@ -29,7 +29,7 @@ export function NotificationsBell() {
         };
     }, [isOpen]);
 
-    const handleNotificationClick = async (id: number, ticketId: number | null) => {
+    const handleNotificationClick = async (id: number, ticketId: number | null | undefined) => {
         await markAsRead(id);
         setIsOpen(false);
         if (ticketId) {

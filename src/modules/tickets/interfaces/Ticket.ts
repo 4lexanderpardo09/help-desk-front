@@ -14,6 +14,7 @@ export interface Ticket {
     customerInitials: string; // Iniciales para el avatar
     status: TicketStatus;
     priority: TicketPriority;
+    prioritySubcategory?: TicketPriority; // Prioridad por defecto/flujo
     lastUpdated: string; // Fecha relativa o absoluta formataeda
     tags: Tag[];
 }
@@ -22,7 +23,8 @@ export interface TicketFilter {
     view?: 'all' | 'created' | 'assigned' | 'observed' | 'history';
     search?: string;
     status?: TicketStatus | 'All Statuses';
-    priority?: TicketPriority | 'All Priorities';
+    userPriority?: TicketPriority | 'All Priorities';
+    subcategoryPriority?: TicketPriority | 'All Priorities';
     page?: number;
     limit?: number;
     // Advanced Filters
