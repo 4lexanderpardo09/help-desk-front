@@ -76,7 +76,7 @@ class NotificationsWebSocketService {
         }
         this.listeners.get(event)!.add(callback);
 
-        if (this.socket?.connected) {
+        if (this.socket) {
             this.socket.on(event, callback);
         }
     }
