@@ -92,6 +92,25 @@ export function useNotifications() {
         // You can show a toast or alert here
     }, []);
 
+    /**
+     * Handle ticket closed notification
+     */
+    const handleTicketClosed = useCallback((data: any) => {
+        console.log('[useNotifications] Ticket closed:', data);
+
+        // Add to notifications list
+        const newNotification: Notification = {
+            id: Date.now(), // Temporary ID until we fetch from API
+            mensaje: data.mensaje,
+            ticketId: data.ticketId,
+            fechaNotificacion: new Date(data.fecha),
+            estado: 2,
+        };
+
+        setNotifications(prev => [newNotification, ...prev]);
+        setUnreadCount(prev => prev + 1);
+    }, []);
+
     useEffect(() => {
         // Connect to WebSocket
         notificationsWs.connect();
@@ -99,6 +118,7 @@ export function useNotifications() {
         // Subscribe to events
         notificationsWs.on('new_notification', handleNewNotification);
         notificationsWs.on('ticket_overdue', handleTicketOverdue);
+        notificationsWs.on('ticket_closed', handleTicketClosed);
 
         // Fetch initial data
         fetchUnreadCount();
@@ -108,8 +128,9 @@ export function useNotifications() {
         return () => {
             notificationsWs.off('new_notification', handleNewNotification);
             notificationsWs.off('ticket_overdue', handleTicketOverdue);
+            notificationsWs.off('ticket_closed', handleTicketClosed);
         };
-    }, [handleNewNotification, handleTicketOverdue, fetchUnreadCount, fetchNotifications]);
+    }, [handleNewNotification, handleTicketOverdue, handleTicketClosed, fetchUnreadCount, fetchNotifications]);
 
     return {
         notifications,
