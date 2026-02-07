@@ -2,15 +2,22 @@ import { useState, useEffect, useCallback } from 'react';
 import { notificationsApi } from '../api/notifications.api';
 import { notificationsWs } from '../services/notifications-ws.service';
 import type { Notification } from '../interfaces/notification.interface';
+import type { Toast } from './useToast';
+
+interface UseNotificationsOptions {
+    showToast?: (toast: Omit<Toast, 'id'>) => void;
+}
 
 /**
  * Hook for managing notifications with WebSocket and REST API.
  * Provides real-time updates and methods to fetch/mark notifications.
+ * Also displays toast notifications for real-time events if showToast is provided.
  */
-export function useNotifications() {
+export function useNotifications(options?: UseNotificationsOptions) {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [unreadCount, setUnreadCount] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
+    const { showToast } = options || {};
 
     /**
      * Fetch unread count from API
@@ -82,15 +89,34 @@ export function useNotifications() {
 
         setNotifications(prev => [newNotification, ...prev]);
         setUnreadCount(prev => prev + 1);
-    }, []);
+
+        // Show toast notification if available
+        if (showToast) {
+            showToast({
+                message: data.mensaje,
+                type: 'info',
+                ticketId: data.ticketId,
+                duration: 6000,
+            });
+        }
+    }, [showToast]);
 
     /**
      * Handle ticket overdue notification
      */
     const handleTicketOverdue = useCallback((data: any) => {
         console.log('[useNotifications] Ticket overdue:', data);
-        // You can show a toast or alert here
-    }, []);
+
+        // Show warning toast if available
+        if (showToast) {
+            showToast({
+                message: `⚠️ Ticket #${data.ticketId} ha vencido su SLA`,
+                type: 'warning',
+                ticketId: data.ticketId,
+                duration: 8000,
+            });
+        }
+    }, [showToast]);
 
     /**
      * Handle ticket closed notification
@@ -109,7 +135,17 @@ export function useNotifications() {
 
         setNotifications(prev => [newNotification, ...prev]);
         setUnreadCount(prev => prev + 1);
-    }, []);
+
+        // Show success toast if available
+        if (showToast) {
+            showToast({
+                message: data.mensaje,
+                type: 'success',
+                ticketId: data.ticketId,
+                duration: 6000,
+            });
+        }
+    }, [showToast]);
 
     useEffect(() => {
         // Connect to WebSocket

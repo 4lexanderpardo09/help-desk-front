@@ -2,17 +2,16 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
+import { ToastContainer } from './components/ToastContainer';
 import { LayoutContext } from './context/LayoutContext';
-
+import { NotificationsProvider, useNotificationsContext } from '../../shared/context/NotificationsContext';
 import { GlobalErrorListener } from '../../shared/components/GlobalErrorListener';
 
-export function MainLayout() {
+function MainLayoutContent() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const [title, setTitle] = useState('');
-
-    // Reset title on location change? Optional, but pages will usually set it.
-    // Actually, pages should set it on mount.
+    const { toasts, removeToast } = useNotificationsContext();
 
     return (
         <LayoutContext.Provider value={{ setTitle }}>
@@ -34,6 +33,17 @@ export function MainLayout() {
                     </div>
                 </main>
             </div>
+
+            {/* Toast Notifications Container */}
+            <ToastContainer toasts={toasts} onRemove={removeToast} />
         </LayoutContext.Provider>
+    );
+}
+
+export function MainLayout() {
+    return (
+        <NotificationsProvider>
+            <MainLayoutContent />
+        </NotificationsProvider>
     );
 }

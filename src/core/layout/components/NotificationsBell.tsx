@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNotifications } from '../../../shared/hooks/useNotifications';
+import { useNotificationsContext } from '../../../shared/context/NotificationsContext';
 import { useNavigate } from 'react-router-dom';
 
 /**
@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 export function NotificationsBell() {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const { notifications, unreadCount, loading, markAsRead, markAllAsRead } = useNotifications();
+    const { notifications, unreadCount, loading, markAsRead, markAllAsRead } = useNotificationsContext();
     const navigate = useNavigate();
 
     // Close dropdown when clicking outside
