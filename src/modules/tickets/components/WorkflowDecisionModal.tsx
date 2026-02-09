@@ -7,7 +7,7 @@ interface WorkflowDecisionModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     transitionData: CheckNextStepResponse | null;
-    onConfirm: (decisionKey: string, targetUserId?: number, manualAssignments?: Record<string, number>) => void;
+    onConfirm: (decisionKey: string, targetUserId?: number, manualAssignments?: Record<string, number>, bossId?: number) => void;
     isLoading?: boolean;
     isAssignedUser: boolean;
 }
@@ -24,6 +24,7 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
     const [selectedUser, setSelectedUser] = useState<string>('');
     const [manualAssignments, setManualAssignments] = useState<Record<number, string>>({});
     const [stepCandidates, setStepCandidates] = useState<UserCandidate[]>([]);
+    const [selectedBossId, setSelectedBossId] = useState<string>('');
     const [verified, setVerified] = useState(false);
 
     // Derived state
@@ -40,6 +41,10 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
 
             if (isLinearMode && transitionData?.linear?.candidates) {
                 setStepCandidates(transitionData.linear.candidates);
+                // Pre-select boss if already assigned
+                if (transitionData.linear.currentBossId) {
+                    setSelectedBossId(String(transitionData.linear.currentBossId));
+                }
             }
         }
     }, [open, transitionData, isLinearMode]);
@@ -54,6 +59,13 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
                 setStepCandidates(decision.candidates);
             } else {
                 setStepCandidates([]);
+            }
+
+            // Link Boss Logic for Decisions
+            if (decision?.currentBossId) {
+                setSelectedBossId(String(decision.currentBossId));
+            } else {
+                setSelectedBossId('');
             }
         }
     }, [selectedDecision, isDecisionMode, transitionData]);
@@ -71,7 +83,7 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
             }
         });
 
-        onConfirm(transitionKey, userId, Object.keys(assignmentsPayload).length > 0 ? assignmentsPayload : undefined);
+        onConfirm(transitionKey, userId, Object.keys(assignmentsPayload).length > 0 ? assignmentsPayload : undefined, selectedBossId ? Number(selectedBossId) : undefined);
     };
 
     const getCurrentOption = () => {
@@ -83,13 +95,18 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
     const currentOption = getCurrentOption();
     const needsUserSelection = currentOption?.requiresManualAssignment || false;
     const missingRoles = currentOption?.missingRoles || [];
+    const bossCandidates = currentOption?.bossCandidates || [];
+    const targetAssignees = currentOption?.targetAssignees || [];
 
     // Check if all needed assignments are made
     const areAllRolesAssigned = missingRoles.every(r => manualAssignments[r.id]);
+    const isBossSelected = bossCandidates.length > 0 ? !!selectedBossId : true;
+
     const isFormValid =
         (isAssignedUser ? verified : true) &&
         (isDecisionMode ? !!selectedDecision : true) &&
-        (missingRoles.length > 0 ? areAllRolesAssigned : (needsUserSelection ? !!selectedUser : true));
+        (missingRoles.length > 0 ? areAllRolesAssigned : (needsUserSelection ? !!selectedUser : true)) &&
+        isBossSelected;
 
     return (
         <Modal
@@ -105,7 +122,7 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
                         : 'Para avanzar, por favor complete la siguiente información.'}
                 </p>
 
-                <div className="space-y-4">
+                <div className="space-y-4 max-h-[60vh] overflow-y-auto px-1">
                     {/* DECISION MODE SELECTOR */}
                     {isDecisionMode && transitionData?.decisions && (
                         <div className="space-y-2">
@@ -186,7 +203,6 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
                     )}
 
                     {/* SINGLE MANUAL ASSIGNMENT (Fallback or Normal) */}
-                    {/* Show this ONLY if NO missing roles are present (to avoid double entry), BUT manual selection is still required */}
                     {needsUserSelection && missingRoles.length === 0 && (selectedDecision || isLinearMode) && (
                         <div className="space-y-2">
                             <label htmlFor="user-select" className="text-sm font-semibold text-[#121617]">
@@ -195,7 +211,7 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
                             <div className="relative">
                                 <select
                                     id="user-select"
-                                    key={`user-select-${selectedDecision}`} // Force re-render on decision change
+                                    key={`user-select-${selectedDecision}`}
                                     className="block w-full rounded-lg border border-gray-200 bg-slate-50 p-3 text-base text-[#121617] focus:border-brand-teal focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-teal h-12 appearance-none"
                                     value={selectedUser}
                                     onChange={(e) => setSelectedUser(e.target.value)}
@@ -211,6 +227,61 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
                             </div>
                         </div>
                     )}
+
+                    {/* BOSS SELECTION SECTION */}
+                    {bossCandidates.length > 0 && (selectedDecision || isLinearMode) && (
+                        <div className="bg-purple-50 border border-purple-100 rounded-lg p-3 space-y-2">
+                            <div className="flex gap-2 items-center">
+                                <span className="material-symbols-outlined text-purple-600">supervisor_account</span>
+                                <label htmlFor="boss-select" className="text-sm font-semibold text-purple-900">
+                                    Confirmar Jefe Inmediato
+                                </label>
+                            </div>
+                            <p className="text-xs text-purple-700">
+                                Es necesario confirmar quién aprobará este ticket.
+                            </p>
+                            <div className="relative">
+                                <select
+                                    id="boss-select"
+                                    className="block w-full rounded-lg border border-purple-200 bg-white p-2 text-sm text-[#121617] focus:border-purple-500 focus:outline-none h-10 appearance-none"
+                                    value={selectedBossId}
+                                    onChange={(e) => setSelectedBossId(e.target.value)}
+                                >
+                                    <option value="">Seleccione al Jefe Inmediato...</option>
+                                    {bossCandidates.map((u) => (
+                                        <option key={u.id} value={u.id.toString()}>
+                                            {u.nombre} {u.apellido} {u.cargo ? `(${u.cargo})` : ''}
+                                        </option>
+                                    ))}
+                                </select>
+                                <span className="material-symbols-outlined absolute right-2 top-2.5 text-gray-400 pointer-events-none text-lg">expand_more</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* NEXT STEP ASSIGNEES PREVIEW */}
+                    {targetAssignees.length > 0 && (selectedDecision || isLinearMode) && (
+                        <div className="mt-4 border-t border-gray-100 pt-3">
+                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                                Usuarios del Siguiente Paso
+                            </p>
+                            <div className="bg-gray-50 rounded-lg p-2 space-y-1 max-h-32 overflow-y-auto">
+                                {targetAssignees.map(u => (
+                                    <div key={u.id} className="flex items-center gap-2 text-sm text-gray-700 p-1.5 hover:bg-white rounded transition-colors">
+                                        <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-medium text-gray-600">
+                                            {u.nombre.charAt(0)}{u.apellido.charAt(0)}
+                                        </div>
+                                        <div className="flex-1">
+                                            <span className="font-medium">{u.nombre} {u.apellido}</span>
+                                            {u.cargo && <span className="text-xs text-gray-500 ml-1">({u.cargo})</span>}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+
 
                     {/* LINEAR INFO */}
                     {transitionData?.linear && (

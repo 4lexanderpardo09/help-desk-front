@@ -173,7 +173,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
     };
 
     // Handler when Modal confirms decision/user
-    const handleTransitionConfirm = async (transitionKeyOrStepId: string, targetUserId?: number, manualAssignments?: Record<string, number>) => {
+    const handleTransitionConfirm = async (transitionKeyOrStepId: string, targetUserId?: number, manualAssignments?: Record<string, number>, usuarioJefeAprobadorId?: number) => {
         setIsSubmitting(true);
         try {
             const dto: TransitionTicketDto = {
@@ -183,7 +183,8 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                 targetUserId,
                 manualAssignments,
                 templateValues: dynamicValues.length > 0 ? dynamicValues : undefined,
-                signature: signature || undefined
+                signature: signature || undefined,
+                usuarioJefeAprobadorId
             };
 
             await ticketService.transitionTicket(dto, files);
