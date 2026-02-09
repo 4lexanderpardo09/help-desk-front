@@ -82,14 +82,14 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
                     isCollapsed ? "justify-center px-0" : "justify-between px-6"
                 )}>
                     <div className="flex items-center gap-3 overflow-hidden">
-                        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded bg-white/20 backdrop-blur-sm">
-                            <span className="material-symbols-outlined text-white" style={{ fontSize: '20px' }}>support_agent</span>
+                        <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center">
+                            <img src="../../public/img/FN-EC.png" alt="" />
                         </div>
                         <span className={cn(
                             "text-xl font-bold tracking-wide transition-opacity whitespace-nowrap",
                             isCollapsed ? "w-0 opacity-0 hidden" : "w-auto opacity-100"
                         )}>
-                            DeskFlow
+                            Deskflow
                         </span>
                     </div>
                     {/* Mobile Close Button */}
