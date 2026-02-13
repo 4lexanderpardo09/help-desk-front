@@ -7,6 +7,7 @@ import { DataTable } from '../../../shared/components/DataTable';
 import { usePermissions } from '../../../shared/hooks/usePermissions';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
 import TagManagementModal from '../components/TagManagementModal';
+import ReopenTicketModal from '../components/ReopenTicketModal';
 import { AdvancedTicketFilter } from '../components/AdvancedTicketFilter';
 import type { TicketFilter } from '../interfaces/Ticket';
 
@@ -20,6 +21,10 @@ export default function TicketsPage() {
     // Tag Modal State
     const [isTagModalOpen, setIsTagModalOpen] = useState(false);
     const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
+
+    // Reopen Modal State
+    const [isReopenModalOpen, setIsReopenModalOpen] = useState(false);
+    const [ticketToReopen, setTicketToReopen] = useState<number | null>(null);
 
     // Pagination
     const [page, setPage] = useState(1);
@@ -58,6 +63,10 @@ export default function TicketsPage() {
         // Historial: Participated tickets (not currently assigned)
         if (can('view:assigned', 'Ticket') || can('view:created', 'Ticket')) {
             options.push({ label: 'Historial', value: 'history' });
+        }
+
+        if (can('view:assigned', 'Ticket') || can('view:created', 'Ticket') || can('view:all', 'Ticket')) {
+            options.push({ label: 'Reabiertos', value: 'reopened' });
         }
 
         // Si no tiene ningún permiso específico, al menos mostrar 'creados'
@@ -383,18 +392,46 @@ export default function TicketsPage() {
                         key: 'actions',
                         header: 'Acciones',
                         className: 'px-6 py-4 text-right',
-                        render: () => (
-                            <div className="flex justify-end">
+                        render: (ticket: Ticket) => (
+                            <div className="flex justify-end gap-2">
+                                {/* Botón Reabrir (Solo si cerrado y permiso) */}
+                                {ticket.status === 'Cerrado' && can('reopen', 'Ticket') && (
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setTicketToReopen(ticket.id);
+                                            setIsReopenModalOpen(true);
+                                        }}
+                                        className="rounded p-1 text-gray-400 hover:bg-yellow-50 hover:text-yellow-600"
+                                        title="Reabrir Ticket"
+                                    >
+                                        <span className="material-symbols-outlined">restart_alt</span>
+                                    </button>
+                                )}
+
                                 <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/tickets/${ticket.id}`);
+                                    }}
                                     className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-brand-blue"
                                 >
-                                    <span className="material-symbols-outlined">more_vert</span>
+                                    <span className="material-symbols-outlined">visibility</span>
                                 </button>
                             </div>
                         )
                     }
                 ]}
             />
+
+            {ticketToReopen && (
+                <ReopenTicketModal
+                    isOpen={isReopenModalOpen}
+                    onClose={() => setIsReopenModalOpen(false)}
+                    ticketId={ticketToReopen}
+                    onSuccess={fetchTickets}
+                />
+            )}
 
             <TagManagementModal
                 isOpen={isTagModalOpen}

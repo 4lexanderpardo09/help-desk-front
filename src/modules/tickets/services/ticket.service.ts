@@ -126,7 +126,7 @@ export const ticketService = {
             status: mapStatus(t.ticketEstado || t.estado || 'Abierto'),
             priority: mapPriority(t.prioridadUsuario || t.prioridad?.nombre || 'Media'),
             prioritySubcategory: mapPriority(t.prioridadSubcategoria || t.prioridadDefecto || 'Media'),
-            lastUpdated: t.lastUpdated || t.fechaCreacion,
+            lastUpdated: t.lastUpdated,
             tags: (t.etiquetas || []).map(e => ({ id: e.id || 0, name: e.nombre, color: e.color }))
         }));
         const total = response.data.total ?? response.data.meta?.total ?? mappedTickets.length;
