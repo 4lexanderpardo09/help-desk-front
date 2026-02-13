@@ -173,13 +173,13 @@ export const AdvancedTicketFilter: React.FC<AdvancedTicketFilterProps> = ({ filt
                         </div>
 
                         {/* N Ticket */}
-                        <div>
+                        <div className="flex flex-col justify-end">
                             <label className="block text-xs font-medium text-gray-700 mb-1">N° Ticket</label>
                             <input
                                 type="number"
                                 placeholder="ID"
                                 {...register('ticketId', { valueAsNumber: true })}
-                                className="block w-full rounded-lg border-gray-200 bg-white py-2.5 px-4 text-sm font-medium text-gray-900 placeholder-gray-500 focus:border-brand-teal focus:ring-brand-teal"
+                                className="block w-full h-[40px] px-4 rounded-lg border-gray-200 bg-white text-sm font-medium text-gray-900 placeholder-gray-500 focus:border-brand-teal focus:ring-brand-teal"
                             />
                         </div>
                     </div>
