@@ -62,21 +62,24 @@ export const AdvancedTicketFilter: React.FC<AdvancedTicketFilterProps> = ({ filt
         loadData();
     }, []);
 
-    // Load subcategories when company changes (optional) or just load all
+    const [isTrackerEnabled, setIsTrackerEnabled] = useState(false);
+
+    // Load subcategories when company changes OR tracker is toggled
     const selectedCompanyId = watch('companyId');
     useEffect(() => {
-        if (selectedCompanyId) {
-            const loadSubcats = async () => {
-                try {
-                    const subs = await subcategoryService.getByCompany(selectedCompanyId);
-                    setSubcategories(subs);
-                } catch (e) { console.error(e); }
-            };
-            loadSubcats();
-        } else {
-            setSubcategories([]);
-        }
-    }, [selectedCompanyId]);
+        const loadSubcats = async () => {
+            try {
+                let subs: { id: number; nombre: string }[] = [];
+                if (isTrackerEnabled) {
+                    subs = await subcategoryService.getTrackRecord();
+                } else if (selectedCompanyId) {
+                    subs = await subcategoryService.getByCompany(selectedCompanyId);
+                }
+                setSubcategories(subs);
+            } catch (e) { console.error(e); }
+        };
+        loadSubcats();
+    }, [selectedCompanyId, isTrackerEnabled]);
 
     const onSubmit = (data: FilterFormValues) => {
         onFilterChange({
@@ -97,6 +100,7 @@ export const AdvancedTicketFilter: React.FC<AdvancedTicketFilterProps> = ({ filt
             dateFrom: '',
             dateTo: ''
         });
+        setIsTrackerEnabled(false);
         onClear();
     };
 
@@ -128,7 +132,12 @@ export const AdvancedTicketFilter: React.FC<AdvancedTicketFilterProps> = ({ filt
                                         placeholder="Todas"
                                         options={companies.map(c => ({ value: c.id, label: c.nombre }))}
                                         value={field.value || ''}
-                                        onChange={(val) => field.onChange(val)}
+                                        onChange={(val) => {
+                                            field.onChange(val);
+                                            // Disable tracker if company is manually selected
+                                            if (val) setIsTrackerEnabled(false);
+                                        }}
+                                        disabled={isTrackerEnabled}
                                     />
                                 )}
                             />
@@ -136,7 +145,24 @@ export const AdvancedTicketFilter: React.FC<AdvancedTicketFilterProps> = ({ filt
 
                         {/* Subcategoria */}
                         <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Subcategoría</label>
+                            <div className="flex justify-between items-center mb-1">
+                                <label className="block text-xs font-medium text-gray-700">Subcategoría</label>
+                                <label className="flex items-center space-x-2 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={isTrackerEnabled}
+                                        onChange={(e) => {
+                                            setIsTrackerEnabled(e.target.checked);
+                                            if (e.target.checked) {
+                                                // Clear company if tracker is enabled
+                                                // setValue('companyId', undefined); // Optional: clear company
+                                            }
+                                        }}
+                                        className="h-3 w-3 rounded border-gray-300 text-brand-teal focus:ring-brand-teal"
+                                    />
+                                    <span className="text-[10px] text-gray-500 font-medium">Solo mis procesos</span>
+                                </label>
+                            </div>
                             <Controller
                                 name="subcategoryId"
                                 control={control}
@@ -144,7 +170,7 @@ export const AdvancedTicketFilter: React.FC<AdvancedTicketFilterProps> = ({ filt
                                     <Select
                                         {...field}
                                         label="Subcategoría"
-                                        placeholder="Todas"
+                                        placeholder={isTrackerEnabled ? "Selecciona de tu historial..." : "Todas"}
                                         options={subcategories.map(s => ({ value: s.id, label: s.nombre }))}
                                         value={field.value || ''}
                                         onChange={(val) => field.onChange(val)}
