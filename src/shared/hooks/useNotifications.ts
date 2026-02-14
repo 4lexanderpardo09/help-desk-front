@@ -34,10 +34,17 @@ export function useNotifications(options?: UseNotificationsOptions) {
     /**
      * Fetch notifications from API
      */
+    /**
+     * Fetch notifications from API
+     * By default, we now only fetch UNREAD notifications (status=2) for the bell dropdown.
+     * If we wanted a full history page, we would need a separate hook or param.
+     * For now, the requirement is "hide read notifications".
+     */
     const fetchNotifications = useCallback(async (page: number = 1, limit: number = 20) => {
         setLoading(true);
         try {
-            const response = await notificationsApi.getNotifications(page, limit);
+            // Hardcoded status=2 (Pendiente/Unread) to ensure we only get unread ones
+            const response = await notificationsApi.getNotifications(page, limit, 2);
             setNotifications(response.data);
         } catch (error) {
             console.error('[useNotifications] Error fetching notifications:', error);
@@ -48,11 +55,13 @@ export function useNotifications(options?: UseNotificationsOptions) {
 
     /**
      * Mark a notification as read
+     * Now removes it from the list instead of just updating status.
      */
     const markAsRead = useCallback(async (id: number) => {
         try {
             await notificationsApi.markAsRead(id);
-            setNotifications(prev => prev.map(n => n.id === id ? { ...n, estado: 0 } : n));
+            // Remove from list because we only want to show unread
+            setNotifications(prev => prev.filter(n => n.id !== id));
             setUnreadCount(prev => Math.max(0, prev - 1));
         } catch (error) {
             console.error('[useNotifications] Error marking as read:', error);
@@ -61,11 +70,13 @@ export function useNotifications(options?: UseNotificationsOptions) {
 
     /**
      * Mark all notifications as read
+     * Now clears the list.
      */
     const markAllAsRead = useCallback(async () => {
         try {
             await notificationsApi.markAllAsRead();
-            setNotifications(prev => prev.map(n => ({ ...n, estado: 0 })));
+            // Clear list because all are now read
+            setNotifications([]);
             setUnreadCount(0);
         } catch (error) {
             console.error('[useNotifications] Error marking all as read:', error);
