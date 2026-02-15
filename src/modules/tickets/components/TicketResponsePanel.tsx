@@ -5,13 +5,13 @@ import { Button } from '../../../shared/components/Button';
 import { useWorkflowTransition } from '../hooks/useWorkflowTransition';
 import { WorkflowDecisionModal } from './WorkflowDecisionModal';
 import { DynamicStepForm } from './DynamicStepForm';
-import { SignatureModal } from './SignatureModal';
+import { UnifiedSignatureModal } from '../../../shared/components/UnifiedSignatureModal';
+import type { SignatureData } from '../../../shared/components/UnifiedSignatureModal';
 import { ticketService } from '../services/ticket.service';
 import type { TransitionTicketDto, TemplateField } from '../interfaces/Ticket';
 import { toast } from 'sonner';
 import { useAuth } from '../../auth/context/useAuth';
 
-import { ParallelSignatureModal } from './ParallelSignatureModal';
 import { Modal } from '../../../shared/components/Modal';
 import type { ParallelTask, TicketStatus } from '../interfaces/Ticket'; // Added TicketStatus
 import { ErrorEventsPanel } from './ErrorEventsPanel';
@@ -228,8 +228,8 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
 
 
     // Handler: Confirm Signature
-    const handleSignatureConfirm = (base64: string) => {
-        setSignature(base64);
+    const handleSignatureConfirm = (data: SignatureData) => {
+        setSignature(data.signature);
         toast.success('Firma capturada correctamente');
     };
 
@@ -267,8 +267,8 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
     };
 
     // Handler: Sign Parallel Task
-    const handleSignParallelTask = async (signatureBase64: string, modalComment: string) => {
-        if (!modalComment.trim()) {
+    const handleSignParallelTask = async (data: SignatureData) => {
+        if (data.comment && !data.comment.trim()) {
             // Optional check logic if comment is mandatory
         }
 
@@ -276,8 +276,8 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
         try {
             const result = await ticketService.signParallelTask({
                 ticketId,
-                comentario: modalComment,
-                signature: signatureBase64
+                comentario: data.comment || '',
+                signature: data.signature
             });
 
             if (result.autoAdvanced) {
@@ -598,17 +598,25 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                 isAssignedUser={isExplicitlyAssigned || isInAssignedList}
             />
 
-            <SignatureModal
+            <UnifiedSignatureModal
                 isOpen={isSignatureModalOpen}
                 onClose={() => setIsSignatureModalOpen(false)}
                 onConfirm={handleSignatureConfirm}
+                title="Firmar Documento"
+                description="Por favor firme en el recuadro a continuación para autorizar esta acción."
+                enableProfileSignature={true}
             />
 
-            <ParallelSignatureModal
+            <UnifiedSignatureModal
                 isOpen={isParallelModalOpen}
                 onClose={() => setIsParallelModalOpen(false)}
                 onConfirm={handleSignParallelTask}
+                title="Firmar mi parte"
+                description="Por favor firme en el recuadro y agregue un comentario si es necesario para completar su tarea asignada."
+                showCommentField={true}
+                commentLabel="Comentario (Opcional)"
                 isLoading={isSubmitting}
+                enableProfileSignature={true}
             />
 
             <CreateNoveltyModal
