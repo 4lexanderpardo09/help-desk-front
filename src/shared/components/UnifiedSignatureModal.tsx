@@ -49,6 +49,7 @@ export const UnifiedSignatureModal: React.FC<UnifiedSignatureModalProps> = ({
     const [isEmpty, setIsEmpty] = useState(true);
     const [comment, setComment] = useState('');
     const [isLoadingSignature, setIsLoadingSignature] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const { user } = useAuth();
 
     if (!isOpen) return null;
@@ -59,7 +60,8 @@ export const UnifiedSignatureModal: React.FC<UnifiedSignatureModalProps> = ({
     };
 
     const handleConfirm = () => {
-        if (!sigCanvas.current || sigCanvas.current.isEmpty()) {
+        // Use local state 'isEmpty' because sigCanvas.isEmpty() ignores drawImage (manual uploads)
+        if (!sigCanvas.current || isEmpty) {
             return;
         }
 
@@ -136,6 +138,78 @@ export const UnifiedSignatureModal: React.FC<UnifiedSignatureModalProps> = ({
         }
     };
 
+    const handleImageUploadClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        // Validar tipo (opcional, aunque el input ya tiene accept)
+        if (!file.type.match('image.*')) {
+            toast.error('Solo se permiten imágenes (PNG, JPG)');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                if (sigCanvas.current) {
+                    const canvas = sigCanvas.current.getCanvas();
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                        // Synchronize canvas internal resolution with its display size
+                        // Multiply by 3 to ensure high resolution for the output image (PDF stamping)
+                        const SCALE_FACTOR = 3;
+                        const rect = canvas.getBoundingClientRect();
+
+                        if (rect.width > 0 && rect.height > 0) {
+                            canvas.width = rect.width * SCALE_FACTOR;
+                            canvas.height = rect.height * SCALE_FACTOR;
+                        }
+
+                        // Clear canvas (resizing usually clears, but good to ensure)
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                        // Calculate scale to fit image within canvas with padding
+                        const padding = 20 * SCALE_FACTOR; // Scale padding too
+                        const availWidth = canvas.width - padding;
+                        const availHeight = canvas.height - padding;
+
+                        // Prevent division by zero
+                        const safeW = availWidth > 0 ? availWidth : canvas.width;
+                        const safeH = availHeight > 0 ? availHeight : canvas.height;
+
+                        const scale = Math.min(safeW / img.width, safeH / img.height);
+
+                        const w = img.width * scale;
+                        const h = img.height * scale;
+
+                        // Center the image
+                        const x = (canvas.width - w) / 2;
+                        const y = (canvas.height - h) / 2;
+
+                        ctx.drawImage(img, x, y, w, h);
+                        setIsEmpty(false);
+                        toast.success('Imagen cargada como firma');
+                    }
+                }
+            };
+            img.onerror = () => {
+                toast.error('Error al procesar la imagen');
+            };
+            if (e.target?.result) {
+                img.src = e.target.result as string;
+            }
+        };
+        reader.readAsDataURL(file);
+
+        // Reset input value to allow re-uploading same file if needed
+        event.target.value = '';
+    };
+
     return (
         <div className="fixed inset-0 z-50 overflow-y-auto">
             <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
@@ -192,6 +266,23 @@ export const UnifiedSignatureModal: React.FC<UnifiedSignatureModalProps> = ({
                                                 {isLoadingSignature ? 'Cargando...' : 'Usar mi firma guardada'}
                                             </button>
                                         )}
+
+                                        <button
+                                            type="button"
+                                            onClick={handleImageUploadClick}
+                                            className="text-xs text-brand-blue hover:underline font-medium"
+                                            disabled={isLoading || isLoadingSignature}
+                                        >
+                                            Subir Imagen
+                                        </button>
+
+                                        <input
+                                            type="file"
+                                            ref={fileInputRef}
+                                            onChange={handleFileChange}
+                                            accept="image/png, image/jpeg"
+                                            className="hidden"
+                                        />
                                     </div>
                                 </div>
 
