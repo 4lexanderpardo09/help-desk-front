@@ -32,8 +32,8 @@ export const UserSelect: React.FC<UserSelectProps> = ({
     // Function to load options asynchronously with debounce
     const loadOptions = (inputValue: string): Promise<UserOption[]> => {
         return new Promise((resolve) => {
-            // If candidates are provided, filter them client-side
-            if (candidates && candidates.length > 0) {
+            // If candidates are provided (even if empty list), strictly use them
+            if (candidates) {
                 const filtered = candidates.filter((u) =>
                     `${u.nombre} ${u.apellido} ${u.email}`.toLowerCase().includes(inputValue.toLowerCase())
                 );
@@ -169,6 +169,7 @@ export const UserSelect: React.FC<UserSelectProps> = ({
     return (
         <div className={className}>
             <AsyncSelect
+                key={candidates ? `candidates-${candidates.length}` : 'global-search'}
                 cacheOptions
                 defaultOptions={true}
                 loadOptions={loadOptions}
