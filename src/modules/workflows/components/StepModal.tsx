@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import ReactQuill from 'react-quill-new';
-import 'react-quill-new/dist/quill.snow.css';
+import { RichTextEditor } from '../../../components/ui/RichTextEditor';
 import { FormModal } from '../../../shared/components/FormModal';
 import { Input } from '../../../shared/components/Input';
 import { Select } from '../../../shared/components/Select';
@@ -194,12 +193,11 @@ export const StepModal = ({ isOpen, onClose, onSuccess, step, flujoId }: StepMod
                             name="descripcion"
                             render={({ field }) => (
                                 <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
-                                    <ReactQuill
-                                        theme="snow"
+                                    <RichTextEditor
                                         value={field.value || ''}
                                         onChange={field.onChange}
-                                        className="[&_.ql-container]:min-h-[100px] [&_.ql-editor]:min-h-[100px] text-sm"
                                         placeholder="Instrucciones para este paso..."
+                                        height={150}
                                     />
                                 </div>
                             )}

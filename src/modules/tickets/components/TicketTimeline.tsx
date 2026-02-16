@@ -56,7 +56,7 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
                         </div>
 
                         {/* Content */}
-                        <div className={`ml-12 w-full rounded-xl border p-5 shadow-sm 
+                        <div className={`ml-12 w-full min-w-0 rounded-xl border p-5 shadow-sm 
                             ${isError
                                 ? 'border-l-4 border-l-red-500 border-red-100 bg-red-50'
                                 : item.type === 'status_change'
@@ -147,7 +147,7 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
                             ) : (
                                 <>
                                     <div
-                                        className="text-sm text-gray-600 leading-relaxed [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-2 [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4"
+                                        className="text-sm text-gray-600 leading-relaxed break-words whitespace-pre-wrap [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-2 [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4"
                                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.content) }}
                                     />
                                     {item.metadata?.estadoTiempoPaso && (

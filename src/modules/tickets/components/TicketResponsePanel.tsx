@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import ReactQuill from 'react-quill-new';
-import 'react-quill-new/dist/quill.snow.css';
+import { RichTextEditor } from '../../../components/ui/RichTextEditor';
 import { Button } from '../../../shared/components/Button';
 import { useWorkflowTransition } from '../hooks/useWorkflowTransition';
 import { WorkflowDecisionModal } from './WorkflowDecisionModal';
@@ -388,12 +387,10 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
             {/* EDITOR AREA */}
             {!isParallelStep && !isPaused && (
                 <div className="mb-4 space-y-3">
-                    <ReactQuill
-                        theme="snow"
+                    <RichTextEditor
                         value={comment}
                         onChange={setComment}
                         placeholder={isFinalStep ? "Escriba la nota de cierre y conclusiones..." : "Escriba su respuesta o notas internas..."}
-                        className="bg-white"
                     />
 
                     {/* Show Signature Preview if Linear Step Signature is captured */}

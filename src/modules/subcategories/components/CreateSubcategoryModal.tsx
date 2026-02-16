@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { FormModal } from '../../../shared/components/FormModal';
 import { Input } from '../../../shared/components/Input';
 import { Select } from '../../../shared/components/Select';
-import ReactQuill from 'react-quill-new';
-import 'react-quill-new/dist/quill.snow.css';
+import { RichTextEditor } from '../../../components/ui/RichTextEditor';
+
 import { categoryService } from '../../categories/services/category.service';
 import { priorityService } from '../../tickets/services/priority.service';
 import type { CreateSubcategoryDto } from '../interfaces/Subcategory';
@@ -109,13 +109,12 @@ export function CreateSubcategoryModal({ isOpen, onClose, onSubmit }: CreateSubc
                 <div className="space-y-1">
                     <label className="text-sm font-medium text-gray-700">Descripción</label>
                     <div className="overflow-hidden rounded-md border border-gray-300 bg-white">
-                        <ReactQuill
-                            theme="snow"
+                        <RichTextEditor
                             value={formData.descripcion || ''}
                             onChange={(value) => setFormData({ ...formData, descripcion: value })}
-                            className="[&_.ql-container]:min-h-[100px] [&_.ql-editor]:min-h-[100px] text-sm"
                             placeholder="Descripción opcional"
-                            readOnly={loading}
+                            disabled={loading}
+                            height={150}
                         />
                     </div>
                 </div>

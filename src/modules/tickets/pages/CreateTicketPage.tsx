@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ReactQuill from 'react-quill-new';
-import 'react-quill-new/dist/quill.snow.css';
+import { RichTextEditor } from '../../../components/ui/RichTextEditor';
 import { FileUploader } from '../../../shared/components/FileUploader';
 import { Button } from '../../../shared/components/Button';
 import { Select } from '../../../shared/components/Select';
@@ -440,21 +439,10 @@ export default function CreateTicketPage() {
                         <div className="space-y-2">
                             <label className="text-sm font-bold text-gray-700">Descripción</label>
                             <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-                                <ReactQuill
-                                    theme="snow"
+                                <RichTextEditor
                                     value={description}
                                     onChange={setDescription}
-                                    className="[&_.ql-container]:min-h-[200px] [&_.ql-editor]:min-h-[200px]"
                                     placeholder="Explique el problema en detalle..."
-                                    modules={{
-                                        toolbar: [
-                                            [{ 'header': [1, 2, false] }],
-                                            ['bold', 'italic', 'underline'],
-                                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                                            ['link', 'image'],
-                                            ['clean']
-                                        ],
-                                    }}
                                 />
                             </div>
                         </div>

@@ -1,6 +1,5 @@
 import type { TicketDetail } from '../interfaces/Ticket';
-import ReactQuill from 'react-quill-new';
-import 'react-quill-new/dist/quill.bubble.css';
+import { RichTextEditor } from '../../../components/ui/RichTextEditor';
 import { MermaidGraph } from './MermaidGraph';
 
 interface TicketWorkflowProps {
@@ -30,11 +29,11 @@ export function TicketWorkflow({ ticket }: TicketWorkflowProps) {
                     <span className="font-bold">Descripción de la Tarea:</span>
                     {ticket.description ? (
                         <div className="react-quill-readonly mt-1 p-0 border-0 bg-transparent">
-                            <ReactQuill
+                            <RichTextEditor
                                 value={ticket.description}
-                                readOnly={true}
-                                theme="bubble"
-                                modules={{ toolbar: false }}
+                                onChange={() => { }} // Read-only
+                                disabled={true}
+                                height={150}
                             />
                         </div>
                     ) : (
