@@ -119,7 +119,7 @@ export default function TicketDetailPage() {
         return (
             <div className="flex flex-col items-center justify-center h-64 gap-4">
                 <p className="text-gray-500">El ticket solicitado no pudo ser encontrado.</p>
-                <Button variant="secondary" onClick={() => navigate('/tickets')}>
+                <Button variant="secondary" onClick={() => navigate(-1)}>
                     Volver a Tickets
                 </Button>
             </div>
@@ -139,7 +139,7 @@ export default function TicketDetailPage() {
             <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-start print:mb-2 text-black">
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">
-                        <Button variant="ghost" className="!p-0 text-gray-400 hover:text-gray-600 no-print" onClick={() => navigate('/tickets')}>
+                        <Button variant="ghost" className="!p-0 text-gray-400 hover:text-gray-600 no-print" onClick={() => navigate(-1)}>
                             <span className="material-symbols-outlined text-xl">arrow_back</span>
                         </Button>
                         <h2 className="text-2xl font-bold text-gray-900 print:text-black">

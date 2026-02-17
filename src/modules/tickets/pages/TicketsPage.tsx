@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ticketService } from '../services/ticket.service';
 import type { Ticket, TicketStatus, TicketPriority } from '../interfaces/Ticket';
 import { FilterBar, type FilterConfig } from '../../../shared/components/FilterBar';
@@ -13,6 +13,7 @@ import type { TicketFilter } from '../interfaces/Ticket';
 
 export default function TicketsPage() {
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
     const { can } = usePermissions();
     const { setTitle } = useLayout();
     const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -26,24 +27,36 @@ export default function TicketsPage() {
     const [isReopenModalOpen, setIsReopenModalOpen] = useState(false);
     const [ticketToReopen, setTicketToReopen] = useState<number | null>(null);
 
-    // Pagination
-    const [page, setPage] = useState(1);
-    const [limit] = useState(10);
-    const [total, setTotal] = useState(0);
+    // Derived State from URL
+    const page = Number(searchParams.get('page')) || 1;
+    const limit = 10; // Fixed limit for now
+    const [total, setTotal] = useState(0); // Kept for pagination total from API
     const [totalPages, setTotalPages] = useState(1);
 
-    // Filters
-    const [statusFilter, setStatusFilter] = useState<TicketStatus | 'Todos'>('Todos');
-    const [userPriorityFilter, setUserPriorityFilter] = useState<TicketPriority | 'Todas'>('Todas');
-    const [subcategoryPriorityFilter, setSubcategoryPriorityFilter] = useState<TicketPriority | 'Todas'>('Todas');
-    const [searchQuery, setSearchQuery] = useState('');
-    const [advancedFilters, setAdvancedFilters] = useState<Partial<TicketFilter>>({});
+    const statusFilter = (searchParams.get('status') as TicketStatus | 'Todos') || 'Todos';
+    const userPriorityFilter = (searchParams.get('userPriority') as TicketPriority | 'Todas') || 'Todas';
+    const subcategoryPriorityFilter = (searchParams.get('subcategoryPriority') as TicketPriority | 'Todas') || 'Todas';
+    const searchQuery = searchParams.get('search') || '';
 
-    useEffect(() => {
-        setTitle('Gestión de Tickets');
-    }, [setTitle]);
+    // Advanced Filters Derived
+    const advancedFilters = useMemo(() => {
+        const filters: Partial<TicketFilter> = {};
+        const knownKeys = ['messageSearch', 'creatorId', 'assigneeId', 'companyId', 'subcategoryId', 'tagId', 'dateFrom', 'dateTo'];
+        searchParams.forEach((value, key) => {
+            if (knownKeys.includes(key)) {
+                if (['creatorId', 'assigneeId', 'companyId', 'subcategoryId', 'tagId'].includes(key)) {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    (filters as any)[key] = Number(value);
+                } else {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    (filters as any)[key] = value;
+                }
+            }
+        });
+        return filters;
+    }, [searchParams]);
 
-    // Construir opciones de vista basadas en permisos
+    // View Options (Permissions)
     const viewOptions = useMemo(() => {
         const options: Array<{ label: string; value: string }> = [];
 
@@ -60,7 +73,6 @@ export default function TicketsPage() {
             options.push({ label: 'Observados', value: 'observed' });
         }
 
-        // Historial: Participated tickets (not currently assigned)
         if (can('view:assigned', 'Ticket') || can('view:created', 'Ticket')) {
             options.push({ label: 'Historial', value: 'history' });
         }
@@ -69,13 +81,11 @@ export default function TicketsPage() {
             options.push({ label: 'Reabiertos', value: 'reopened' });
         }
 
-        // Vistas de Errores (Disponibles para todos los que puedan ver tickets)
         if (can('view:assigned', 'Ticket') || can('view:created', 'Ticket')) {
             options.push({ label: 'Errores que reporté', value: 'errors_reported' });
             options.push({ label: 'Errores asignados a mí', value: 'errors_received' });
         }
 
-        // Si no tiene ningún permiso específico, al menos mostrar 'creados'
         if (options.length === 0) {
             options.push({ label: 'Creados por mí', value: 'created' });
         }
@@ -83,24 +93,92 @@ export default function TicketsPage() {
         return options;
     }, [can]);
 
-    // Initialize viewFilter with the first available option based on permissions
-    const [viewFilter, setViewFilter] = useState<'all' | 'created' | 'assigned' | 'observed' | 'history' | 'reopened' | 'errors_reported' | 'errors_received'>(() => {
-        // This will be computed after viewOptions is available, but we need a default
-        // We'll use 'created' as the safest default
-        return 'created';
-    });
+    // View Filter Derived
+    // Default to 'created' if no URL param, but effect below will correct it based on permissions
+    const viewFilter = (searchParams.get('view') || 'created') as NonNullable<TicketFilter['view']>;
 
-    // Track if we've initialized the filter to prevent overriding user selection
+    // Track initialization
     const filterInitialized = useRef(false);
 
-    // Sync viewFilter with the first available option ONLY on initial load
+    // Initialize View Filter if missing or invalid
     useEffect(() => {
         if (viewOptions.length > 0 && !filterInitialized.current) {
-            const firstOption = viewOptions[0].value as 'all' | 'created' | 'assigned' | 'observed' | 'history' | 'reopened' | 'errors_reported' | 'errors_received';
-            setViewFilter(firstOption);
+            const search = window.location.search;
+            const params = new URLSearchParams(search);
+            const urlView = params.get('view');
+
+            // Only force default if URL param is completely missing
+            if (!urlView) {
+                const defaultView = viewOptions[0].value;
+                setSearchParams(_ => {
+                    // Start fresh from current search params
+                    const newParams = new URLSearchParams(window.location.search);
+                    newParams.set('view', defaultView);
+                    return newParams;
+                }, { replace: true });
+            }
             filterInitialized.current = true;
         }
-    }, [viewOptions]);
+    }, [viewOptions, setSearchParams]);
+
+    useEffect(() => {
+        setTitle('Gestión de Tickets');
+    }, [setTitle]);
+
+    // Helper functions to update URL params (replace setters)
+    const updateParams = useCallback((updates: Record<string, string | null>) => {
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev);
+            Object.entries(updates).forEach(([key, value]) => {
+                if (value === null) {
+                    newParams.delete(key);
+                } else {
+                    newParams.set(key, value);
+                }
+            });
+            // Reset page on filter changes (heuristic: if 'page' is not explicitly set in updates, reset it)
+            if (!('page' in updates)) {
+                newParams.set('page', '1');
+            }
+            return newParams;
+        });
+    }, [setSearchParams]);
+
+    // Specific Setters for UI Components (Clean defaults from URL)
+    const setPage = (p: number) => {
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev);
+            newParams.set('page', String(p));
+            return newParams;
+        });
+    };
+
+    const setViewFilter = (val: string) => updateParams({ view: val });
+    const setStatusFilter = (val: string) => updateParams({ status: val === 'Todos' ? null : val });
+    const setUserPriorityFilter = (val: string) => updateParams({ userPriority: val === 'Todas' ? null : val });
+    const setSubcategoryPriorityFilter = (val: string) => updateParams({ subcategoryPriority: val === 'Todas' ? null : val });
+    const setSearchQuery = (val: string) => updateParams({ search: val === '' ? null : val });
+
+    const setAdvancedFilters = (newFilters: Partial<TicketFilter>) => {
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev);
+            // Clear old advanced filters first? Or merge?
+            // Usually replace. To be safe, let's verify keys.
+            const knownKeys = ['messageSearch', 'creatorId', 'assigneeId', 'companyId', 'subcategoryId', 'tagId', 'dateFrom', 'dateTo'];
+            knownKeys.forEach(k => newParams.delete(k));
+
+            Object.entries(newFilters).forEach(([key, value]) => {
+                if (value !== undefined && value !== null && value !== '') {
+                    newParams.set(key, String(value));
+                }
+            });
+            newParams.set('page', '1');
+            return newParams;
+        });
+    };
+
+
+
 
     const fetchTickets = useCallback(async () => {
         try {
@@ -127,10 +205,7 @@ export default function TicketsPage() {
         }
     }, [viewFilter, statusFilter, userPriorityFilter, subcategoryPriorityFilter, searchQuery, page, limit, advancedFilters]);
 
-    useEffect(() => {
-        setPage(1);
-    }, [viewFilter, statusFilter, userPriorityFilter, subcategoryPriorityFilter, searchQuery]);
-
+    // Effect to fetch tickets when URL params change
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             fetchTickets();
