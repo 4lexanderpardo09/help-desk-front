@@ -177,7 +177,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
                                 "flex items-center gap-3 text-sm text-white/80 hover:text-white mb-4 transition-colors font-medium",
                                 isCollapsed ? "justify-center" : ""
                             )}
-                            href="/manual/"
+                            href="/manual/index.html"
                             target="_blank"
                             rel="noopener noreferrer"
                             title="Manual de Usuario"
