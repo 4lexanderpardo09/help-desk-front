@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { Modal } from '../../../shared/components/Modal';
 import { Button } from '../../../shared/components/Button';
 import { api } from '../../../core/api/api';
+import { Icon } from '../../../shared/components/Icon';
 
 interface ReopenTicketModalProps {
     isOpen: boolean;
@@ -44,7 +45,7 @@ const ReopenTicketModal = ({ isOpen, onClose, ticketId, onSuccess }: ReopenTicke
         >
             <div className="flex items-start gap-4 mb-6 p-4 bg-yellow-50 rounded-lg border border-yellow-100">
                 <div className="p-2 bg-yellow-100 rounded-full text-yellow-600 shrink-0">
-                    <span className="material-symbols-outlined text-[20px]">warning</span>
+                    <Icon name="warning" className="text-[20px]" />
                 </div>
                 <div>
                     <h4 className="text-sm font-medium text-yellow-800 mb-1">Confirmación de Reapertura</h4>

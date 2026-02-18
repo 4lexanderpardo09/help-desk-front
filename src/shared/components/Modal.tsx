@@ -2,6 +2,7 @@
 import { type ReactNode, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../lib/utils';
+import { Icon } from './Icon';
 
 interface ModalProps {
     isOpen: boolean;
@@ -48,7 +49,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
                         onClick={onClose}
                         className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
                     >
-                        <span className="material-symbols-outlined">close</span>
+                        <Icon name="close" />
                     </button>
                 </div>
                 <div className="flex-1 overflow-y-auto px-6 py-4">

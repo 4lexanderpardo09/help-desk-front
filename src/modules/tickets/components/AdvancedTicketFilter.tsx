@@ -3,6 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import type { TicketFilter } from '../interfaces/Ticket';
 import { Button } from '../../../shared/components/Button';
 import { Select } from '../../../shared/components/Select';
+import { Icon } from '../../../shared/components/Icon';
 import { UserSelect } from '../../users/components/UserSelect';
 import { companyService } from '../services/company.service';
 import { subcategoryService } from '../services/subcategory.service';
@@ -129,12 +130,10 @@ export const AdvancedTicketFilter: React.FC<AdvancedTicketFilterProps> = ({ filt
         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
             <div className="flex justify-between items-center mb-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
                 <h3 className="text-sm font-semibold text-gray-700 flex items-center">
-                    <span className="material-symbols-outlined mr-2">filter_list</span>
+                    <Icon name="filter_list" className="mr-2" />
                     Filtros Avanzados
                 </h3>
-                <span className="material-symbols-outlined text-gray-500">
-                    {isExpanded ? 'expand_less' : 'expand_more'}
-                </span>
+                <Icon name={isExpanded ? 'expand_less' : 'expand_more'} className="text-gray-500" />
             </div>
 
             {isExpanded && (
@@ -300,7 +299,7 @@ export const AdvancedTicketFilter: React.FC<AdvancedTicketFilterProps> = ({ filt
                         <label className="block text-xs font-medium text-gray-700 mb-1">Búsqueda en Mensajes</label>
                         <div className="flex relative">
                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                <span className="material-symbols-outlined text-gray-400">search</span>
+                                <Icon name="search" className="text-gray-400" />
                             </div>
                             <input
                                 type="text"
@@ -312,7 +311,7 @@ export const AdvancedTicketFilter: React.FC<AdvancedTicketFilterProps> = ({ filt
                                 Buscar
                             </Button>
                             <Button type="button" variant="outline" onClick={handleClear} className="ml-2 rounded-lg">
-                                <span className="material-symbols-outlined">filter_alt_off</span>
+                                <Icon name="filter_alt_off" />
                             </Button>
                         </div>
                     </div>

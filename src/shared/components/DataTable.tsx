@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import { Icon } from './Icon';
 
 export interface ColumnDef<T> {
     key: string;
@@ -143,14 +144,16 @@ export function DataTable<T>({
                                     <div className="flex items-center gap-1">
                                         {col.header}
                                         {col.sortable && sort && sort.key === col.key && (
-                                            <span className="material-symbols-outlined text-sm font-bold text-brand-blue">
-                                                {sort.order === 'asc' ? 'arrow_upward' : 'arrow_downward'}
-                                            </span>
+                                            <Icon
+                                                name={sort.order === 'asc' ? 'arrow_upward' : 'arrow_downward'}
+                                                className="text-sm font-bold text-brand-blue"
+                                            />
                                         )}
                                         {col.sortable && (!sort || sort.key !== col.key) && (
-                                            <span className="material-symbols-outlined text-sm font-bold text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                unfold_more
-                                            </span>
+                                            <Icon
+                                                name="unfold_more"
+                                                className="text-sm font-bold text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            />
                                         )}
                                     </div>
                                 </th>

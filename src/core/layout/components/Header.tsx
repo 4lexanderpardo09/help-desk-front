@@ -3,6 +3,7 @@
 import { useAuth } from '../../../modules/auth/context/useAuth';
 import { NotificationsBell } from './NotificationsBell';
 import { UserDropdown } from './UserDropdown';
+import { Icon } from '../../../shared/components/Icon';
 
 interface HeaderProps {
     toggleMobileSidebar: () => void;
@@ -19,7 +20,7 @@ export function Header({ toggleMobileSidebar, title = 'Dashboard' }: HeaderProps
                     onClick={toggleMobileSidebar}
                     className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg lg:hidden"
                 >
-                    <span className="material-symbols-outlined" style={{ fontVariationSettings: '"FILL" 1' }}>menu</span>
+                    <Icon name="menu" style={{ fontVariationSettings: '"FILL" 1' }} />
                 </button>
                 <h1 className="text-xl font-bold text-gray-800">{title}</h1>
             </div>

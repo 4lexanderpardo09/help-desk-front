@@ -3,6 +3,7 @@ import type { CheckNextStepResponse, UserCandidate } from '../interfaces/Ticket'
 import { Modal } from '../../../shared/components/Modal';
 import { Button } from '../../../shared/components/Button';
 import { UserSelect } from '../../users/components/UserSelect';
+import { Icon } from '../../../shared/components/Icon';
 
 interface WorkflowDecisionModalProps {
     open: boolean;
@@ -139,9 +140,7 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
                                             }`}
                                     >
                                         <div className="font-medium flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-xl">
-                                                {d.isRoute ? 'alt_route' : 'arrow_forward'}
-                                            </span>
+                                            <Icon name={d.isRoute ? 'alt_route' : 'arrow_forward'} className="text-xl" />
                                             {d.label}
                                         </div>
                                         {d.isRoute && (
@@ -160,7 +159,7 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
                         <div className="space-y-3">
                             <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
                                 <div className="flex gap-2">
-                                    <span className="material-symbols-outlined text-amber-600">warning</span>
+                                    <Icon name="warning" className="text-amber-600" />
                                     <div>
                                         <p className="text-sm font-medium text-amber-800">Cargos sin usuario asignado</p>
                                         <p className="text-xs text-amber-700 mt-1">
@@ -226,7 +225,7 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
                     {bossCandidates.length > 0 && (selectedDecision || isLinearMode) && (
                         <div className="bg-purple-50 border border-purple-100 rounded-lg p-3 space-y-2">
                             <div className="flex gap-2 items-center">
-                                <span className="material-symbols-outlined text-purple-600">supervisor_account</span>
+                                <Icon name="supervisor_account" className="text-purple-600" />
                                 <label htmlFor="boss-select" className="text-sm font-semibold text-purple-900">
                                     Confirmar Jefe Inmediato
                                 </label>
@@ -273,12 +272,12 @@ export const WorkflowDecisionModal: React.FC<WorkflowDecisionModalProps> = ({
                     {transitionData?.linear && (
                         <div className="p-4 bg-sky-50 text-sky-800 rounded-lg text-sm border border-sky-100 space-y-2">
                             <div className="flex items-start gap-3">
-                                <span className="material-symbols-outlined text-lg mt-0.5">info</span>
+                                <Icon name="info" className="text-lg mt-0.5" />
                                 <div>
                                     El ticket avanzará al paso: <strong className="font-bold">{transitionData?.linear?.targetStepName}</strong>
                                     {transitionData?.parallelStatus && (
                                         <div className="mt-1 flex items-center gap-1 text-xs font-bold text-brand-orange uppercase">
-                                            <span className="material-symbols-outlined text-base">call_split</span>
+                                            <Icon name="call_split" className="text-base" />
                                             Paso Paralelo
                                         </div>
                                     )}

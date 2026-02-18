@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 
 import { Modal } from '../../../shared/components/Modal';
 import { FileUploader } from '../../../shared/components/FileUploader';
+import { Icon } from '../../../shared/components/Icon';
 
 interface CreateNoveltyModalProps {
     isOpen: boolean;
@@ -59,7 +60,7 @@ export const CreateNoveltyModal: React.FC<CreateNoveltyModalProps> = ({
         >
             <div className="space-y-6">
                 <div className="bg-orange-50 border border-orange-100 rounded-lg p-4 flex gap-3">
-                    <span className="material-symbols-outlined text-orange-600 mt-0.5">pause_circle</span>
+                    <Icon name="pause_circle" className="text-orange-600 mt-0.5" />
                     <p className="text-sm text-orange-800">
                         Crear una novedad pausará el ticket y lo asignará al usuario seleccionado para su gestión.
                         El SLA se detendrá hasta que se resuelva la novedad.

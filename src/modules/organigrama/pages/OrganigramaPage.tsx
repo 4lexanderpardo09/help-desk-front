@@ -7,6 +7,7 @@ import { ConfirmDialog } from '../../../shared/components/ConfirmDialog';
 import { organigramaService } from '../services/organigrama.service';
 import { positionService } from '../../positions/services/position.service';
 import type { OrganigramaTreeNode } from '../interfaces/Organigrama';
+import { Icon } from '../../../shared/components/Icon';
 
 export default function OrganigramaPage() {
     const { setTitle } = useLayout();
@@ -96,10 +97,10 @@ export default function OrganigramaPage() {
                         Mostrar Inactivos
                     </label>
                     <Button variant="outline" onClick={loadData} title="Refrescar">
-                        <span className="material-symbols-outlined">refresh</span>
+                        <Icon name="refresh" />
                     </Button>
                     <Button variant="brand" onClick={() => setShowAddModal(true)}>
-                        <span className="material-symbols-outlined mr-2">add_link</span>
+                        <Icon name="add_link" className="mr-2" />
                         Nueva Relación
                     </Button>
                 </div>
@@ -108,7 +109,7 @@ export default function OrganigramaPage() {
             <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 min-h-[600px]">
                 {loading ? (
                     <div className="flex h-96 items-center justify-center">
-                        <span className="material-symbols-outlined animate-spin text-4xl text-brand-teal">autorenew</span>
+                        <Icon name="autorenew" className="animate-spin text-4xl text-brand-teal" />
                     </div>
                 ) : (
                     <OrganigramaTree data={treeData} onNodeClick={handleNodeClick} />

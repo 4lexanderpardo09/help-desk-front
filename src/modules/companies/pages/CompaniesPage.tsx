@@ -8,6 +8,7 @@ import { CreateCompanyModal } from '../components/CreateCompanyModal';
 import { EditCompanyModal } from '../components/EditCompanyModal';
 import type { Company, CreateCompanyDto, UpdateCompanyDto } from '../interfaces/Company';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
+import { Icon } from '../../../shared/components/Icon';
 
 /**
  * Página principal de gestión de empresas
@@ -164,14 +165,14 @@ export default function CompaniesPage() {
                         className="text-gray-400 hover:text-brand-blue"
                         title="Editar"
                     >
-                        <span className="material-symbols-outlined text-[20px]">edit</span>
+                        <Icon name="edit" className="text-[20px]" />
                     </button>
                     <button
                         onClick={() => handleDeleteClick(comp)}
                         className="text-gray-400 hover:text-red-600"
                         title="Eliminar"
                     >
-                        <span className="material-symbols-outlined text-[20px]">delete</span>
+                        <Icon name="delete" className="text-[20px]" />
                     </button>
                 </div>
             )
@@ -213,7 +214,7 @@ export default function CompaniesPage() {
                     variant="brand"
                     onClick={() => setShowCreateModal(true)}
                 >
-                    <span className="material-symbols-outlined mr-2">add</span>
+                    <Icon name="add" className="mr-2" />
                     Crear Empresa
                 </Button>
             </div>

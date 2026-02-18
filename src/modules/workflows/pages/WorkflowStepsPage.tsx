@@ -11,6 +11,7 @@ import { TransitionModal } from '../components/TransitionModal';
 import { workflowService } from '../services/workflow.service';
 import { CompanyTemplateManager } from '../components/CompanyTemplateManager';
 import type { Workflow } from '../interfaces/Workflow';
+import { Icon } from '../../../shared/components/Icon';
 
 
 export const WorkflowStepsPage = () => {
@@ -104,11 +105,11 @@ export const WorkflowStepsPage = () => {
                 </div>
                 <div className="flex gap-2">
                     <Button variant="outline" onClick={() => navigate('/workflows')}>
-                        <span className="material-symbols-outlined mr-2">arrow_back</span>
+                        <Icon name="arrow_back" className="mr-2" />
                         Volver
                     </Button>
                     <Button variant="brand" onClick={handleCreate}>
-                        <span className="material-symbols-outlined mr-2">add</span>
+                        <Icon name="add" className="mr-2" />
                         Nuevo Paso
                     </Button>
                 </div>
@@ -194,21 +195,21 @@ export const WorkflowStepsPage = () => {
                                     className="text-gray-400 hover:text-purple-600"
                                     title="Gestionar Transiciones"
                                 >
-                                    <span className="material-symbols-outlined text-[20px]">call_split</span>
+                                    <Icon name="call_split" className="text-[20px]" />
                                 </button>
                                 <button
                                     onClick={() => handleEdit(step)}
                                     className="text-gray-400 hover:text-brand-blue"
                                     title="Editar"
                                 >
-                                    <span className="material-symbols-outlined text-[20px]">edit</span>
+                                    <Icon name="edit" className="text-[20px]" />
                                 </button>
                                 <button
                                     onClick={() => handleDelete(step.id)}
                                     className="text-gray-400 hover:text-red-600"
                                     title="Eliminar"
                                 >
-                                    <span className="material-symbols-outlined text-[20px]">delete</span>
+                                    <Icon name="delete" className="text-[20px]" />
                                 </button>
                             </div>
                         )

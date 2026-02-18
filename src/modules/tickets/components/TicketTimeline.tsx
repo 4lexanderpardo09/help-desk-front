@@ -1,6 +1,7 @@
 import type { TicketTimelineItem } from '../interfaces/Ticket';
 import { ticketService } from '../services/ticket.service';
 import DOMPurify from 'dompurify';
+import { Icon } from '../../../shared/components/Icon';
 
 interface TicketTimelineProps {
     items: TicketTimelineItem[];
@@ -34,7 +35,7 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
                         <div className="absolute left-0 flex h-14 w-14 items-center justify-center rounded-full border-4 border-[#f6f8f8] bg-white">
                             {isError ? (
                                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-600">
-                                    <span className="material-symbols-outlined text-xl">report_problem</span>
+                                    <Icon name="report_problem" className="text-xl" />
                                 </div>
                             ) : item.type === 'comment' ? (
                                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-brand-blue font-bold">
@@ -42,15 +43,15 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
                                 </div>
                             ) : item.type === 'status_change' ? (
                                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-500">
-                                    <span className="material-symbols-outlined text-xl">cached</span>
+                                    <Icon name="cached" className="text-xl" />
                                 </div>
                             ) : item.type === 'assignment' ? (
                                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-purple-600">
-                                    <span className="material-symbols-outlined text-xl">person_add</span>
+                                    <Icon name="person_add" className="text-xl" />
                                 </div>
                             ) : (
                                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-gray-400">
-                                    <span className="material-symbols-outlined text-xl">info</span>
+                                    <Icon name="info" className="text-xl" />
                                 </div>
                             )}
                         </div>
@@ -78,7 +79,7 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
                             {isError && item.metadata?.error ? (
                                 <div className="space-y-3">
                                     <div className="flex items-start gap-2">
-                                        <span className="material-symbols-outlined text-red-600 mt-0.5">error</span>
+                                        <Icon name="error" className="text-red-600 mt-0.5" />
                                         <div>
                                             <h4 className="font-bold text-red-800 text-sm uppercase tracking-wide mb-1">
                                                 {item.metadata.error.title}
@@ -93,7 +94,7 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
                                     {item.type === 'assignment' && item.asignadoA && (
                                         <div className="flex flex-wrap gap-2 items-center mt-2">
                                             <div className="flex items-center gap-2 text-sm text-red-600 bg-white/50 border border-red-100 p-2 rounded-lg w-fit">
-                                                <span className="material-symbols-outlined text-[18px]">person_off</span>
+                                                <Icon name="person_off" className="text-[18px]" />
                                                 <span>Responsable: <strong>{item.asignadoA.nombre}</strong></span>
                                             </div>
 
@@ -103,9 +104,7 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
                                                     ? 'bg-red-50 text-red-700 border-red-100'
                                                     : 'bg-emerald-50 text-emerald-700 border-emerald-100'
                                                     }`}>
-                                                    <span className="material-symbols-outlined text-[14px]">
-                                                        {['Atrasado', 'Vencido'].includes(item.metadata.estadoTiempoPaso) ? 'warning' : 'check_circle'}
-                                                    </span>
+                                                    <Icon name={['Atrasado', 'Vencido'].includes(item.metadata.estadoTiempoPaso) ? 'warning' : 'check_circle'} className="text-[14px]" />
                                                     {item.metadata.estadoTiempoPaso}
                                                 </div>
                                             )}
@@ -126,7 +125,7 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
                                     <div className="flex flex-wrap gap-2 items-center">
                                         {item.asignadoA && (
                                             <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-2 rounded-lg border border-gray-100 w-fit">
-                                                <span className="material-symbols-outlined text-[18px]">person</span>
+                                                <Icon name="person" className="text-[18px]" />
                                                 <span>Asignado a: <strong>{item.asignadoA.nombre}</strong></span>
                                             </div>
                                         )}
@@ -136,9 +135,7 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
                                                 ? 'bg-red-50 text-red-700 border-red-100'
                                                 : 'bg-emerald-50 text-emerald-700 border-emerald-100'
                                                 }`}>
-                                                <span className="material-symbols-outlined text-[14px]">
-                                                    {['Atrasado', 'Vencido'].includes(item.metadata.estadoTiempoPaso) ? 'warning' : 'check_circle'}
-                                                </span>
+                                                <Icon name={['Atrasado', 'Vencido'].includes(item.metadata.estadoTiempoPaso) ? 'warning' : 'check_circle'} className="text-[14px]" />
                                                 {item.metadata.estadoTiempoPaso}
                                             </div>
                                         )}
@@ -155,9 +152,7 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
                                             ? 'bg-red-50 text-red-700 border-red-100'
                                             : 'bg-emerald-50 text-emerald-700 border-emerald-100'
                                             }`}>
-                                            <span className="material-symbols-outlined text-[14px]">
-                                                {['Atrasado', 'Vencido'].includes(item.metadata.estadoTiempoPaso) ? 'warning' : 'check_circle'}
-                                            </span>
+                                            <Icon name={['Atrasado', 'Vencido'].includes(item.metadata.estadoTiempoPaso) ? 'warning' : 'check_circle'} className="text-[14px]" />
                                             {item.metadata.estadoTiempoPaso}
                                         </div>
                                     )}
@@ -178,7 +173,7 @@ export function TicketTimeline({ items }: TicketTimelineProps) {
                                                         ? 'border-red-200 bg-red-100 text-red-700 hover:bg-red-50 hover:text-red-900'
                                                         : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-white hover:text-brand-blue'}`}
                                             >
-                                                <span className="material-symbols-outlined text-[18px]">description</span>
+                                                <Icon name="description" className="text-[18px]" />
                                                 {att.nombre}
                                             </button>
                                         ))}

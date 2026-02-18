@@ -1,5 +1,6 @@
 import { type InputHTMLAttributes, forwardRef } from 'react';
 import { cn } from '../lib/utils';
+import { Icon } from './Icon';
 
 /**
  * Propiedades del componente Input.
@@ -42,12 +43,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                             type="button"
                             onClick={onIconClick}
                             className={cn(
-                                "material-symbols-outlined absolute right-3 top-3 text-gray-400 select-none transition-colors hover:text-brand-teal",
+                                "absolute right-3 top-3 select-none transition-colors",
                                 onIconClick ? "cursor-pointer pointer-events-auto" : "pointer-events-none"
                             )}
-                            style={{ fontSize: '20px' }}
                         >
-                            {icon}
+                            <Icon
+                                name={icon}
+                                className="text-gray-400 hover:text-brand-teal"
+                                style={{ fontSize: '20px' }}
+                            />
                         </button>
                     )}
                 </div>

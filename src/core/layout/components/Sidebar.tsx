@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { cn } from '../../../shared/lib/utils';
 import { useAuth } from '../../../modules/auth/context/useAuth';
 import type { PermissionSubject } from '../../../modules/roles/interfaces/Permission';
+import { Icon } from '../../../shared/components/Icon';
 
 interface SidebarProps {
     isCollapsed: boolean;
@@ -112,7 +113,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
                             onClick={closeMobile}
                             className="lg:hidden text-white/90 hover:text-white transition-colors"
                         >
-                            <span className="material-symbols-outlined">close</span>
+                            <Icon name="close" />
                         </button>
                     </div>
 
@@ -133,7 +134,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
                                         )}
                                         onClick={() => closeMobile()}
                                     >
-                                        <span className="material-symbols-outlined flex-shrink-0" style={{ fontSize: '22px', fontVariationSettings: '"FILL" 1' }}>add_circle</span>
+                                        <Icon name="add_circle" className="flex-shrink-0" style={{ fontSize: '22px', fontVariationSettings: '"FILL" 1' }} />
                                         <span className={cn(
                                             "font-semibold text-sm transition-all whitespace-nowrap",
                                             isCollapsed ? "w-0 opacity-0 hidden" : "w-auto opacity-100"
@@ -156,7 +157,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
                                         )}
                                         onClick={() => closeMobile()} // Close on navigation in mobile
                                     >
-                                        <span className="material-symbols-outlined flex-shrink-0" style={{ fontSize: '22px', fontVariationSettings: '"FILL" 1' }}>{item.icon}</span>
+                                        <Icon name={item.icon} className="flex-shrink-0" style={{ fontSize: '22px', fontVariationSettings: '"FILL" 1' }} />
                                         <span className={cn(
                                             "font-medium text-sm transition-all whitespace-nowrap",
                                             isCollapsed ? "w-0 opacity-0 hidden" : "w-auto opacity-100"
@@ -182,7 +183,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
                             rel="noopener noreferrer"
                             title="Manual de Usuario"
                         >
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px', fontVariationSettings: '"FILL" 1' }}>menu_book</span>
+                            <Icon name="menu_book" style={{ fontSize: '20px', fontVariationSettings: '"FILL" 1' }} />
                             {!isCollapsed && <span>Manual de Usuario</span>}
                         </a>
 
@@ -191,9 +192,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
                             onClick={toggleCollapse}
                             className="hidden lg:flex w-full items-center justify-center rounded-lg bg-white/10 p-2 text-white/80 hover:bg-white/20 hover:text-white transition-all"
                         >
-                            <span className="material-symbols-outlined">
-                                {isCollapsed ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left'}
-                            </span>
+                            <Icon name={isCollapsed ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left'} />
                         </button>
                     </div>
                 </div>

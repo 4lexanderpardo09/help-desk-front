@@ -8,6 +8,7 @@ import { FIELD_TYPES } from '../interfaces/TemplateField';
 import { excelDataService } from '../../imports/services/excel-data.service';
 import type { ExcelData } from '../../imports/interfaces/ExcelData';
 import { toast } from 'sonner';
+import { Icon } from '../../../shared/components/Icon';
 
 interface TemplateFieldsConfigProps {
     campos: StepTemplateField[];
@@ -190,7 +191,7 @@ export const TemplateFieldsConfig = ({ campos, onChange, flujoId }: TemplateFiel
                 <h4 className="font-semibold text-gray-700">Campos de Plantilla</h4>
                 {!isAdding && (
                     <Button size="sm" variant="outline" onClick={() => setIsAdding(true)}>
-                        <span className="material-symbols-outlined mr-1 text-[18px]">add</span>
+                        <Icon name="add" className="mr-1 text-[18px]" />
                         Agregar Campo
                     </Button>
                 )}
@@ -217,14 +218,14 @@ export const TemplateFieldsConfig = ({ campos, onChange, flujoId }: TemplateFiel
                                     onClick={() => handleEdit(index)}
                                     className="text-gray-400 hover:text-brand-blue"
                                 >
-                                    <span className="material-symbols-outlined text-[20px]">edit</span>
+                                    <Icon name="edit" className="text-[20px]" />
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => handleDelete(index)}
                                     className="text-gray-400 hover:text-red-600"
                                 >
-                                    <span className="material-symbols-outlined text-[20px]">delete</span>
+                                    <Icon name="delete" className="text-[20px]" />
                                 </button>
                             </div>
                         </div>

@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
+import { Icon } from '../../../shared/components/Icon';
 import { DataTable } from '../../../shared/components/DataTable';
 import { Button } from '../../../shared/components/Button';
 import { ConfirmDialog } from '../../../shared/components/ConfirmDialog';
@@ -130,14 +131,14 @@ export default function ErrorTypesPage() {
                         className="p-1 text-gray-400 hover:text-brand-blue transition-colors"
                         title="Editar"
                     >
-                        <span className="material-symbols-outlined text-lg">edit</span>
+                        <Icon name="edit" className="text-lg" />
                     </button>
                     <button
                         onClick={() => { setSelectedItem(row); setShowDeleteDialog(true); }}
                         className="p-1 text-gray-400 hover:text-red-500 transition-colors"
                         title="Eliminar"
                     >
-                        <span className="material-symbols-outlined text-lg">delete</span>
+                        <Icon name="delete" className="text-lg" />
                     </button>
                 </div>
             )
@@ -175,7 +176,7 @@ export default function ErrorTypesPage() {
                     </p>
                 </div>
                 <Button variant="brand" onClick={() => setShowCreateModal(true)}>
-                    <span className="material-symbols-outlined mr-2">add</span>
+                    <Icon name="add" className="mr-2" />
                     Nuevo Tipo de Error
                 </Button>
             </div>

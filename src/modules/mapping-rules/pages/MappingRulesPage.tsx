@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Button } from '../../../shared/components/Button';
+import { Icon } from '../../../shared/components/Icon';
 import { DataTable } from '../../../shared/components/DataTable';
 import { ConfirmDialog } from '../../../shared/components/ConfirmDialog';
 import { FilterBar, type FilterConfig } from '../../../shared/components/FilterBar';
@@ -215,14 +216,14 @@ export default function MappingRulesPage() {
                         onClick={() => handleEdit(rule)}
                         title="Editar"
                     >
-                        <span className="material-symbols-outlined text-[20px]">edit</span>
+                        <Icon name="edit" className="text-[20px]" />
                     </button>
                     <button
                         className="text-gray-400 hover:text-red-600"
                         onClick={() => handleDeleteClick(rule)}
                         title="Eliminar"
                     >
-                        <span className="material-symbols-outlined text-[20px]">delete</span>
+                        <Icon name="delete" className="text-[20px]" />
                     </button>
                 </div>
             )
@@ -274,7 +275,7 @@ export default function MappingRulesPage() {
                     variant="brand"
                     onClick={() => setShowCreateModal(true)}
                 >
-                    <span className="material-symbols-outlined mr-2">add</span>
+                    <Icon name="add" className="mr-2" />
                     Crear Regla
                 </Button>
             </div>

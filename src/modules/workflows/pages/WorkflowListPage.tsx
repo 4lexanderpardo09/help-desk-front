@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { DataTable } from '../../../shared/components/DataTable';
 import { ConfirmDialog } from '../../../shared/components/ConfirmDialog';
 import { FilterBar, type FilterConfig } from '../../../shared/components/FilterBar';
+import { Icon } from '../../../shared/components/Icon';
 
 export default function WorkflowListPage() {
     const { setTitle } = useLayout();
@@ -127,21 +128,21 @@ export default function WorkflowListPage() {
                         className="text-gray-400 hover:text-brand-blue"
                         title="Editar"
                     >
-                        <span className="material-symbols-outlined text-[20px]">edit</span>
+                        <Icon name="edit" className="text-[20px]" />
                     </button>
                     <button
                         onClick={() => navigate(`/workflows/${wf.id}/steps`)}
                         className="text-gray-400 hover:text-brand-teal"
                         title="Gestionar Pasos"
                     >
-                        <span className="material-symbols-outlined text-[20px]">account_tree</span>
+                        <Icon name="account_tree" className="text-[20px]" />
                     </button>
                     <button
                         onClick={() => handleDeleteClick(wf)}
                         className="text-gray-400 hover:text-red-600"
                         title="Eliminar"
                     >
-                        <span className="material-symbols-outlined text-[20px]">delete</span>
+                        <Icon name="delete" className="text-[20px]" />
                     </button>
                 </div>
             )
@@ -186,7 +187,7 @@ export default function WorkflowListPage() {
                     </p>
                 </div>
                 <Button variant="brand" onClick={handleCreate}>
-                    <span className="material-symbols-outlined mr-2">add</span>
+                    <Icon name="add" className="mr-2" />
                     Nuevo Flujo
                 </Button>
             </div>

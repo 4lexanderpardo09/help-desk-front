@@ -1,6 +1,7 @@
 
 import { Modal } from './Modal';
 import { Button } from './Button';
+import { Icon } from './Icon';
 
 interface InfoModalProps {
     isOpen: boolean;
@@ -37,17 +38,17 @@ export function InfoModal({
                 <div className="flex items-start gap-4">
                     {variant === 'success' && (
                         <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-green-100 text-green-600">
-                            <span className="material-symbols-outlined">check_circle</span>
+                            <Icon name="check_circle" />
                         </div>
                     )}
                     {variant === 'error' && (
                         <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-red-100 text-red-600">
-                            <span className="material-symbols-outlined">error</span>
+                            <Icon name="error" />
                         </div>
                     )}
                     {variant === 'info' && (
                         <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-600">
-                            <span className="material-symbols-outlined">info</span>
+                            <Icon name="info" />
                         </div>
                     )}
                     <div>

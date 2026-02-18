@@ -1,5 +1,6 @@
 
 import { cn } from '../../../shared/lib/utils';
+import { Icon } from '../../../shared/components/Icon';
 
 interface StatsCardProps {
     title: string;
@@ -44,13 +45,13 @@ export function StatsCard({
                     )}>{value}</p>
                 </div>
                 <div className={cn("flex h-14 w-14 items-center justify-center rounded-lg", iconBgColor, iconColor)}>
-                    <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: '"FILL" 1' }}>{icon}</span>
+                    <Icon name={icon} className="text-2xl" style={{ fontVariationSettings: '"FILL" 1' }} />
                 </div>
             </div>
             {(trend || footerLabel) && (
                 <div className={cn("mt-4 flex items-center text-xs font-medium", trend ? trendColor : footerColor)}>
                     {(trend || footerIcon) && (
-                        <span className="material-symbols-outlined mr-1 text-sm" style={{ fontVariationSettings: '"FILL" 1' }}>{trend ? (Number(trend.replace(/\D/g, '')) > 0 ? "trending_up" : "trending_down") : footerIcon}</span>
+                        <Icon name={trend ? (Number(trend.replace(/\D/g, '')) > 0 ? "trending_up" : "trending_down") : footerIcon!} className="mr-1 text-sm" style={{ fontVariationSettings: '"FILL" 1' }} />
                     )}
                     <span>{trendLabel || footerLabel}</span>
                 </div>

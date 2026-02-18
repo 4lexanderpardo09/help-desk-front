@@ -10,6 +10,7 @@ import { EditCategoryModal } from '../components/EditCategoryModal';
 import type { Category, CreateCategoryDto, UpdateCategoryDto } from '../interfaces/Category';
 import type { Department } from '../../departments/interfaces/Department';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
+import { Icon } from '../../../shared/components/Icon';
 
 /**
  * Página principal de gestión de categorías
@@ -200,14 +201,14 @@ export default function CategoriesPage() {
                         onClick={() => handleEdit(cat)}
                         title="Editar"
                     >
-                        <span className="material-symbols-outlined text-[20px]">edit</span>
+                        <Icon name="edit" className="text-[20px]" />
                     </button>
                     <button
                         className="text-gray-400 hover:text-red-600"
                         onClick={() => handleDeleteClick(cat)}
                         title="Eliminar"
                     >
-                        <span className="material-symbols-outlined text-[20px]">delete</span>
+                        <Icon name="delete" className="text-[20px]" />
                     </button>
                 </div>
             )
@@ -259,7 +260,7 @@ export default function CategoriesPage() {
                     variant="brand"
                     onClick={() => setShowCreateModal(true)}
                 >
-                    <span className="material-symbols-outlined mr-2">add</span>
+                    <Icon name="add" className="mr-2" />
                     Crear Categoría
                 </Button>
             </div>

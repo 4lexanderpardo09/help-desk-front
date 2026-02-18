@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { SignatureConfig } from './SignatureConfig';
 import { TemplateFieldsConfig } from './TemplateFieldsConfig';
 import { SpecificAssignmentConfig } from './SpecificAssignmentConfig';
+import { Icon } from '../../../shared/components/Icon';
 
 interface StepModalProps {
     isOpen: boolean;
@@ -336,7 +337,7 @@ export const StepModal = ({ isOpen, onClose, onSuccess, step, flujoId }: StepMod
                                 </label>
                                 <div className="flex gap-2 items-center">
                                     <label className="cursor-pointer bg-white px-3 py-2 border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2 shadow-sm">
-                                        <span className="material-symbols-outlined text-[20px]">upload</span>
+                                        <Icon name="upload" className="text-[20px]" />
                                         <span>
                                             {pdfFile ? pdfFile.name : step?.nombreAdjunto ? 'Cambiar PDF' : 'Subir PDF'}
                                         </span>

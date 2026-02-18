@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../../../shared/components/Button';
 import { Modal } from '../../../shared/components/Modal';
 import { FileUploader } from '../../../shared/components/FileUploader';
+import { Icon } from '../../../shared/components/Icon';
 
 interface ResolveNoveltyModalProps {
     isOpen: boolean;
@@ -37,7 +38,7 @@ export const ResolveNoveltyModal: React.FC<ResolveNoveltyModalProps> = ({
         >
             <div className="space-y-6">
                 <div className="bg-green-50 border border-green-100 rounded-lg p-4 flex gap-3">
-                    <span className="material-symbols-outlined text-green-600 mt-0.5">check_circle</span>
+                    <Icon name="check_circle" className="text-green-600 mt-0.5" />
                     <p className="text-sm text-green-800">
                         Al resolver la novedad, el ticket se reanudará y el SLA continuará su conteo normal.
                     </p>

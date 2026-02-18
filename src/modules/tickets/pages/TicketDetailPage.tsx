@@ -9,6 +9,7 @@ import { EditTicketModal } from '../components/EditTicketModal';
 import { TicketResponsePanel } from '../components/TicketResponsePanel';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
 import TagManagementModal from '../components/TagManagementModal';
+import { Icon } from '../../../shared/components/Icon';
 
 export default function TicketDetailPage() {
     const { setTitle } = useLayout();
@@ -142,7 +143,7 @@ export default function TicketDetailPage() {
                 <div className="space-y-2">
                     <div className="flex items-center gap-3 flex-wrap">
                         <Button variant="ghost" className="!p-0 text-gray-400 hover:text-gray-600 no-print" onClick={() => navigate(-1)}>
-                            <span className="material-symbols-outlined text-xl">arrow_back</span>
+                            <Icon name="arrow_back" className="text-xl" />
                         </Button>
                         <h2 className="text-2xl font-bold text-gray-900 print:text-black">
                             Ticket #{ticket.id} - {ticket.subject}
@@ -171,26 +172,26 @@ export default function TicketDetailPage() {
                     </div>
                     <div className="flex items-center gap-6 text-sm text-gray-500 pl-9">
                         <span className="flex items-center gap-1.5">
-                            <span className="material-symbols-outlined text-[18px]">calendar_today</span>
+                            <Icon name="calendar_today" className="text-[18px]" />
                             Creado: {new Date(ticket.createdDate).toLocaleDateString()}
                         </span>
                         <span className="flex items-center gap-1.5">
-                            <span className="material-symbols-outlined text-[18px]">person</span>
+                            <Icon name="person" className="text-[18px]" />
                             Cliente: {ticket.customer}
                         </span>
                         <span className="flex items-center gap-1.5">
-                            <span className="material-symbols-outlined text-[18px]">folder</span>
+                            <Icon name="folder" className="text-[18px]" />
                             Categoría: {ticket.category}
                         </span>
                     </div>
                 </div>
                 <div className="flex gap-3 no-print">
                     <Button variant="secondary" onClick={handlePrint}>
-                        <span className="material-symbols-outlined mr-2">print</span>
+                        <Icon name="print" className="mr-2" />
                         Imprimir
                     </Button>
                     <Button variant="secondary" onClick={() => setIsTagModalOpen(true)}>
-                        <span className="material-symbols-outlined mr-2">label</span>
+                        <Icon name="label" className="mr-2" />
                         Etiquetas
                     </Button>
                 </div>
@@ -216,7 +217,7 @@ export default function TicketDetailPage() {
                                     }`}
                             >
                                 <span className="flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-[16px]">picture_as_pdf</span>
+                                    <Icon name="picture_as_pdf" className="text-[16px]" />
                                     Documento
                                 </span>
                             </button>

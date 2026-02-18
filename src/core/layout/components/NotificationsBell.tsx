@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Icon } from '../../../shared/components/Icon';
 import { useNotificationsContext } from '../../../shared/context/NotificationsContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -47,7 +48,7 @@ export function NotificationsBell() {
                 onClick={() => setIsOpen(!isOpen)}
                 className="relative rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus:outline-none"
             >
-                <span className="material-symbols-outlined text-2xl">notifications</span>
+                <Icon name="notifications" className="text-2xl" />
                 {unreadCount > 0 && (
                     <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-brand-red text-xs font-bold text-white">
                         {unreadCount > 9 ? '9+' : unreadCount}
@@ -76,7 +77,7 @@ export function NotificationsBell() {
                             </div>
                         ) : notifications.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-8">
-                                <span className="material-symbols-outlined text-4xl text-gray-300">notifications_off</span>
+                                <Icon name="notifications_off" className="text-4xl text-gray-300" />
                                 <p className="mt-2 text-sm text-gray-500">No hay notificaciones</p>
                             </div>
                         ) : (
@@ -88,7 +89,7 @@ export function NotificationsBell() {
                                         }`}
                                 >
                                     <div className="flex items-start gap-3">
-                                        <span className="material-symbols-outlined text-brand-blue">info</span>
+                                        <Icon name="info" className="text-brand-blue" />
                                         <div className="flex-1">
                                             <p className="text-sm text-gray-800">{notification.mensaje}</p>
                                             <p className="mt-1 text-xs text-gray-500">

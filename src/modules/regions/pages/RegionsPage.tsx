@@ -8,6 +8,7 @@ import { CreateRegionModal } from '../components/CreateRegionModal';
 import { EditRegionModal } from '../components/EditRegionModal';
 import type { Regional, CreateRegionalDto, UpdateRegionalDto } from '../interfaces/Region';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
+import { Icon } from '../../../shared/components/Icon';
 
 
 export default function RegionsPage() {
@@ -163,14 +164,14 @@ export default function RegionsPage() {
                         className="text-gray-400 hover:text-brand-blue"
                         title="Editar"
                     >
-                        <span className="material-symbols-outlined text-[20px]">edit</span>
+                        <Icon name="edit" className="text-[20px]" />
                     </button>
                     <button
                         onClick={() => handleDeleteClick(reg)}
                         className="text-gray-400 hover:text-red-600"
                         title="Eliminar"
                     >
-                        <span className="material-symbols-outlined text-[20px]">delete</span>
+                        <Icon name="delete" className="text-[20px]" />
                     </button>
                 </div>
             )
@@ -212,7 +213,7 @@ export default function RegionsPage() {
                     variant="brand"
                     onClick={() => setShowCreateModal(true)}
                 >
-                    <span className="material-symbols-outlined mr-2">add</span>
+                    <Icon name="add" className="mr-2" />
                     Crear Regional
                 </Button>
             </div>

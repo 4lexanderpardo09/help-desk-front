@@ -4,6 +4,7 @@ import { Button } from '../../../shared/components/Button';
 import { Select } from '../../../shared/components/Select';
 import { errorTypeService } from '../services/error-type.service';
 import type { ErrorType, UpdateErrorTypeDto, ErrorSubtype, CreateErrorSubtypeDto } from '../interfaces/ErrorType';
+import { Icon } from '../../../shared/components/Icon';
 
 interface EditErrorTypeModalProps {
     isOpen: boolean;
@@ -255,7 +256,7 @@ export const EditErrorTypeModal: React.FC<EditErrorTypeModalProps> = ({ isOpen, 
                                                 className="text-gray-400 hover:text-red-500"
                                                 title="Eliminar"
                                             >
-                                                <span className="material-symbols-outlined text-base">delete</span>
+                                                <Icon name="delete" className="text-base" />
                                             </button>
                                         </div>
                                     </li>

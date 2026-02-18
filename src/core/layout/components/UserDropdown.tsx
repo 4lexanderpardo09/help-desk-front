@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { cn } from '../../../shared/lib/utils';
+import { Icon } from '../../../shared/components/Icon';
 
 interface UserDropdownProps {
     userName: string;
@@ -56,15 +57,14 @@ export function UserDropdown({ userName, userRole, onLogout }: UserDropdownProps
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-blue text-white font-semibold text-sm">
                     {getInitials(userName)}
                 </div>
-                <span
+                <Icon
+                    name="expand_more"
                     className={cn(
-                        "material-symbols-outlined text-gray-400 transition-transform hidden sm:block",
+                        "text-gray-400 transition-transform hidden sm:block",
                         isOpen && "rotate-180"
                     )}
                     style={{ fontSize: '20px', fontVariationSettings: '"FILL" 1' }}
-                >
-                    expand_more
-                </span>
+                />
             </button>
 
             {/* Dropdown Menu */}
@@ -82,9 +82,7 @@ export function UserDropdown({ userName, userRole, onLogout }: UserDropdownProps
                             onClick={onLogout}
                             className="flex w-full items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         >
-                            <span className="material-symbols-outlined text-gray-400" style={{ fontSize: '20px', fontVariationSettings: '"FILL" 1' }}>
-                                logout
-                            </span>
+                            <Icon name="logout" className="text-gray-400" style={{ fontSize: '20px', fontVariationSettings: '"FILL" 1' }} />
                             <span>Cerrar Sesión</span>
                         </button>
                     </div>

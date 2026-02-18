@@ -8,6 +8,7 @@ import { ConfirmDialog } from '../../../shared/components/ConfirmDialog';
 import { FilterBar, type FilterConfig } from '../../../shared/components/FilterBar';
 import { CreatePositionModal } from '../components/CreatePositionModal';
 import { EditPositionModal } from '../components/EditPositionModal';
+import { Icon } from '../../../shared/components/Icon';
 
 export default function PositionsPage() {
     const { setTitle } = useLayout();
@@ -115,10 +116,10 @@ export default function PositionsPage() {
             render: (pos: Position) => (
                 <div className="flex gap-3">
                     <button onClick={() => handleEdit(pos)} className="text-gray-400 hover:text-brand-blue" title="Editar">
-                        <span className="material-symbols-outlined text-[20px]">edit</span>
+                        <Icon name="edit" className="text-[20px]" />
                     </button>
                     <button onClick={() => handleDeleteClick(pos)} className="text-gray-400 hover:text-red-600" title="Eliminar">
-                        <span className="material-symbols-outlined text-[20px]">delete</span>
+                        <Icon name="delete" className="text-[20px]" />
                     </button>
                 </div>
             )
@@ -154,7 +155,7 @@ export default function PositionsPage() {
                     <p className="mt-1 text-sm text-gray-500">Gestiona los cargos disponibles en el sistema</p>
                 </div>
                 <Button variant="brand" onClick={() => setShowCreateModal(true)}>
-                    <span className="material-symbols-outlined mr-2">add</span>
+                    <Icon name="add" className="mr-2" />
                     Crear Cargo
                 </Button>
             </div>

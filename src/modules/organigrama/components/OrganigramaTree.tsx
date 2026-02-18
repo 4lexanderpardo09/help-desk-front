@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import Tree from 'react-d3-tree';
 import type { OrganigramaTreeNode } from '../interfaces/Organigrama';
+import { Icon } from '../../../shared/components/Icon';
 
 interface OrganigramaTreeProps {
     data: OrganigramaTreeNode[];
@@ -41,7 +42,7 @@ export function OrganigramaTree({ data, onNodeClick }: OrganigramaTreeProps) {
     if (data.length === 0) return (
         <div className="flex h-96 items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-50">
             <div className="text-center text-gray-500">
-                <span className="material-symbols-outlined mb-2 text-4xl">account_tree</span>
+                <Icon name="account_tree" className="mb-2 text-4xl" />
                 <p>No hay datos de organigrama definidos.</p>
                 <p className="text-sm">Agrega relaciones para visualizar el árbol.</p>
             </div>

@@ -1,4 +1,5 @@
 import { Select } from './Select';
+import { Icon } from './Icon';
 
 export interface FilterOption {
     label: string;
@@ -28,7 +29,7 @@ export function FilterBar({ filters, className = '' }: FilterBarProps) {
                         return (
                             <div key={index} className="relative w-full max-w-md">
                                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                    <span className="material-symbols-outlined text-gray-400">search</span>
+                                    <Icon name="search" className="text-gray-400" />
                                 </div>
                                 <input
                                     className="block w-full rounded-lg border-gray-200 bg-gray-50 py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-500 focus:border-brand-teal focus:bg-white focus:ring-brand-teal"

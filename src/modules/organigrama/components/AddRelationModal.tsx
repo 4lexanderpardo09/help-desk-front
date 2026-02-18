@@ -6,6 +6,7 @@ import { organigramaService } from '../services/organigrama.service';
 import { positionService } from '../../positions/services/position.service';
 import type { Position } from '../../positions/interfaces/Position';
 import type { CreateOrganigramaDto } from '../interfaces/Organigrama';
+import { Icon } from '../../../shared/components/Icon';
 
 interface AddRelationModalProps {
     isOpen: boolean;
@@ -103,7 +104,7 @@ export function AddRelationModal({ isOpen, onClose, onSuccess }: AddRelationModa
                         </div>
 
                         <div className="flex justify-center text-gray-400">
-                            <span className="material-symbols-outlined">arrow_downward</span>
+                            <Icon name="arrow_downward" />
                         </div>
 
                         <div>

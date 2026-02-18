@@ -1,4 +1,5 @@
 import { cn } from '../lib/utils';
+import { Icon } from './Icon';
 
 interface EmptyStateProps {
     icon: string;
@@ -26,12 +27,11 @@ export function EmptyState({ icon, title, description, action, className }: Empt
     return (
         <div className={cn("flex flex-col items-center justify-center py-12 px-4 text-center", className)}>
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gray-100 mb-4">
-                <span
-                    className="material-symbols-outlined text-5xl text-gray-400"
+                <Icon
+                    name={icon}
+                    className="text-5xl text-gray-400"
                     style={{ fontVariationSettings: '"FILL" 1' }}
-                >
-                    {icon}
-                </span>
+                />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
             <p className="text-sm text-gray-500 max-w-sm mb-6">{description}</p>
@@ -40,9 +40,7 @@ export function EmptyState({ icon, title, description, action, className }: Empt
                     onClick={action.onClick}
                     className="inline-flex items-center gap-2 rounded-lg bg-brand-blue px-4 py-2 text-sm font-medium text-white hover:bg-brand-accent transition-colors"
                 >
-                    <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: '"FILL" 1' }}>
-                        add_circle
-                    </span>
+                    <Icon name="add_circle" className="text-base" style={{ fontVariationSettings: '"FILL" 1' }} />
                     {action.label}
                 </button>
             )}

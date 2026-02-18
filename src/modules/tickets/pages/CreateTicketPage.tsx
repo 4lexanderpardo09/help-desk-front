@@ -22,6 +22,7 @@ import type { Company } from '../interfaces/Company';
 import type { TemplateField } from '../interfaces/Ticket';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
 import { DynamicStepForm } from '../components/DynamicStepForm';
+import { Icon } from '../../../shared/components/Icon';
 
 
 export default function CreateTicketPage() {
@@ -345,7 +346,7 @@ export default function CreateTicketPage() {
                                 ) : (
                                     <div className="space-y-3">
                                         <div className="flex items-start gap-3">
-                                            <span className="material-symbols-outlined text-blue-600 mt-0.5">info</span>
+                                            <Icon name="info" className="text-blue-600 mt-0.5" />
                                             <div>
                                                 <p className="text-sm font-medium text-blue-900">
                                                     Flujo: {initialStepName || 'Flujo Estándar'}
@@ -409,7 +410,7 @@ export default function CreateTicketPage() {
                         {pdfTemplate && (
                             <div className="rounded-xl border border-teal-100 bg-teal-50 p-4 flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    <span className="material-symbols-outlined text-teal-600">description</span>
+                                    <Icon name="description" className="text-teal-600" />
                                     <div>
                                         <p className="text-sm font-bold text-teal-900">Formato Requerido</p>
                                         <p className="text-xs text-teal-700">Para este flujo se requiere un formato específico.</p>
@@ -421,7 +422,7 @@ export default function CreateTicketPage() {
                                     rel="noreferrer"
                                     className="rounded-lg bg-white border border-teal-200 px-4 py-2 text-xs font-bold text-teal-700 shadow-sm hover:bg-teal-50 flex items-center gap-2"
                                 >
-                                    <span className="material-symbols-outlined text-sm">download</span>
+                                    <Icon name="download" className="text-sm" />
                                     Descargar Formato
                                 </a>
                             </div>

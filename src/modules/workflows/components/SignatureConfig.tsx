@@ -7,6 +7,7 @@ import { Select } from '../../../shared/components/Select';
 import type { StepSignature } from '../interfaces/Step';
 import type { Position } from '../../../shared/interfaces/Catalog';
 import { toast } from 'sonner';
+import { Icon } from '../../../shared/components/Icon';
 
 interface SignatureConfigProps {
     firmas: StepSignature[];
@@ -82,7 +83,7 @@ export const SignatureConfig = ({ firmas, onChange, positions }: SignatureConfig
                 <h4 className="font-semibold text-gray-700">Zonas de Firma</h4>
                 {!isAdding && (
                     <Button type="button" size="sm" variant="outline" onClick={() => { setEditingIndex(null); reset(); setIsAdding(true); }}>
-                        <span className="material-symbols-outlined mr-1 text-[18px]">add</span>
+                        <Icon name="add" className="mr-1 text-[18px]" />
                         Agregar Zona
                     </Button>
                 )}
@@ -125,7 +126,7 @@ export const SignatureConfig = ({ firmas, onChange, positions }: SignatureConfig
                                 className="text-gray-400 hover:text-brand-blue"
                                 title="Editar configuración"
                             >
-                                <span className="material-symbols-outlined text-[20px]">edit</span>
+                                <Icon name="edit" className="text-[20px]" />
                             </button>
                             <button
                                 type="button"
@@ -133,7 +134,7 @@ export const SignatureConfig = ({ firmas, onChange, positions }: SignatureConfig
                                 className="text-gray-400 hover:text-red-600"
                                 title="Eliminar"
                             >
-                                <span className="material-symbols-outlined text-[20px]">delete</span>
+                                <Icon name="delete" className="text-[20px]" />
                             </button>
                         </div>
                     </div>

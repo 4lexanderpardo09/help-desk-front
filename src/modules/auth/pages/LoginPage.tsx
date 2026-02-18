@@ -3,6 +3,7 @@ import { useAuth } from '../context/useAuth';
 import { useState } from 'react';
 import { AxiosError } from 'axios';
 import { Input } from '../../../shared/components/Input';
+import { Icon } from '../../../shared/components/Icon';
 import { Button } from '../../../shared/components/Button';
 import { LoginLayout } from '../../../core/layout/LoginLayout';
 
@@ -49,12 +50,7 @@ export default function LoginPage() {
             {/* Mobile Logo (Visible only on smaller screens) */}
             <div className="mb-8 flex items-center gap-2 lg:hidden">
                 <div className="flex h-8 w-8 items-center justify-center rounded bg-brand-blue text-white">
-                    <span
-                        className="material-symbols-outlined"
-                        style={{ fontSize: '20px' }}
-                    >
-                        support_agent
-                    </span>
+                    <Icon name="support_agent" style={{ fontSize: '20px' }} />
                 </div>
                 <span className="text-lg font-bold text-brand-blue">Mesa de Ayuda</span>
             </div>

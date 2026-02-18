@@ -9,6 +9,7 @@ import { ConfirmationModal } from '../../../shared/components/ConfirmationModal'
 import { DataTable } from '../../../shared/components/DataTable';
 import { Input } from '../../../shared/components/Input';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
+import { Icon } from '../../../shared/components/Icon';
 
 export default function RolesPage() {
     const { setTitle } = useLayout();
@@ -82,7 +83,7 @@ export default function RolesPage() {
                     <p className="text-gray-500">Administra los roles y sus permisos.</p>
                 </div>
                 <Button variant="brand" onClick={() => setIsCreateModalOpen(true)}>
-                    <span className="material-symbols-outlined mr-2">add</span>
+                    <Icon name="add" className="mr-2" />
                     Nuevo Rol
                 </Button>
             </div>
@@ -129,14 +130,14 @@ export default function RolesPage() {
                                     className="inline-flex items-center justify-center h-8 w-8 rounded text-brand-blue hover:bg-blue-50 transition-colors"
                                     title="Editar y Permisos"
                                 >
-                                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>edit</span>
+                                    <Icon name="edit" style={{ fontSize: '20px' }} />
                                 </Link>
                                 <button
                                     onClick={() => handleDeleteClick(role.id)}
                                     className="inline-flex items-center justify-center h-8 w-8 rounded text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                                     title="Eliminar"
                                 >
-                                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>delete</span>
+                                    <Icon name="delete" style={{ fontSize: '20px' }} />
                                 </button>
                             </div>
                         )

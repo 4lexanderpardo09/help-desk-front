@@ -5,6 +5,7 @@ import { Button } from '../../../shared/components/Button';
 import { Input } from '../../../shared/components/Input';
 import { tagService, type Tag } from '../services/tag.service';
 import { ticketService } from '../services/ticket.service';
+import { Icon } from '../../../shared/components/Icon';
 
 interface TagManagementModalProps {
     isOpen: boolean;
@@ -107,7 +108,7 @@ export default function TagManagementModal({ isOpen, onClose, ticketId, currentT
                                 <div className="flex flex-wrap gap-2">
                                     {tags.length === 0 && (
                                         <div className="w-full text-center py-6 bg-gray-50 rounded-lg border border-dashed border-gray-200">
-                                            <span className="material-symbols-outlined text-gray-400 text-3xl mb-2">label_off</span>
+                                            <Icon name="label_off" className="text-gray-400 text-3xl mb-2" />
                                             <p className="text-gray-500 text-sm">No tienes etiquetas creadas.</p>
                                         </div>
                                     )}
@@ -134,7 +135,7 @@ export default function TagManagementModal({ isOpen, onClose, ticketId, currentT
                                                 {tag.nombre}
 
                                                 {isAssigned && (
-                                                    <span className="ml-1.5 material-symbols-outlined text-[16px]">check</span>
+                                                    <Icon name="check" className="ml-1.5 text-[16px]" />
                                                 )}
 
                                                 {!ticketId && (
@@ -143,7 +144,7 @@ export default function TagManagementModal({ isOpen, onClose, ticketId, currentT
                                                         className="ml-2 -mr-1 p-0.5 rounded-full hover:bg-red-50 text-gray-400 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
                                                         title="Eliminar etiqueta"
                                                     >
-                                                        <span className="material-symbols-outlined text-[16px] block">close</span>
+                                                        <Icon name="close" className="text-[16px] block" />
                                                     </div>
                                                 )}
                                             </button>
@@ -159,7 +160,7 @@ export default function TagManagementModal({ isOpen, onClose, ticketId, currentT
                                 onClick={() => setView('create')}
                                 className="w-full sm:w-auto"
                             >
-                                <span className="material-symbols-outlined mr-2 text-sm">add</span>
+                                <Icon name="add" className="mr-2 text-sm" />
                                 Nueva Etiqueta
                             </Button>
                         </div>

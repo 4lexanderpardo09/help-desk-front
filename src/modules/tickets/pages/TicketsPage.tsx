@@ -10,6 +10,7 @@ import TagManagementModal from '../components/TagManagementModal';
 import ReopenTicketModal from '../components/ReopenTicketModal';
 import { AdvancedTicketFilter } from '../components/AdvancedTicketFilter';
 import type { TicketFilter } from '../interfaces/Ticket';
+import { Icon } from '../../../shared/components/Icon';
 
 export default function TicketsPage() {
     const navigate = useNavigate();
@@ -480,7 +481,7 @@ export default function TicketsPage() {
                                     className="ml-1 rounded-full p-0.5 text-gray-400 hover:bg-gray-100 hover:text-brand-blue"
                                     title="Gestionar etiquetas"
                                 >
-                                    <span className="material-symbols-outlined text-[16px]">add_circle</span>
+                                    <Icon name="add_circle" className="text-[16px]" />
                                 </button>
                             </div>
                         )
@@ -527,7 +528,7 @@ export default function TicketsPage() {
                                         className="rounded p-1 text-gray-400 hover:bg-yellow-50 hover:text-yellow-600"
                                         title="Reabrir Ticket"
                                     >
-                                        <span className="material-symbols-outlined">restart_alt</span>
+                                        <Icon name="restart_alt" />
                                     </button>
                                 )}
 
@@ -538,7 +539,7 @@ export default function TicketsPage() {
                                     }}
                                     className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-brand-blue"
                                 >
-                                    <span className="material-symbols-outlined">visibility</span>
+                                    <Icon name="visibility" />
                                 </button>
                             </div>
                         )

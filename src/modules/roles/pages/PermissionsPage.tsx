@@ -10,6 +10,7 @@ import { InfoModal } from '../../../shared/components/InfoModal';
 import { Input } from '../../../shared/components/Input';
 import { Select } from '../../../shared/components/Select';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
+import { Icon } from '../../../shared/components/Icon';
 
 export default function PermissionsPage() {
     const [permissions, setPermissions] = useState<Permission[]>([]);
@@ -108,7 +109,7 @@ export default function PermissionsPage() {
                     <p className="text-gray-500">Definiciones técnicas de permisos (Solo para desarrolladores/admin).</p>
                 </div>
                 <Button variant="brand" onClick={() => setIsCreateModalOpen(true)}>
-                    <span className="material-symbols-outlined mr-2">add</span>
+                    <Icon name="add" className="mr-2" />
                     Nuevo Permiso
                 </Button>
             </div>
@@ -163,7 +164,7 @@ export default function PermissionsPage() {
                                                 className="text-gray-400 hover:text-red-600 transition-colors"
                                                 title="Eliminar Definición"
                                             >
-                                                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>delete</span>
+                                                <Icon name="delete" style={{ fontSize: '20px' }} />
                                             </button>
                                         </td>
                                     </tr>

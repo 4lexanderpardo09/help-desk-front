@@ -4,6 +4,7 @@ import { Button } from '../../../shared/components/Button';
 import { Select } from '../../../shared/components/Select';
 import { errorTypeService } from '../services/error-type.service';
 import type { CreateErrorTypeDto, CreateErrorSubtypeDto } from '../interfaces/ErrorType';
+import { Icon } from '../../../shared/components/Icon';
 
 interface CreateErrorTypeModalProps {
     isOpen: boolean;
@@ -212,7 +213,7 @@ export const CreateErrorTypeModal: React.FC<CreateErrorTypeModalProps> = ({ isOp
                                             onClick={() => handleRemoveSubtype(idx)}
                                             className="text-red-400 hover:text-red-600"
                                         >
-                                            <span className="material-symbols-outlined text-base">close</span>
+                                            <Icon name="close" className="text-base" />
                                         </button>
                                     </li>
                                 ))}

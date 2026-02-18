@@ -10,6 +10,7 @@ import { EditSubcategoryModal } from '../components/EditSubcategoryModal';
 import type { Subcategory, CreateSubcategoryDto, UpdateSubcategoryDto } from '../interfaces/Subcategory';
 import type { Category } from '../../categories/interfaces/Category';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
+import { Icon } from '../../../shared/components/Icon';
 
 /**
  * Página principal de gestión de subcategorías
@@ -194,14 +195,14 @@ export default function SubcategoriesPage() {
                         className="text-gray-400 hover:text-brand-blue"
                         title="Editar"
                     >
-                        <span className="material-symbols-outlined text-[20px]">edit</span>
+                        <Icon name="edit" className="text-[20px]" />
                     </button>
                     <button
                         onClick={() => handleDeleteClick(sub)}
                         className="text-gray-400 hover:text-red-600"
                         title="Eliminar"
                     >
-                        <span className="material-symbols-outlined text-[20px]">delete</span>
+                        <Icon name="delete" className="text-[20px]" />
                     </button>
                 </div>
             )
@@ -253,7 +254,7 @@ export default function SubcategoriesPage() {
                     variant="brand"
                     onClick={() => setShowCreateModal(true)}
                 >
-                    <span className="material-symbols-outlined mr-2">add</span>
+                    <Icon name="add" className="mr-2" />
                     Crear Subcategoría
                 </Button>
             </div>

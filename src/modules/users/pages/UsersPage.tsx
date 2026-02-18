@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Button } from '../../../shared/components/Button';
+import { Icon } from '../../../shared/components/Icon';
 import { FilterBar, type FilterConfig } from '../../../shared/components/FilterBar';
 import { DataTable } from '../../../shared/components/DataTable';
 import { userService } from '../services/user.service';
@@ -115,7 +116,7 @@ export default function UsersPage() {
                     <p className="mt-1 text-sm text-gray-500">Administra los usuarios del sistema</p>
                 </div>
                 <Button variant="brand" onClick={() => setIsCreateModalOpen(true)}>
-                    <span className="material-symbols-outlined mr-2">add</span>
+                    <Icon name="add" className="mr-2" />
                     Crear Usuario
                 </Button>
             </div>
@@ -210,7 +211,7 @@ export default function UsersPage() {
                                         setEditingUser(user);
                                     }}
                                 >
-                                    <span className="material-symbols-outlined text-[20px]">edit</span>
+                                    <Icon name="edit" className="text-[20px]" />
                                 </button>
                                 <button
                                     className="text-gray-400 hover:text-red-600"
@@ -219,7 +220,7 @@ export default function UsersPage() {
                                         setDeletingUser(user);
                                     }}
                                 >
-                                    <span className="material-symbols-outlined text-[20px]">delete</span>
+                                    <Icon name="delete" className="text-[20px]" />
                                 </button>
                             </div>
                         )

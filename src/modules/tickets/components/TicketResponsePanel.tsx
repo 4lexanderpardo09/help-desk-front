@@ -17,6 +17,7 @@ import { ErrorEventsPanel } from './ErrorEventsPanel';
 import { CreateNoveltyModal } from './CreateNoveltyModal';
 import { ResolveNoveltyModal } from './ResolveNoveltyModal';
 import { FileUploader } from '../../../shared/components/FileUploader';
+import { Icon } from '../../../shared/components/Icon';
 
 interface TicketResponsePanelProps {
     ticketId: number;
@@ -334,7 +335,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
         return (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8 flex flex-col items-center justify-center text-center">
                 <div className="bg-gray-100 p-3 rounded-full mb-3">
-                    <span className="material-symbols-outlined text-gray-500 text-2xl">lock_clock</span>
+                    <Icon name="lock_clock" className="text-gray-500 text-2xl" />
                 </div>
                 <h3 className="text-gray-900 font-semibold mb-1">Ticket Cerrado</h3>
                 <p className="text-gray-500 text-sm max-w-md">
@@ -348,7 +349,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
         return (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8 flex flex-col items-center justify-center text-center">
                 <div className="bg-gray-100 p-3 rounded-full mb-3">
-                    <span className="material-symbols-outlined text-gray-500 text-2xl">lock</span>
+                    <Icon name="lock" className="text-gray-500 text-2xl" />
                 </div>
                 <h3 className="text-gray-900 font-semibold mb-1">Modo de Solo Lectura</h3>
                 <p className="text-gray-500 text-sm max-w-md">
@@ -397,7 +398,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                     {!isParallelStep && signature && (
                         <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <span className="material-symbols-outlined text-green-600">verified</span>
+                                <Icon name="verified" className="text-green-600" />
                                 <span className="text-sm font-medium text-gray-700">Firma capturada correctamente</span>
                             </div>
                             <Button variant="ghost" size="sm" onClick={() => setIsSignatureModalOpen(true)}>
@@ -422,9 +423,10 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                 <div className={`border rounded-lg p-4 mb-4 ${hasSigned ? 'bg-green-50 border-green-100' : 'bg-blue-50 border-blue-100'}`}>
 
                     <div className="flex items-start gap-3">
-                        <span className={`material-symbols-outlined mt-0.5 ${hasSigned ? 'text-green-600' : 'text-blue-600'}`}>
-                            {hasSigned ? 'check_circle' : 'info'}
-                        </span>
+                        <Icon
+                            name={hasSigned ? 'check_circle' : 'info'}
+                            className={`mt-0.5 ${hasSigned ? 'text-green-600' : 'text-blue-600'}`}
+                        />
                         <div>
                             <p className={`text-sm font-medium ${hasSigned ? 'text-green-800' : 'text-blue-800'}`}>
                                 {hasSigned ? 'Ya has firmado tu parte.' : 'Este es un paso de aprobación paralela.'}
@@ -467,7 +469,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
             {isPaused && (
                 <div className="border border-orange-200 bg-orange-50 rounded-lg p-4 mb-4">
                     <div className="flex items-start gap-3">
-                        <span className="material-symbols-outlined text-orange-600 mt-0.5">pause_circle</span>
+                        <Icon name="pause_circle" className="text-orange-600 mt-0.5" />
                         <div>
                             <p className="text-sm font-medium text-orange-800">
                                 Ticket Pausado (Novedad Abierta)
@@ -485,7 +487,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
             {isForcedClose && (
                 <div className="border border-red-200 bg-red-50 rounded-lg p-4 mb-4">
                     <div className="flex items-start gap-3">
-                        <span className="material-symbols-outlined text-red-600 mt-0.5">block</span>
+                        <Icon name="block" className="text-red-600 mt-0.5" />
                         <div>
                             <p className="text-sm font-medium text-red-800">
                                 Cierre Obligatorio del Ticket
@@ -519,7 +521,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                                 disabled={isSubmitting || isChecking}
                                 className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 border-orange-200"
                             >
-                                <span className="material-symbols-outlined text-sm mr-2">pause_circle</span>
+                                <Icon name="pause_circle" className="text-sm mr-2" />
                                 Crear Novedad
                             </Button>
                         )}
@@ -532,7 +534,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                                 disabled={isSubmitting}
                                 className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 border-emerald-200"
                             >
-                                <span className="material-symbols-outlined text-sm mr-2">check_circle</span>
+                                <Icon name="check_circle" className="text-sm mr-2" />
                                 Cerrar Ticket
                             </Button>
                         )}
@@ -544,7 +546,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                                 disabled={isSubmitting}
                                 className="bg-red-600 hover:bg-red-700 text-white border-red-600"
                             >
-                                <span className="material-symbols-outlined text-sm mr-2">block</span>
+                                <Icon name="block" className="text-sm mr-2" />
                                 {isSubmitting ? 'Cerrando...' : 'Cierre Obligatorio y Finalizar'}
                             </Button>
                         ) : isParallelStep ? (
@@ -564,7 +566,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
                                 disabled={isChecking || isSubmitting}
                                 className="bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600"
                             >
-                                <span className="material-symbols-outlined text-sm mr-2">check_circle</span>
+                                <Icon name="check_circle" className="text-sm mr-2" />
                                 {isSubmitting ? 'Cerrando...' : 'Finalizar Ticket & Cerrar'}
                             </Button>
                         ) : (
@@ -640,7 +642,7 @@ export const TicketResponsePanel: React.FC<TicketResponsePanelProps> = ({
             >
                 <div>
                     <div className="bg-yellow-50 border border-yellow-100 rounded-lg p-4 mb-6 flex gap-3">
-                        <span className="material-symbols-outlined text-yellow-600 mt-0.5">warning</span>
+                        <Icon name="warning" className="text-yellow-600 mt-0.5" />
                         <div>
                             <p className="font-medium text-yellow-800 mb-1">Atención</p>
                             <p className="text-sm text-yellow-700">

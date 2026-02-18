@@ -8,6 +8,7 @@ import { CreateDepartmentModal } from '../components/CreateDepartmentModal';
 import { EditDepartmentModal } from '../components/EditDepartmentModal';
 import type { Department, CreateDepartmentDto, UpdateDepartmentDto } from '../interfaces/Department';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
+import { Icon } from '../../../shared/components/Icon';
 
 /**
  * Página principal de gestión de departamentos
@@ -164,14 +165,14 @@ export default function DepartmentsPage() {
                         className="text-gray-400 hover:text-brand-blue"
                         title="Editar"
                     >
-                        <span className="material-symbols-outlined text-[20px]">edit</span>
+                        <Icon name="edit" className="text-[20px]" />
                     </button>
                     <button
                         onClick={() => handleDeleteClick(dept)}
                         className="text-gray-400 hover:text-red-600"
                         title="Eliminar"
                     >
-                        <span className="material-symbols-outlined text-[20px]">delete</span>
+                        <Icon name="delete" className="text-[20px]" />
                     </button>
                 </div>
             )
@@ -212,7 +213,7 @@ export default function DepartmentsPage() {
                     variant="brand"
                     onClick={() => setShowCreateModal(true)}
                 >
-                    <span className="material-symbols-outlined mr-2">add</span>
+                    <Icon name="add" className="mr-2" />
                     Crear Departamento
                 </Button>
             </div>
