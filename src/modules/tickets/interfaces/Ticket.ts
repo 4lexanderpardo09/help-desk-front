@@ -41,6 +41,7 @@ export interface TicketFilter {
     companyId?: number;
     subcategoryId?: number;
     tagId?: number;
+    ticketId?: number;
     dateFrom?: string;
     dateTo?: string;
 }

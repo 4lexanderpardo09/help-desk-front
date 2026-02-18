@@ -41,10 +41,10 @@ export default function TicketsPage() {
     // Advanced Filters Derived
     const advancedFilters = useMemo(() => {
         const filters: Partial<TicketFilter> = {};
-        const knownKeys = ['messageSearch', 'creatorId', 'assigneeId', 'companyId', 'subcategoryId', 'tagId', 'dateFrom', 'dateTo'];
+        const knownKeys = ['messageSearch', 'creatorId', 'assigneeId', 'companyId', 'subcategoryId', 'tagId', 'ticketId', 'dateFrom', 'dateTo'];
         searchParams.forEach((value, key) => {
             if (knownKeys.includes(key)) {
-                if (['creatorId', 'assigneeId', 'companyId', 'subcategoryId', 'tagId'].includes(key)) {
+                if (['creatorId', 'assigneeId', 'companyId', 'subcategoryId', 'tagId', 'ticketId'].includes(key)) {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     (filters as any)[key] = Number(value);
                 } else {
@@ -164,7 +164,7 @@ export default function TicketsPage() {
             const newParams = new URLSearchParams(prev);
             // Clear old advanced filters first? Or merge?
             // Usually replace. To be safe, let's verify keys.
-            const knownKeys = ['messageSearch', 'creatorId', 'assigneeId', 'companyId', 'subcategoryId', 'tagId', 'dateFrom', 'dateTo'];
+            const knownKeys = ['messageSearch', 'creatorId', 'assigneeId', 'companyId', 'subcategoryId', 'tagId', 'ticketId', 'dateFrom', 'dateTo'];
             knownKeys.forEach(k => newParams.delete(k));
 
             Object.entries(newFilters).forEach(([key, value]) => {
@@ -326,12 +326,14 @@ export default function TicketsPage() {
             <AdvancedTicketFilter
                 filters={advancedFilters}
                 onFilterChange={(newFilters) => {
+                    // setAdvancedFilters already resets page to 1 internally.
+                    // Do NOT call setPage(1) here — it would trigger a second
+                    // setSearchParams that overwrites the advanced filter params
+                    // due to a race condition with stale closure state.
                     setAdvancedFilters(newFilters);
-                    setPage(1);
                 }}
                 onClear={() => {
                     setAdvancedFilters({});
-                    setPage(1);
                 }}
             />
 

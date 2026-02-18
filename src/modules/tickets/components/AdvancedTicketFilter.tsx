@@ -32,11 +32,31 @@ export const AdvancedTicketFilter: React.FC<AdvancedTicketFilterProps> = ({ filt
             companyId: filters.companyId,
             subcategoryId: filters.subcategoryId,
             tagId: filters.tagId,
+            ticketId: filters.ticketId,
+            creatorId: filters.creatorId,
+            assigneeId: filters.assigneeId,
             messageSearch: filters.messageSearch,
             dateFrom: filters.dateFrom,
             dateTo: filters.dateTo
         }
     });
+
+    // Sync form with URL params when navigating back to the page
+    useEffect(() => {
+        reset({
+            companyId: filters.companyId,
+            subcategoryId: filters.subcategoryId,
+            tagId: filters.tagId,
+            ticketId: filters.ticketId,
+            creatorId: filters.creatorId,
+            assigneeId: filters.assigneeId,
+            messageSearch: filters.messageSearch ?? '',
+            dateFrom: filters.dateFrom ?? '',
+            dateTo: filters.dateTo ?? ''
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filters.companyId, filters.subcategoryId, filters.tagId, filters.ticketId,
+    filters.creatorId, filters.assigneeId, filters.messageSearch, filters.dateFrom, filters.dateTo]);
 
     const [isExpanded, setIsExpanded] = useState(false);
     const [companies, setCompanies] = useState<{ id: number; nombre: string }[]>([]);
@@ -94,6 +114,7 @@ export const AdvancedTicketFilter: React.FC<AdvancedTicketFilterProps> = ({ filt
             companyId: undefined,
             subcategoryId: undefined,
             tagId: undefined,
+            ticketId: undefined,
             creatorId: undefined,
             assigneeId: undefined,
             messageSearch: '',
@@ -201,11 +222,21 @@ export const AdvancedTicketFilter: React.FC<AdvancedTicketFilterProps> = ({ filt
                         {/* N Ticket */}
                         <div className="flex flex-col justify-end">
                             <label className="block text-xs font-medium text-gray-700 mb-1">N° Ticket</label>
-                            <input
-                                type="number"
-                                placeholder="ID"
-                                {...register('ticketId', { valueAsNumber: true })}
-                                className="block w-full h-[40px] px-4 rounded-lg border-gray-200 bg-white text-sm font-medium text-gray-900 placeholder-gray-500 focus:border-brand-teal focus:ring-brand-teal"
+                            <Controller
+                                name="ticketId"
+                                control={control}
+                                render={({ field }) => (
+                                    <input
+                                        type="number"
+                                        placeholder="ID"
+                                        value={field.value ?? ''}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            field.onChange(val === '' ? undefined : Number(val));
+                                        }}
+                                        className="block w-full h-[40px] px-4 rounded-lg border-gray-200 bg-white text-sm font-medium text-gray-900 placeholder-gray-500 focus:border-brand-teal focus:ring-brand-teal"
+                                    />
+                                )}
                             />
                         </div>
                     </div>
