@@ -19,22 +19,40 @@ export const ProfileSignatureUpload: React.FC = () => {
     const loadSignature = async () => {
         if (!user?.id) return;
         try {
-            // Check if signature exists by trying to fetch it
             const url = userService.getProfileSignatureUrl(user.id);
+            const token = localStorage.getItem('token');
             const response = await fetch(url, {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
             if (response.ok) {
-                // Determine new timestamp to force refresh
-                setPreviewUrl(`${url}?t=${new Date().getTime()}`);
+                const blob = await response.blob();
+                if (blob.size > 0) {
+                    const objectUrl = URL.createObjectURL(blob);
+                    setPreviewUrl(prev => {
+                        if (prev) URL.revokeObjectURL(prev); // Cleanup previous
+                        return objectUrl;
+                    });
+                }
+            } else {
+                setPreviewUrl(null);
             }
         } catch (error) {
-            // Signature not found or error, just ignore
+            console.error('Error loading signature:', error);
+            setPreviewUrl(null);
         }
     };
+
+    // Cleanup object URL on unmount
+    useEffect(() => {
+        return () => {
+            if (previewUrl && previewUrl.startsWith('blob:')) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl]);
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
