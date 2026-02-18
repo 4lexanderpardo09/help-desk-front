@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 
 export interface ColumnDef<T> {
     key: string;
@@ -40,10 +40,93 @@ export function DataTable<T>({
 }: DataTableProps<T>) {
     const colSpan = columns.length;
 
+    const containerRef = useRef<HTMLDivElement>(null);
+    const tableRef = useRef<HTMLTableElement>(null);
+    const floatingScrollRef = useRef<HTMLDivElement>(null);
+    const [showFloatingScroll, setShowFloatingScroll] = useState(false);
+    const [scrollWidth, setScrollWidth] = useState(0);
+    const [containerWidth, setContainerWidth] = useState(0);
+
+    // Sync scroll logic
+    useEffect(() => {
+        const container = containerRef.current;
+        const floating = floatingScrollRef.current;
+        const table = tableRef.current;
+
+        if (!container || !floating || !table) return;
+
+        const handleContainerScroll = () => {
+            if (floating && container) {
+                floating.scrollLeft = container.scrollLeft;
+            }
+        };
+
+        const handleFloatingScroll = () => {
+            if (floating && container) {
+                container.scrollLeft = floating.scrollLeft;
+            }
+        };
+
+        const updateDimensions = () => {
+            if (container && table) {
+                setScrollWidth(table.scrollWidth);
+                setContainerWidth(container.clientWidth);
+            }
+        };
+
+        // Visibility logic
+        const checkVisibility = () => {
+            if (!container) return;
+            const rect = container.getBoundingClientRect();
+            const isHorizontallyScrollable = table ? table.scrollWidth > container.clientWidth : false;
+
+            // Show if:
+            // 1. Table has horizontal scroll
+            // 2. Top of table is above bottom of viewport (visible or above)
+            // 3. Bottom of table is below bottom of viewport (use buffer to hide early)
+            const isVisible =
+                isHorizontallyScrollable &&
+                rect.top < window.innerHeight &&
+                rect.bottom > window.innerHeight + 20; // 20px buffer ensures it hides before native scrollbar fully appears
+
+            setShowFloatingScroll(isVisible);
+        };
+
+        container.addEventListener('scroll', handleContainerScroll);
+        floating.addEventListener('scroll', handleFloatingScroll);
+        window.addEventListener('resize', updateDimensions);
+        window.addEventListener('resize', checkVisibility);
+        // Use capture phase to detect scroll events from any container
+        window.addEventListener('scroll', checkVisibility, true);
+
+        // Initial check
+        updateDimensions();
+        checkVisibility();
+
+        // Observer for size changes in table
+        const resizeObserver = new ResizeObserver(() => {
+            updateDimensions();
+            checkVisibility();
+        });
+        resizeObserver.observe(table);
+
+        return () => {
+            container.removeEventListener('scroll', handleContainerScroll);
+            floating.removeEventListener('scroll', handleFloatingScroll);
+            window.removeEventListener('resize', updateDimensions);
+            window.removeEventListener('resize', checkVisibility);
+            window.removeEventListener('scroll', checkVisibility, true);
+            resizeObserver.disconnect();
+        };
+    }, [data, columns]); // Re-run when data changes
+
     return (
-        <div className={`overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm ${className}`}>
-            <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-gray-600">
+        <div className={`relative ${className}`}>
+            <div
+                ref={containerRef}
+                className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm"
+            >
+                <table ref={tableRef} className="w-full text-left text-sm text-gray-600">
                     <thead className="bg-gray-50 text-xs font-semibold uppercase text-gray-500 sticky top-0 z-10">
                         <tr>
                             {columns.map((col) => (
@@ -91,7 +174,7 @@ export function DataTable<T>({
 
             {/* Pagination */}
             {pagination && !loading && data.length > 0 && (
-                <div className="flex items-center justify-between border-t border-gray-200 px-6 py-4">
+                <div className="flex items-center justify-between border-t border-gray-200 px-6 py-4 bg-white rounded-b-xl border-x-gray-200 border-b-gray-200">
                     <div className="text-sm text-gray-500">
                         Mostrando{' '}
                         <span className="font-medium text-gray-900">
@@ -122,6 +205,18 @@ export function DataTable<T>({
                     </div>
                 </div>
             )}
+
+            {/* Floating Scrollbar */}
+            <div
+                ref={floatingScrollRef}
+                className={`fixed bottom-0 z-50 overflow-x-auto bg-gray-100/80 backdrop-blur-sm border-t border-gray-200 transition-opacity duration-200 ${showFloatingScroll ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+                style={{
+                    width: containerWidth,
+                    left: containerRef.current?.getBoundingClientRect().left
+                }}
+            >
+                <div style={{ width: scrollWidth, height: '12px' }}></div>
+            </div>
         </div>
     );
 }
