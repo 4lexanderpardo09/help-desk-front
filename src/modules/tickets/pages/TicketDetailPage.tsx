@@ -8,6 +8,7 @@ import { TicketTimeline } from '../components/TicketTimeline';
 import { EditTicketModal } from '../components/EditTicketModal';
 import { TicketResponsePanel } from '../components/TicketResponsePanel';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
+import TagManagementModal from '../components/TagManagementModal';
 
 export default function TicketDetailPage() {
     const { setTitle } = useLayout();
@@ -18,6 +19,7 @@ export default function TicketDetailPage() {
     const [loading, setLoading] = useState(true);
     const [activeFilter, setActiveFilter] = useState<'all' | 'comments' | 'history' | 'document'>('all');
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isTagModalOpen, setIsTagModalOpen] = useState(false);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
     useEffect(() => {
@@ -138,7 +140,7 @@ export default function TicketDetailPage() {
         <>
             <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-start print:mb-2 text-black">
                 <div className="space-y-2">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-wrap">
                         <Button variant="ghost" className="!p-0 text-gray-400 hover:text-gray-600 no-print" onClick={() => navigate(-1)}>
                             <span className="material-symbols-outlined text-xl">arrow_back</span>
                         </Button>
@@ -151,6 +153,21 @@ export default function TicketDetailPage() {
                         <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold ring-1 ring-inset ${getPriorityColor(ticket.priority)}`}>
                             {ticket.priority}
                         </span>
+                        {/* Current tags display */}
+                        {ticket.tags && ticket.tags.length > 0 && (
+                            <div className="flex items-center gap-1.5 flex-wrap no-print">
+                                {ticket.tags.map(tag => (
+                                    <span
+                                        key={tag.id}
+                                        className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                                        style={{ backgroundColor: tag.color + '18', color: tag.color, border: `1px solid ${tag.color}30` }}
+                                    >
+                                        <span className="w-1.5 h-1.5 rounded-full mr-1.5" style={{ backgroundColor: tag.color }} />
+                                        {tag.name}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
                     </div>
                     <div className="flex items-center gap-6 text-sm text-gray-500 pl-9">
                         <span className="flex items-center gap-1.5">
@@ -171,6 +188,10 @@ export default function TicketDetailPage() {
                     <Button variant="secondary" onClick={handlePrint}>
                         <span className="material-symbols-outlined mr-2">print</span>
                         Imprimir
+                    </Button>
+                    <Button variant="secondary" onClick={() => setIsTagModalOpen(true)}>
+                        <span className="material-symbols-outlined mr-2">label</span>
+                        Etiquetas
                     </Button>
                     {/* Cerrar Ticket button moved to TicketResponsePanel */}
                     <Button variant="brand" onClick={() => setIsEditModalOpen(true)}>
@@ -292,6 +313,14 @@ export default function TicketDetailPage() {
                 onSuccess={fetchData}
                 ticket={ticket}
                 className="no-print"
+            />
+
+            <TagManagementModal
+                isOpen={isTagModalOpen}
+                onClose={() => setIsTagModalOpen(false)}
+                ticketId={ticket.id}
+                currentTags={ticket.tags}
+                onTagAssigned={fetchData}
             />
         </>
     );
