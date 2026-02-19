@@ -5,6 +5,7 @@ import type { TicketDetail, TicketTimelineItem, TicketStatus, TicketPriority } f
 import { Button } from '../../../shared/components/Button';
 import { TicketWorkflow } from '../components/TicketWorkflow';
 import { TicketTimeline } from '../components/TicketTimeline';
+import { TicketAttachmentsPanel } from '../components/TicketAttachmentsPanel';
 import { EditTicketModal } from '../components/EditTicketModal';
 import { TicketResponsePanel } from '../components/TicketResponsePanel';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
@@ -18,7 +19,7 @@ export default function TicketDetailPage() {
     const [ticket, setTicket] = useState<TicketDetail | null>(null);
     const [timeline, setTimeline] = useState<TicketTimelineItem[]>([]);
     const [loading, setLoading] = useState(true);
-    const [activeFilter, setActiveFilter] = useState<'all' | 'comments' | 'history' | 'document'>('all');
+    const [activeFilter, setActiveFilter] = useState<'all' | 'comments' | 'history' | 'document'>('comments');
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isTagModalOpen, setIsTagModalOpen] = useState(false);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -78,11 +79,18 @@ export default function TicketDetailPage() {
     };
 
     const filteredItems = timeline.filter(item => {
+        // Always exclude creation items from the timeline — shown in the attachments panel
+        if (item.type === 'creation') return false;
         if (activeFilter === 'all') return true;
         if (activeFilter === 'comments') return item.type === 'comment';
         if (activeFilter === 'history') return item.type !== 'comment';
         return true;
     });
+
+    // Extract creation attachments from the timeline to show in the dedicated panel
+    const creationAttachments = timeline
+        .filter(item => item.type === 'creation')
+        .flatMap(item => item.metadata?.attachments || []);
 
     // Logic to resolve the effective "Assigned To" name
     // Because the main endpoint might return "Usuario (ID: 123)" if relation is missing,
@@ -197,10 +205,16 @@ export default function TicketDetailPage() {
                 </div>
             </div>
 
-            {/* Workflow Section - now allowed in print, but graph hidden inside */}
+            {/* Workflow Section */}
             <div>
                 <TicketWorkflow ticket={ticket} />
             </div>
+
+            {/* Ticket Creation Attachments Panel */}
+            <div className="mb-4">
+                <TicketAttachmentsPanel attachments={creationAttachments} />
+            </div>
+
 
             {/* Main Content Grid - Remove grid for print to allow natural flow */}
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 print:block print:gap-0">
