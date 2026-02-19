@@ -394,7 +394,7 @@ export default function CreateTicketPage() {
                                                 </div>
                                                 <UserSelect
                                                     value={typeof assigneeId === 'number' ? assigneeId : undefined}
-                                                    onChange={(val) => setAssigneeId(val || '')}
+                                                    onChange={(val) => setAssigneeId(typeof val === 'number' ? val : '')}
                                                     candidates={assigneeCandidates} // Pass candidates for restricted mode
                                                     placeholder="Seleccione un usuario..."
                                                 />
