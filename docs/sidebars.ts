@@ -17,6 +17,20 @@ const sidebars: SidebarsConfig = {
     'intro',
     {
       type: 'category',
+      label: 'Acceso',
+      items: [
+        'acceso/iniciar-sesion',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Dashboard',
+      items: [
+        'dashboard/panel-principal',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Tickets',
       items: [
         'tickets/crear-ticket',
@@ -34,6 +48,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'usuarios/gestionar-usuarios',
         'usuarios/roles-permisos',
+        'usuarios/mi-perfil',
       ],
     },
     {
@@ -52,15 +67,19 @@ const sidebars: SidebarsConfig = {
         'administracion/gestion-regionales',
         'administracion/gestion-departamentos',
         'administracion/gestion-cargos',
+        'administracion/gestion-perfiles',
         'administracion/gestion-categorias',
         'administracion/gestion-subcategorias',
+        'administracion/gestion-tipos-errores',
         'administracion/gestion-respuestas-rapidas',
+        'administracion/reglas-mapeo',
       ],
     },
     {
       type: 'category',
       label: 'Workflows',
       items: [
+        'workflows/lista-workflows',
         'workflows/gestion-pasos',
       ],
     },
