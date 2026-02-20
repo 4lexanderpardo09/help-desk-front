@@ -98,8 +98,8 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
                         isCollapsed ? "justify-center px-0" : "justify-between px-6"
                     )}>
                         <div className="flex items-center gap-3 overflow-hidden">
-                            <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center">
-                                <img src="img/AXIS-BG.png" alt="" />
+                            <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center">
+                                <img src="img/LOGO-EC-FN.png" alt="" />
                             </div>
                             <span className={cn(
                                 "text-xl font-extrabold tracking-wide transition-opacity whitespace-nowrap drop-shadow-md",
