@@ -19,6 +19,7 @@ export default function TicketsPage() {
     const { setTitle } = useLayout();
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [loading, setLoading] = useState(true);
+    const [exporting, setExporting] = useState(false);
 
     // Tag Modal State
     const [isTagModalOpen, setIsTagModalOpen] = useState(false);
@@ -231,6 +232,17 @@ export default function TicketsPage() {
         return () => clearTimeout(timeoutId);
     }, [fetchTickets]);
 
+    const handleExportPerformance = async () => {
+        try {
+            setExporting(true);
+            await ticketService.exportPerformance();
+        } catch (error) {
+            console.error('Error exporting performance report', error);
+        } finally {
+            setExporting(false);
+        }
+    };
+
     const getStatusColor = (status: TicketStatus) => {
         switch (status) {
             case 'Abierto': return 'bg-green-100 text-green-800';
@@ -340,6 +352,23 @@ export default function TicketsPage() {
                 <div>
                     <h2 className="text-2xl font-bold text-gray-900">Tickets</h2>
                     <p className="mt-1 text-sm text-gray-500">Gestiona solicitudes de soporte y sigue su progreso.</p>
+                </div>
+                <div className="flex gap-3">
+                    {/* Add export button, only for admins or users with Report access */}
+                    {can('read', 'Report') && (
+                        <button
+                            onClick={handleExportPerformance}
+                            disabled={exporting}
+                            className="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50"
+                        >
+                            {exporting ? (
+                                <Icon name="sync" className="h-5 w-5 animate-spin" />
+                            ) : (
+                                <Icon name="download" className="h-5 w-5" />
+                            )}
+                            Exportar Desempeño
+                        </button>
+                    )}
                 </div>
             </div>
 

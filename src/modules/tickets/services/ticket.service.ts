@@ -411,6 +411,10 @@ export const ticketService = {
         await api.delete(`/tickets/${ticketId}/tags/${tagId}`);
     },
 
+    async exportPerformance(): Promise<void> {
+        await this.downloadFile('/tickets/export/performance', `Reporte_Desempeno_${new Date().toISOString().split('T')[0]}.xlsx`);
+    },
+
     async downloadFile(url: string, filename: string): Promise<void> {
         // If the URL is absolute, api.get should handle it.
         const response = await api.get(url, { responseType: 'blob' });
