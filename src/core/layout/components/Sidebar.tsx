@@ -51,7 +51,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen, closeMobile
         { to: "/organigrama", icon: "account_tree", label: "Organigrama", subject: 'Organigrama' as any, action: 'manage' },
         { to: "/error-types", icon: "quick_phrases", label: "Tipos de Error", subject: 'FastAnswer' as any, action: 'manage' },
         { to: "/mapping-rules", icon: "rule", label: "Reglas de Mapeo", subject: 'Rule' as any, action: 'manage' },
-        { to: "/reports", icon: "bar_chart", label: "Reports", subject: 'Report' }, // Reports might be read-only? Leaving default for now unless specified.
+        { to: "/reports", icon: "bar_chart", label: "Reportes", subject: 'Report', action: 'read' },
 
         { to: "/settings", icon: "settings", label: "Settings" }
     ];

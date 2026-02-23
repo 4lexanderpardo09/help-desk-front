@@ -411,10 +411,6 @@ export const ticketService = {
         await api.delete(`/tickets/${ticketId}/tags/${tagId}`);
     },
 
-    async exportPerformance(): Promise<void> {
-        await this.downloadFile('/tickets/export/performance', `Reporte_Desempeno_${new Date().toISOString().split('T')[0]}.xlsx`);
-    },
-
     async downloadFile(url: string, filename: string): Promise<void> {
         // If the URL is absolute, api.get should handle it.
         const response = await api.get(url, { responseType: 'blob' });
@@ -426,8 +422,6 @@ export const ticketService = {
 
         if (isViewable) {
             window.open(blobUrl, '_blank');
-            // Clean up later (browser handles it mostly for new tabs, but good practice to revoke if SPA)
-            // setTimeout(() => window.URL.revokeObjectURL(blobUrl), 60000); 
         } else {
             const link = document.createElement('a');
             link.href = blobUrl;
