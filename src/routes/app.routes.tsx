@@ -32,6 +32,7 @@ const NotificationsPage = lazy(() => import('../modules/notifications/pages/Noti
 const ReportsPage = lazy(() => import('../modules/reports/pages/ReportsPage'));
 const MainDashboardPage = lazy(() => import('../modules/reports/pages/MainDashboard'));
 const RankingUsuariosPage = lazy(() => import('../modules/reports/pages/RankingUsuarios'));
+const RegionalesPage = lazy(() => import('../modules/reports/pages/Regionales'));
 
 export const appRoutes: RouteObject[] = [
     {
@@ -253,6 +254,14 @@ export const appRoutes: RouteObject[] = [
                         element: (
                             <Suspense fallback={<PageLoader />}>
                                 <RankingUsuariosPage />
+                            </Suspense>
+                        )
+                    },
+                    {
+                        path: '/reports/dashboard/regionales',
+                        element: (
+                            <Suspense fallback={<PageLoader />}>
+                                <RegionalesPage />
                             </Suspense>
                         )
                     },
