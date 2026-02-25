@@ -30,7 +30,7 @@ const WorkflowStepsPage = lazy(() => import('../modules/workflows/pages/Workflow
 const MappingRulesPage = lazy(() => import('../modules/mapping-rules/pages/MappingRulesPage'));
 const NotificationsPage = lazy(() => import('../modules/notifications/pages/NotificationsPage'));
 const ReportsPage = lazy(() => import('../modules/reports/pages/ReportsPage'));
-
+const MainDashboardPage = lazy(() => import('../modules/reports/pages/MainDashboard'));
 
 export const appRoutes: RouteObject[] = [
     {
@@ -236,6 +236,14 @@ export const appRoutes: RouteObject[] = [
                         element: (
                             <Suspense fallback={<PageLoader />}>
                                 <ReportsPage />
+                            </Suspense>
+                        )
+                    },
+                    {
+                        path: '/reports/dashboard',
+                        element: (
+                            <Suspense fallback={<PageLoader />}>
+                                <MainDashboardPage />
                             </Suspense>
                         )
                     },
