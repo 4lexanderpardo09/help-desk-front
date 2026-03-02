@@ -79,6 +79,10 @@ class ReportService {
         await this.downloadFile(`/tickets/export/flow-open?${params.toString()}`, `Reporte_Flujo_${new Date().toISOString().split('T')[0]}.xlsx`);
     }
 
+    async exportDashboard(): Promise<void> {
+        await this.downloadFile('/reports/dashboard/export', `Dashboard_Completo_${new Date().toISOString().split('T')[0]}.xlsx`);
+    }
+
     private async downloadFile(url: string, filename: string): Promise<void> {
         const response = await api.get(url, { responseType: 'blob' });
         const mimeType = response.headers['content-type'] || 'application/octet-stream';
