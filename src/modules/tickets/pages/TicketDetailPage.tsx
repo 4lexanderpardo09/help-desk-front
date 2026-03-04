@@ -12,6 +12,7 @@ import { useLayout } from '../../../core/layout/context/LayoutContext';
 import TagManagementModal from '../components/TagManagementModal';
 import { Icon } from '../../../shared/components/Icon';
 import { useAuth } from '../../auth/context/useAuth';
+import { LegalizacionGastos } from '../../viaticos/components/LegalizacionGastos';
 
 export default function TicketDetailPage() {
     const { setTitle } = useLayout();
@@ -239,6 +240,16 @@ export default function TicketDetailPage() {
             <div>
                 <TicketWorkflow ticket={ticket} />
             </div>
+
+            {/* Legalización de Gastos - Solo para Viáticos en paso Legalización */}
+            {ticket && user && ticket.workflowStep?.toLowerCase().replace('á','a').replace('é','e').replace('í','i').replace('ó','o').replace('ú','u').includes('legalizacion') && (
+                <div className="mt-6">
+                    <LegalizacionGastos 
+                        tickId={ticket.id} 
+                        isCreator={Number(user.id) === Number(ticket.creatorId)} 
+                    />
+                </div>
+            )}
 
             {/* Ticket Creation Attachments Panel */}
             <div className="mb-4">

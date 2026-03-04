@@ -24,6 +24,19 @@ import { useLayout } from '../../../core/layout/context/LayoutContext';
 import { DynamicStepForm } from '../components/DynamicStepForm';
 import { Icon } from '../../../shared/components/Icon';
 
+// Campos del sistema que no deben mostrarse como campos dinámicos para el usuario
+// Estos campos se manejan automáticamente por el sistema
+const SYSTEM_FIELDS = [
+    'TICKET_ID',
+    'FECHA_CREACION',
+    'TITULO',
+    'SOLICITANTE',
+    'CARGO',
+    'DEPARTAMENTO',
+    'EMPRESA'
+] as const;
+
+type SystemFieldCode = typeof SYSTEM_FIELDS[number];
 
 export default function CreateTicketPage() {
     const { setTitle } = useLayout();
@@ -163,8 +176,9 @@ export default function CreateTicketPage() {
                 }
 
                 // Filter out system fields that shouldn't be manually entered
+                // Using constant for maintainability
                 const filteredFields: TemplateField[] = (result.templateFields || []).filter(f =>
-                    !['TICKET_ID', 'FECHA_CREACION', 'TITULO', 'SOLICITANTE', 'CARGO'].includes(f.codigo.toUpperCase())
+                    !SYSTEM_FIELDS.includes(f.codigo.toUpperCase() as SystemFieldCode)
                 ).map(f => ({
                     ...f,
                     required: !!f.required
@@ -383,8 +397,9 @@ export default function CreateTicketPage() {
                                                             // If decision has its own fields, use them
                                                             // Otherwise, keep the existing fields from step 0 (for legacy flows)
                                                             if (dec.templateFields && dec.templateFields.length > 0) {
+                                                                // Using constant for maintainability
                                                                 const filteredFields = dec.templateFields.filter(f =>
-                                                                    !['TICKET_ID', 'FECHA_CREACION', 'TITULO', 'SOLICITANTE', 'CARGO'].includes(f.codigo.toUpperCase())
+                                                                    !SYSTEM_FIELDS.includes(f.codigo.toUpperCase() as SystemFieldCode)
                                                                 ).map(f => ({
                                                                     ...f,
                                                                     required: !!f.required
