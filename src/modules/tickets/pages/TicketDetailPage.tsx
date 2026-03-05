@@ -13,6 +13,7 @@ import TagManagementModal from '../components/TagManagementModal';
 import { Icon } from '../../../shared/components/Icon';
 import { useAuth } from '../../auth/context/useAuth';
 import { LegalizacionGastos } from '../../viaticos/components/LegalizacionGastos';
+import { AprobacionLegalizacion } from '../../viaticos/components/AprobacionLegalizacion';
 
 export default function TicketDetailPage() {
     const { setTitle } = useLayout();
@@ -249,6 +250,20 @@ export default function TicketDetailPage() {
                         isCreator={Number(user.id) === Number(ticket.creatorId)} 
                     />
                 </div>
+            )}
+
+            {/* Aprobación de Legalización - Para jefe o CAC */}
+            {ticket && user && ticket.workflowStep && (
+                (ticket.workflowStep.toLowerCase().replace(/[áéíóú]/g, (c: string) => 'aeiou'.charAt('áéíóú'.indexOf(c))).includes('aprobacion') &&
+                 ticket.workflowStep.toLowerCase().replace(/[áéíóú]/g, (c: string) => 'aeiou'.charAt('áéíóú'.indexOf(c))).includes('legalizacion')) && (
+                    <div className="mt-6">
+                        <AprobacionLegalizacion 
+                            tickId={ticket.id}
+                            esJefe={ticket.workflowStep.toLowerCase().replace(/[áéíóú]/g, (c: string) => 'aeiou'.charAt('áéíóú'.indexOf(c))).includes(' del viaje')}
+                            onSuccess={fetchData}
+                        />
+                    </div>
+                )
             )}
 
             {/* Ticket Creation Attachments Panel */}

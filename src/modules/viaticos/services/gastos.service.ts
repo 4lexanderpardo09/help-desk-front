@@ -54,7 +54,15 @@ class GastosService {
     async createGasto(tickId: number, data: CreateGastoDto, archivo?: File): Promise<ViaticoGasto> {
         const formData = new FormData();
         
-        formData.append('data', JSON.stringify(data));
+        // Enviar datos directamente como campos del FormData
+        formData.append('concepto_id', String(data.concepto_id));
+        formData.append('fecha_gasto', data.fecha_gasto);
+        if (data.ciudad) formData.append('ciudad', data.ciudad);
+        formData.append('valor', String(data.valor));
+        if (data.nombre_proveedor) formData.append('nombre_proveedor', data.nombre_proveedor);
+        if (data.nit_proveedor) formData.append('nit_proveedor', data.nit_proveedor);
+        if (data.num_factura) formData.append('num_factura', data.num_factura);
+        if (data.observaciones) formData.append('observaciones', data.observaciones);
         
         if (archivo) {
             formData.append('archivo', archivo);
@@ -71,7 +79,15 @@ class GastosService {
     async updateGasto(tickId: number, gastoId: number, data: UpdateGastoDto, archivo?: File): Promise<ViaticoGasto> {
         const formData = new FormData();
         
-        formData.append('data', JSON.stringify(data));
+        // Enviar datos directamente como campos del FormData
+        if (data.concepto_id !== undefined) formData.append('concepto_id', String(data.concepto_id));
+        if (data.fecha_gasto) formData.append('fecha_gasto', data.fecha_gasto);
+        if (data.ciudad) formData.append('ciudad', data.ciudad);
+        if (data.valor !== undefined) formData.append('valor', String(data.valor));
+        if (data.nombre_proveedor) formData.append('nombre_proveedor', data.nombre_proveedor);
+        if (data.nit_proveedor) formData.append('nit_proveedor', data.nit_proveedor);
+        if (data.num_factura) formData.append('num_factura', data.num_factura);
+        if (data.observaciones) formData.append('observaciones', data.observaciones);
         
         if (archivo) {
             formData.append('archivo', archivo);

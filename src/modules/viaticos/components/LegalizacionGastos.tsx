@@ -173,7 +173,7 @@ export function LegalizacionGastos({ tickId, isCreator }: Props) {
                                                         className="text-gray-400 hover:text-red-500 transition-colors"
                                                         title="Eliminar"
                                                     >
-                                                        <Icon name="trash" className="text-[18px]" />
+                                                        <Icon name="delete" className="text-[18px]" />
                                                     </button>
                                                 </div>
                                             </td>
