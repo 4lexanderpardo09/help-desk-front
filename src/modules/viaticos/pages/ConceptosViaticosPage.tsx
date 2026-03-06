@@ -174,7 +174,7 @@ export default function ConceptosViaticosPage() {
                         className="text-gray-400 hover:text-red-500 transition-colors"
                         title="Eliminar"
                     >
-                        <Icon name="trash" className="text-[20px]" />
+                        <Icon name="delete" className="text-[20px]" />
                     </button>
                 </div>
             )

@@ -23,6 +23,7 @@ import type { TemplateField } from '../interfaces/Ticket';
 import { useLayout } from '../../../core/layout/context/LayoutContext';
 import { DynamicStepForm } from '../components/DynamicStepForm';
 import { Icon } from '../../../shared/components/Icon';
+import { SolicitudAnticipoModal } from '../../viaticos/components/SolicitudAnticipoModal';
 
 // Campos del sistema que no deben mostrarse como campos dinámicos para el usuario
 // Estos campos se manejan automáticamente por el sistema
@@ -78,6 +79,20 @@ export default function CreateTicketPage() {
     const [availableDecisions, setAvailableDecisions] = useState<DecisionOption[]>([]);
     const [selectedDecision, setSelectedDecision] = useState<DecisionOption | null>(null);
 
+    // Anticipo Modal State
+    const [showAnticipoModal, setShowAnticipoModal] = useState(false);
+    const [anticipoData, setAnticipoData] = useState<{
+        destino: string;
+        detalle_destino: string;
+        proposito_viaje: string;
+        ciudades_visitar: string;
+        fecha_inicio_viaje: string;
+        fecha_fin_viaje: string;
+        plazo_legalizacion_dias: number;
+        valor_solicitado: number;
+        valor_en_letras: string;
+    } | null>(null);
+
     useEffect(() => {
         setTitle('Gestión de Tickets');
     }, [setTitle]);
@@ -94,6 +109,20 @@ export default function CreateTicketPage() {
                 setDepartments(deps);
                 setCompanies(comps);
                 setPriorities(prios);
+
+                // Cargar datos de anticipo desde localStorage
+                const savedAnticipo = localStorage.getItem('anticipoData');
+                if (savedAnticipo) {
+                    const data = JSON.parse(savedAnticipo);
+                    setAnticipoData(data);
+                    setTemplateValues(prev => ({
+                        ...prev,
+                        [152]: data.fecha_inicio_viaje,
+                        [158]: data.valor_en_letras,
+                        [160]: String(data.valor_solicitado),
+                        [161]: data.detalle_destino,
+                    }));
+                }
             } catch (error) {
                 console.error("Error loading initial data", error);
             }
@@ -211,6 +240,14 @@ export default function CreateTicketPage() {
             return;
         }
 
+        // Check if this is "Con anticipo" and show modal if data not filled
+        const isConAnticipo = selectedDecision?.label.toLowerCase().includes('anticipo') && 
+                             selectedDecision?.label.toLowerCase().includes('con');
+        if (isConAnticipo && !anticipoData) {
+            setShowAnticipoModal(true);
+            return;
+        }
+
         setLoading(true);
         try {
             const payload: CreateTicketDto = {
@@ -224,12 +261,28 @@ export default function CreateTicketPage() {
                 usuarioId: user?.id,
                 initialTransitionKey: selectedDecision ? selectedDecision.decisionId : undefined,
                 initialTargetStepId: selectedDecision ? selectedDecision.targetStepId : undefined,
-                templateValues: Object.entries(templateValues).map(([key, val]) => ({
-                    campoId: Number(key),
-                    valor: val
-                }))
+                templateValues: [
+                    ...Object.entries(templateValues).map(([key, val]) => ({
+                        campoId: Number(key),
+                        valor: val
+                    })),
+                    // Agregar campos de anticipo directamente
+                    ...(anticipoData ? [
+                        { campoId: 152, valor: anticipoData.fecha_inicio_viaje }, // ANTICIPO_FECHA
+                        { campoId: 158, valor: anticipoData.valor_en_letras }, // ANTICIPO_VALOR_LETRAS
+                        { campoId: 160, valor: String(anticipoData.valor_solicitado) }, // ANTICIPO_VALOR
+                        { campoId: 161, valor: anticipoData.detalle_destino }, // ANTICIPO_DETALLE
+                    ] : [])
+                ],
+                anticipoData: anticipoData || undefined
             };
 
+            console.log('CreateTicketPage: anticipoData:', anticipoData);
+            console.log('CreateTicketPage: templateValues a enviar:', payload.templateValues);
+            // Limpiar localStorage después de enviar
+            if (anticipoData) {
+                localStorage.removeItem('anticipoData');
+            }
             await ticketService.createTicket(payload, files);
 
             // Removed separate document upload as it is now handled in createTicket
@@ -383,6 +436,8 @@ export default function CreateTicketPage() {
                                                     onChange={(val) => {
                                                         const dec = availableDecisions.find(d => String(d.decisionId) === String(val));
                                                         setSelectedDecision(dec || null);
+                                                        // Reset anticipo data when decision changes
+                                                        setAnticipoData(null);
                                                         // Update manual assignment requirements based on decision
                                                         if (dec) {
                                                             setRequiresManualSelection(dec.requiresManualAssignment);
@@ -392,6 +447,12 @@ export default function CreateTicketPage() {
                                                             // Update PDF template based on decision's target step
                                                             if (dec.pdfTemplate) {
                                                                 setPdfTemplate(dec.pdfTemplate);
+                                                            }
+                                                            // Check if this is "Con anticipo" decision
+                                                            const isConAnticipo = dec.label.toLowerCase().includes('anticipo') && 
+                                                                                 dec.label.toLowerCase().includes('con');
+                                                            if (isConAnticipo) {
+                                                                setShowAnticipoModal(true);
                                                             }
                                                             // Update template fields based on decision's target step
                                                             // If decision has its own fields, use them
@@ -467,6 +528,7 @@ export default function CreateTicketPage() {
                             <DynamicStepForm
                                 fields={templateFields}
                                 onChange={handleTemplateChange}
+                                initialValues={templateValues}
                             />
                         )}
 
@@ -522,6 +584,28 @@ export default function CreateTicketPage() {
                 title="Ticket Creado Exitosamente"
                 message="El ticket ha sido registrado en el sistema y se ha iniciado el flujo de trabajo correspondiente. Puede hacer seguimiento en la lista de tickets."
                 variant="success"
+            />
+
+            {/* ANTICIPO MODAL */}
+            <SolicitudAnticipoModal
+                open={showAnticipoModal}
+                onOpenChange={(open) => {
+                    setShowAnticipoModal(open);
+                }}
+                onDataSubmit={(data) => {
+                    console.log('CreateTicketPage: Received anticipo data', data);
+                    setAnticipoData(data);
+                    // Llenar los campos de plantilla automáticamente
+                    setTemplateValues(prev => ({
+                        ...prev,
+                        [152]: data.fecha_inicio_viaje, // ANTICIPO_FECHA
+                        [158]: data.valor_en_letras, // ANTICIPO_VALOR_LETRAS
+                        [160]: String(data.valor_solicitado), // ANTICIPO_VALOR
+                        [161]: data.detalle_destino, // ANTICIPO_DETALLE
+                    }));
+                    // Guardar en localStorage
+                    localStorage.setItem('anticipoData', JSON.stringify(data));
+                }}
             />
         </>
     );

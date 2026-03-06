@@ -8,9 +8,10 @@ import { templateService } from '../../templates/services/template.service';
 interface DynamicStepFormProps {
     fields: TemplateField[]; // Schema
     onChange: (values: { campoId: number; valor: string }[]) => void;
+    initialValues?: Record<number, string>;
 }
 
-export const DynamicStepForm: React.FC<DynamicStepFormProps> = ({ fields, onChange }) => {
+export const DynamicStepForm: React.FC<DynamicStepFormProps> = ({ fields, onChange, initialValues }) => {
     const { control, watch, setValue, formState: { errors } } = useForm();
     const allValues = watch();
 
@@ -37,6 +38,18 @@ export const DynamicStepForm: React.FC<DynamicStepFormProps> = ({ fields, onChan
             onChange(formattedValues);
         }
     }, [allValues, fields, onChange]);
+
+    // Initialize values from initialValues
+    useEffect(() => {
+        if (initialValues && fields.length > 0) {
+            fields.forEach(f => {
+                const val = initialValues[f.id];
+                if (val !== undefined && val !== null && val !== '') {
+                    setValue(`field_${f.id}`, String(val));
+                }
+            });
+        }
+    }, [initialValues, fields, setValue]);
 
     if (!fields || fields.length === 0) return null;
 

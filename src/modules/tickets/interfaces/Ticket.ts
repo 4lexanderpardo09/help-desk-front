@@ -70,6 +70,17 @@ export interface CreateTicketDto {
     initialTransitionKey?: string;
     initialTargetStepId?: number;
     templateValues?: { campoId: number; valor: string }[];
+    anticipoData?: {
+        destino: string;
+        detalle_destino: string;
+        proposito_viaje: string;
+        ciudades_visitar: string;
+        fecha_inicio_viaje: string;
+        fecha_fin_viaje: string;
+        plazo_legalizacion_dias: number;
+        valor_solicitado: number;
+        valor_en_letras: string;
+    };
 }
 
 export interface UpdateTicketDto {
