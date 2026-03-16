@@ -8,6 +8,7 @@ export default function ReportsPage() {
     const { can } = usePermissions();
     const { setTitle } = useLayout();
     const [exporting, setExporting] = useState(false);
+    const [exportingFlujos, setExportingFlujos] = useState(false);
 
     // Set page title
     useState(() => {
@@ -22,6 +23,17 @@ export default function ReportsPage() {
             console.error('Error exporting performance report', error);
         } finally {
             setExporting(false);
+        }
+    };
+
+    const handleExportFlujosReport = async () => {
+        try {
+            setExportingFlujos(true);
+            await reportService.exportFlowUsage();
+        } catch (error) {
+            console.error('Error exporting flujos report', error);
+        } finally {
+            setExportingFlujos(false);
         }
     };
 
@@ -58,6 +70,44 @@ export default function ReportsPage() {
                                 className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-teal px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-brand-teal/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-teal disabled:opacity-50"
                             >
                                 {exporting ? (
+                                    <>
+                                        <Icon name="sync" className="h-5 w-5 animate-spin" />
+                                        <span>Generando...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Icon name="download" className="h-5 w-5" />
+                                        <span>Descargar Excel</span>
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* Flujos Usage Report Card */}
+                {can('read', 'Workflow') && (
+                    <div className="flex flex-col rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:border-brand-blue/30 hover:shadow-md">
+                        <div className="flex items-start justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-gray-500">Flujos de Trabajo</p>
+                                <p className="mt-2 text-xl font-bold text-gray-800">Uso de Flujos</p>
+                                <p className="mt-2 text-xs text-gray-400 line-clamp-2">
+                                    Exporta a Excel los flujos que están en uso y los que no tienen tickets asociados.
+                                </p>
+                            </div>
+                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
+                                <Icon name="account_tree" className="text-2xl" style={{ fontVariationSettings: '"FILL" 1' }} />
+                            </div>
+                        </div>
+
+                        <div className="mt-6">
+                            <button
+                                onClick={handleExportFlujosReport}
+                                disabled={exportingFlujos}
+                                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-teal px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-brand-teal/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-teal disabled:opacity-50"
+                            >
+                                {exportingFlujos ? (
                                     <>
                                         <Icon name="sync" className="h-5 w-5 animate-spin" />
                                         <span>Generando...</span>
