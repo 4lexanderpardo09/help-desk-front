@@ -1,5 +1,32 @@
 import { api } from "../../../core/api/api";
 
+interface FlowOpenTicketsData {
+    flujo: {
+        flujo_id: number;
+        flujo_nom: string;
+        cats_id: number;
+        cats_nom: string;
+    };
+    pasos: {
+        paso_id: number;
+        paso_nombre: string;
+        paso_orden: number;
+        tickets_abiertos: number;
+        tickets: {
+            tick_id: number;
+            tick_titulo: string;
+            fech_crea: string;
+            paso_nombre: string;
+            dias_abierto: number;
+        }[];
+    }[];
+    total_abiertos: number;
+    filtros: {
+        fechaInicio?: string;
+        fechaFin?: string;
+    };
+}
+
 class ReportService {
     async exportPerformance(): Promise<void> {
         await this.downloadFile('/tickets/export/performance', `Reporte_Desempeno_${new Date().toISOString().split('T')[0]}.xlsx`);
@@ -11,6 +38,24 @@ class ReportService {
 
     async exportFlowUsage(): Promise<void> {
         await this.downloadFile('/workflows/reporte/uso/export', `Reporte_Flujos_En_Uso_${new Date().toISOString().split('T')[0]}.xlsx`);
+    }
+
+    async getFlowOpenTickets(flujoId: number, fechaInicio?: string, fechaFin?: string): Promise<FlowOpenTicketsData> {
+        const params = new URLSearchParams();
+        if (fechaInicio) params.append('fechaInicio', fechaInicio);
+        if (fechaFin) params.append('fechaFin', fechaFin);
+        
+        const queryString = params.toString();
+        const url = queryString 
+            ? `/tickets/flow-open/${flujoId}?${queryString}` 
+            : `/tickets/flow-open/${flujoId}`;
+        
+        const response = await api.get<FlowOpenTicketsData>(url);
+        return response.data;
+    }
+
+    async exportFlowOpenTickets(flujoId: number): Promise<void> {
+        await this.downloadFile(`/tickets/export/flow-open?flujoId=${flujoId}`, `Reporte_Flujo_Abiertos_${new Date().toISOString().split('T')[0]}.xlsx`);
     }
 
     private async downloadFile(url: string, filename: string): Promise<void> {
