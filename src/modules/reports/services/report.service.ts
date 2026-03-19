@@ -64,8 +64,15 @@ class ReportService {
         return response.data;
     }
 
-    async exportFlowOpenTickets(flujoId: number): Promise<void> {
-        await this.downloadFile(`/tickets/export/flow-open?flujoId=${flujoId}`, `Reporte_Flujo_Abiertos_${new Date().toISOString().split('T')[0]}.xlsx`);
+    async exportFlowOpenTickets(flujoId: number, fechaInicio?: string, fechaFin?: string, estado?: string, regionalId?: number): Promise<void> {
+        const params = new URLSearchParams();
+        params.append('flujoId', String(flujoId));
+        if (fechaInicio) params.append('fechaInicio', fechaInicio);
+        if (fechaFin) params.append('fechaFin', fechaFin);
+        if (estado) params.append('estado', estado);
+        if (regionalId) params.append('regionalId', String(regionalId));
+        
+        await this.downloadFile(`/tickets/export/flow-open?${params.toString()}`, `Reporte_Flujo_${new Date().toISOString().split('T')[0]}.xlsx`);
     }
 
     private async downloadFile(url: string, filename: string): Promise<void> {
