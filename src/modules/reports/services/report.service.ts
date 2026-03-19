@@ -1,5 +1,10 @@
 import { api } from "../../../core/api/api";
 
+interface Regional {
+    reg_id: number;
+    reg_nom: string;
+}
+
 interface FlowOpenTicketsData {
     flujo: {
         flujo_id: number;
@@ -25,6 +30,7 @@ interface FlowOpenTicketsData {
         fechaInicio?: string;
         fechaFin?: string;
         estado: string;
+        regionalId?: number;
     };
 }
 
@@ -41,11 +47,12 @@ class ReportService {
         await this.downloadFile('/workflows/reporte/uso/export', `Reporte_Flujos_En_Uso_${new Date().toISOString().split('T')[0]}.xlsx`);
     }
 
-    async getFlowOpenTickets(flujoId: number, fechaInicio?: string, fechaFin?: string, estado?: string): Promise<FlowOpenTicketsData> {
+    async getFlowOpenTickets(flujoId: number, fechaInicio?: string, fechaFin?: string, estado?: string, regionalId?: number): Promise<FlowOpenTicketsData> {
         const params = new URLSearchParams();
         if (fechaInicio) params.append('fechaInicio', fechaInicio);
         if (fechaFin) params.append('fechaFin', fechaFin);
         if (estado) params.append('estado', estado);
+        if (regionalId) params.append('regionalId', String(regionalId));
         
         const queryString = params.toString();
         const url = queryString 
@@ -53,6 +60,11 @@ class ReportService {
             : `/tickets/flow-open/${flujoId}`;
         
         const response = await api.get<FlowOpenTicketsData>(url);
+        return response.data;
+    }
+
+    async getRegionales(): Promise<Regional[]> {
+        const response = await api.get<Regional[]>('/tickets/regionals');
         return response.data;
     }
 
