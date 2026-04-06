@@ -77,8 +77,19 @@ class TemplateService {
     // ==================== Template Fields (PlantillaCampo) ====================
 
     async getTemplateFields(flujoPlantillaId: number): Promise<TemplateField[]> {
-        const response = await api.get<TemplateField[]>(`${this.baseUrl}/${flujoPlantillaId}/campos`);
-        return response.data;
+        const response = await api.get<any>(`${this.baseUrl}/${flujoPlantillaId}/campos`);
+        // Handle both direct array response and wrapped { data: [...] } response
+        let data: any = response.data;
+        if (!Array.isArray(data)) {
+            data = data?.data || [];
+        }
+        return (data as TemplateField[]).map((field: any) => ({
+            ...field,
+            id: field.id,
+            coordX: typeof field.coordX === 'string' ? parseFloat(field.coordX) : field.coordX,
+            coordY: typeof field.coordY === 'string' ? parseFloat(field.coordY) : field.coordY,
+            mostrarDiasTranscurridos: Boolean(field.mostrarDiasTranscurridos),
+        }));
     }
 
     async createTemplateField(

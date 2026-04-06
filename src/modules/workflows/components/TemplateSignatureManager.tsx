@@ -29,7 +29,7 @@ export const TemplateSignatureManager = ({ flujoPlantillaId, onZonasChange }: Te
     const [editingId, setEditingId] = useState<number | null>(null);
     const [isAdding, setIsAdding] = useState(false);
 
-    const { register, handleSubmit, reset, setValue, watch, control } = useForm<FormData>();
+    const { register, handleSubmit, reset, setValue, control } = useForm<FormData>();
 
     const loadFirmas = async () => {
         setIsLoading(true);
