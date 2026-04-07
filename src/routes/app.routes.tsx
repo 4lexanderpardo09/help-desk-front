@@ -30,7 +30,6 @@ const WorkflowStepsPage = lazy(() => import('../modules/workflows/pages/Workflow
 const MappingRulesPage = lazy(() => import('../modules/mapping-rules/pages/MappingRulesPage'));
 const NotificationsPage = lazy(() => import('../modules/notifications/pages/NotificationsPage'));
 const ReportsPage = lazy(() => import('../modules/reports/pages/ReportsPage'));
-const FlowOpenTicketsPage = lazy(() => import('../modules/reports/pages/FlowOpenTicketsPage'));
 const MainDashboardPage = lazy(() => import('../modules/reports/pages/MainDashboard'));
 const RankingUsuariosPage = lazy(() => import('../modules/reports/pages/RankingUsuarios'));
 const RegionalesPage = lazy(() => import('../modules/reports/pages/Regionales'));
