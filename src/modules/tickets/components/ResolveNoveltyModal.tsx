@@ -69,7 +69,7 @@ export const ResolveNoveltyModal: React.FC<ResolveNoveltyModalProps> = ({
                         files={files}
                         onFilesChange={setFiles}
                         label="Adjuntar Evidencia (Opcional)"
-                        maxFiles={10}
+                        maxFiles={15}
                         accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
                     />
                 </div>
