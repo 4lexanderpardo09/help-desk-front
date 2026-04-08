@@ -30,10 +30,17 @@ const WorkflowStepsPage = lazy(() => import('../modules/workflows/pages/Workflow
 const MappingRulesPage = lazy(() => import('../modules/mapping-rules/pages/MappingRulesPage'));
 const NotificationsPage = lazy(() => import('../modules/notifications/pages/NotificationsPage'));
 const ReportsPage = lazy(() => import('../modules/reports/pages/ReportsPage'));
+const MainDashboardPage = lazy(() => import('../modules/reports/pages/MainDashboard'));
+const RankingUsuariosPage = lazy(() => import('../modules/reports/pages/RankingUsuarios'));
+const RegionalesPage = lazy(() => import('../modules/reports/pages/Regionales'));
+const MapaCalorPage = lazy(() => import('../modules/reports/pages/MapaCalor'));
+const CategoriasPage = lazy(() => import('../modules/reports/pages/Categorias'));
+const CuellosBottleneckPage = lazy(() => import('../modules/reports/pages/CuellosBottleneck'));
+const DistribucionTiemposPage = lazy(() => import('../modules/reports/pages/DistribucionTiempos'));
+const TopPerformersPage = lazy(() => import('../modules/reports/pages/TopPerformers'));
+const NovedadesPage = lazy(() => import('../modules/reports/pages/Novedades'));
+const DetalleUsuarioPage = lazy(() => import('../modules/reports/pages/DetalleUsuario'));
 const FlowOpenTicketsPage = lazy(() => import('../modules/reports/pages/FlowOpenTicketsPage'));
-const PriceListsPage = lazy(() => import('../modules/price-lists/pages/PriceListsPage'));
-const PriceListsAdminPage = lazy(() => import('../modules/price-lists/pages/PriceListsAdminPage'));
-
 
 export const appRoutes: RouteObject[] = [
     {
@@ -251,18 +258,90 @@ export const appRoutes: RouteObject[] = [
                         )
                     },
                     {
-                        path: '/price-lists',
+                        path: '/reports/dashboard',
                         element: (
                             <Suspense fallback={<PageLoader />}>
-                                <PriceListsPage />
+                                <MainDashboardPage />
                             </Suspense>
                         )
                     },
                     {
-                        path: '/price-lists/admin',
+                        path: '/reports/dashboard/ranking',
                         element: (
                             <Suspense fallback={<PageLoader />}>
-                                <PriceListsAdminPage />
+                                <RankingUsuariosPage />
+                            </Suspense>
+                        )
+                    },
+                    {
+                        path: '/reports/dashboard/regionales',
+                        element: (
+                            <Suspense fallback={<PageLoader />}>
+                                <RegionalesPage />
+                            </Suspense>
+                        )
+                    },
+                    {
+                        path: '/reports/dashboard/mapa-calor',
+                        element: (
+                            <Suspense fallback={<PageLoader />}>
+                                <MapaCalorPage />
+                            </Suspense>
+                        )
+                    },
+                    {
+                        path: '/reports/dashboard/categorias',
+                        element: (
+                            <Suspense fallback={<PageLoader />}>
+                                <CategoriasPage />
+                            </Suspense>
+                        )
+                    },
+                    {
+                        path: '/reports/dashboard/cuellos-botella',
+                        element: (
+                            <Suspense fallback={<PageLoader />}>
+                                <CuellosBottleneckPage />
+                            </Suspense>
+                        )
+                    },
+                    {
+                        path: '/reports/dashboard/distribucion',
+                        element: (
+                            <Suspense fallback={<PageLoader />}>
+                                <DistribucionTiemposPage />
+                            </Suspense>
+                        )
+                    },
+                    {
+                        path: '/reports/dashboard/top-performers',
+                        element: (
+                            <Suspense fallback={<PageLoader />}>
+                                <TopPerformersPage />
+                            </Suspense>
+                        )
+                    },
+                    {
+                        path: '/reports/dashboard/novedades',
+                        element: (
+                            <Suspense fallback={<PageLoader />}>
+                                <NovedadesPage />
+                            </Suspense>
+                        )
+                    },
+                    {
+                        path: '/reports/dashboard/usuario/:id',
+                        element: (
+                            <Suspense fallback={<PageLoader />}>
+                                <DetalleUsuarioPage />
+                            </Suspense>
+                        )
+                    },
+                    {
+                        path: '/reports/flow-open',
+                        element: (
+                            <Suspense fallback={<PageLoader />}>
+                                <FlowOpenTicketsPage />
                             </Suspense>
                         )
                     },

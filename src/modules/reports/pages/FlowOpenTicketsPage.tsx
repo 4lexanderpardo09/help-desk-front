@@ -62,11 +62,10 @@ export default function FlowOpenTicketsPage() {
     // Filtros
     const [fechaInicio, setFechaInicio] = useState<string>('');
     const [fechaFin, setFechaFin] = useState<string>('');
-    const [estado, setEstado] = useState<string>('todos');
+    const [estado, setEstado] = useState<string>('Abierto');
     const [regionalId, setRegionalId] = useState<number | undefined>(undefined);
 
     const estadoOptions = [
-        { value: 'todos', label: 'Todos' },
         { value: 'Abierto', label: 'Abierto' },
         { value: 'Cerrado', label: 'Cerrado' },
         { value: 'Pausado', label: 'Pausado' },
@@ -142,7 +141,7 @@ export default function FlowOpenTicketsPage() {
     const handleClearFilters = () => {
         setFechaInicio('');
         setFechaFin('');
-        setEstado('todos');
+        setEstado('Abierto');
         setRegionalId(undefined);
         if (selectedWorkflow) {
             loadFlowDataData(Number(selectedWorkflow));
@@ -153,13 +152,7 @@ export default function FlowOpenTicketsPage() {
         if (!selectedWorkflow) return;
         setExporting(true);
         try {
-            await reportService.exportFlowOpenTickets(
-                Number(selectedWorkflow),
-                fechaInicio || undefined,
-                fechaFin || undefined,
-                estado,
-                regionalId
-            );
+            await reportService.exportFlowOpenTickets(Number(selectedWorkflow));
         } catch (error) {
             console.error('Error exporting', error);
         } finally {
@@ -385,7 +378,7 @@ export default function FlowOpenTicketsPage() {
                                             </div>
                                         </div>
                                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${getCountBadgeClass(paso.tickets_count)}`}>
-                                            {paso.tickets_count} {!flowData.filtros.estado || flowData.filtros.estado === 'todos' ? 'tickets' : flowData.filtros.estado.toLowerCase() === 'abierto' ? 'abiertos' : flowData.filtros.estado.toLowerCase() === 'cerrado' ? 'cerrados' : 'pausados'}
+                                            {paso.tickets_count} {flowData.filtros.estado.toLowerCase() === 'abierto' ? 'abiertos' : flowData.filtros.estado.toLowerCase() === 'cerrado' ? 'cerrados' : 'pausados'}
                                         </span>
                                     </div>
 
